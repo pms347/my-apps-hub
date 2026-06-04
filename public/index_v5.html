@@ -1208,14 +1208,4 @@ function hubRenderHabits(){const el=document.getElementById('hubHabits');if(!tHa
 function updateHubStat(){const done=tHabits.filter(h=>tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done')).length;document.getElementById('hubHabitStat').textContent=`${done}/${tHabits.length}`;}
 
 // ══ UTILS ════════════════════════════════════════
-function fmtD(d){if(!d)return'—';try{return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch{return d;}}
-function addDays(ds,n){const d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
-function dateDiff(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
-function groupBy(arr,fn){return arr.reduce((acc,x)=>{const k=fn(x);(acc[k]=acc[k]||[]).push(x);return acc;},{});}
-function dlBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
-function openOv(id){const el=document.getElementById(id);if(!el)return;el.classList.add('on');if(id==='profOv')renderProfileSheet();}
-function closeOv(id){document.getElementById(id)?.classList.remove('on');}
-function toast(msg,type='ok'){const t=document.getElementById('toast');clearTimeout(t._t);t.className='toast';t.textContent=msg;requestAnimationFrame(()=>requestAnimationFrame(()=>{t.className=`toast ${type} show`;t._t=setTimeout(()=>t.className='toast',2500);}));}
-</script>
-</body>
-</html>
+function fmtD(d){if(!d)return'—';try{return new
