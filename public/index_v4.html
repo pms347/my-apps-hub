@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1117">
 <title>My Apps Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -21,6 +22,9 @@
   --hdr:52px;--nav:58px;--sab:env(safe-area-inset-bottom,0px)
 }
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',sans-serif;overflow:hidden}
+.tamil{font-family:'Noto Sans Tamil',-apple-system,sans-serif}
+.tl-prev{font-size:.75rem;color:var(--purple);padding:4px 9px;margin-top:4px;border-radius:6px;background:rgba(139,92,246,.1);border-left:2px solid var(--purple);display:none;font-family:'Noto Sans Tamil',sans-serif;line-height:1.7;word-break:break-word}
+.tl-prev.show{display:block}
 #authWrap{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
 .abox{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px 18px;width:100%;max-width:380px}
 .alogo{text-align:center;margin-bottom:16px}
@@ -44,7 +48,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .topbar{height:var(--hdr);background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 14px;flex-shrink:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:8px}
 .app-ico-sm{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.topbar-title{font-size:.9rem;font-weight:700}
+.topbar-title{font-size:.9rem;font-weight:700;font-family:'Noto Sans Tamil',-apple-system,sans-serif}
 .topbar-right{display:flex;gap:6px}
 .tbar-btn{width:30px;height:30px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--muted);font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .apps-wrap{flex:1;overflow:hidden;position:relative}
@@ -159,7 +163,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .prow-l{font-size:.84rem;font-weight:600}
 .prow-s{font-size:.66rem;color:var(--muted);margin-top:1px}
 .badge{display:inline-flex;padding:1px 5px;border-radius:4px;font-size:.6rem;font-weight:700;margin-left:3px}
-.bu{background:#ef444420;color:#ef4444}.bd{background:#22c55e20;color:#22c55e}
+.bu{background:#ef444420;color:#ef4444}
+.bd{background:#22c55e20;color:#22c55e}
 .ring-wrap{position:relative;width:72px;height:72px;flex-shrink:0}
 .ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800}
 .empty{text-align:center;padding:24px 12px;color:var(--muted)}
@@ -168,14 +173,15 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 .grp-hdr{font-size:.64rem;font-weight:700;color:var(--muted);padding:8px 0 4px;text-transform:uppercase;letter-spacing:.05em;display:flex;justify-content:space-between}
 /* MoiData */
 .moi-hero{background:linear-gradient(135deg,#8b5cf6,#6c63ff);border-radius:14px;padding:16px;margin-bottom:10px;color:#fff}
-.moi-rec-card{background:var(--card);border:1px solid var(--border);border-radius:11px;margin-bottom:8px;padding:11px 12px;display:flex;align-items:center;gap:9px}
-.moi-rec-num{width:26px;height:26px;border-radius:50%;background:rgba(139,92,246,.2);color:#a78bfa;font-size:.7rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.moi-rec-body{flex:1;min-width:0}
-.moi-rec-name{font-size:.84rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.moi-rec-sub{font-size:.64rem;color:var(--muted);margin-top:2px}
-.moi-rec-amt{font-size:.9rem;font-weight:800;color:var(--green);flex-shrink:0;text-align:right}
-.moi-grand-hero{background:linear-gradient(135deg,#1a1d27,#21253a);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
-.moi-grand-hero::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,#8b5cf633,transparent);border-radius:50%}
+.moi-tbl-wrap{overflow-x:auto;margin-bottom:10px;border-radius:12px;border:1px solid var(--border)}
+.moi-tbl{width:100%;border-collapse:collapse;min-width:380px}
+.moi-tbl th{background:linear-gradient(135deg,#8b5cf6,#6c63ff);color:#fff;padding:9px 10px;text-align:left;font-weight:700;font-size:.68rem;white-space:nowrap}
+.moi-tbl th.r,.moi-tbl td.r{text-align:right}
+.moi-tbl td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:.8rem;vertical-align:middle;font-family:'Noto Sans Tamil',-apple-system,sans-serif}
+.moi-tbl tr:last-child td{border-bottom:none}
+.moi-tbl tr:nth-child(even) td{background:rgba(139,92,246,.04)}
+.moi-tbl tfoot td{background:rgba(139,92,246,.15);font-weight:800;color:#a78bfa;font-size:.82rem}
+.moi-tag{font-size:.55rem;background:rgba(139,92,246,.15);color:#a78bfa;border-radius:4px;padding:1px 5px;margin-left:3px;font-family:inherit;font-weight:700}
 .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-50px);background:var(--card);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:.78rem;z-index:9999;transition:transform .25s,opacity .25s;opacity:0;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px #00000099}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.ok{border-left:3px solid var(--green)}.toast.err{border-left:3px solid var(--red)}.toast.info{border-left:3px solid var(--blue)}
@@ -219,6 +225,7 @@ input[type=file]{display:none}
       <div class="tbar-btn" id="profAvBtn" onclick="openOv('profOv')" style="overflow:hidden;font-size:.7rem;font-weight:700;background:linear-gradient(135deg,#6c63ff,#3b82f6);color:#fff;border:none">?</div>
     </div>
   </div>
+
   <div class="apps-wrap">
 
     <!-- HUB -->
@@ -291,9 +298,24 @@ input[type=file]{display:none}
     <div class="app" id="ap-grocery">
       <div class="pages">
         <div class="page on" id="gp-home">
-          <div class="mnav"><button class="mnav-btn" onclick="grChg(-1)">‹</button><span class="mnav-lbl" id="grMonthLbl">—</span><button class="mnav-btn" onclick="grChg(1)">›</button><button class="btn btn-sm" style="background:rgba(108,99,255,.2);color:var(--accent);border:1px solid #6c63ff33;padding:5px 9px;font-size:.66rem" onclick="openGrBudget()">💰 Budget</button></div>
-          <div class="bhero"><div class="bhero-lbl">Monthly Total</div><div class="bhero-amt" id="grAmt">₹0</div><div class="bhero-sub" id="grSub">No budget set</div><div class="bpb"><div class="bpb-fill" id="grPbar" style="width:0%"></div></div><div class="bhero-meta"><span id="grL">₹0 spent</span><span id="grR">No limit</span></div></div>
-          <div class="sgrid"><div class="sc"><label>Items</label><div class="sv" id="grItems">0</div></div><div class="sc"><label>Avg/Item</label><div class="sv" id="grAvg">₹0</div></div><div class="sc"><label>Categories</label><div class="sv" id="grCats">0</div></div><div class="sc"><label>Price ↑</label><div class="sv" id="grInc">0</div></div></div>
+          <div class="mnav">
+            <button class="mnav-btn" onclick="grChg(-1)">‹</button>
+            <span class="mnav-lbl" id="grMonthLbl">—</span>
+            <button class="mnav-btn" onclick="grChg(1)">›</button>
+            <button class="btn btn-sm" style="background:rgba(108,99,255,.2);color:var(--accent);border:1px solid #6c63ff33;padding:5px 9px;font-size:.66rem" onclick="openGrBudget()">💰 Budget</button>
+          </div>
+          <div class="bhero">
+            <div class="bhero-lbl">Monthly Total</div><div class="bhero-amt" id="grAmt">₹0</div>
+            <div class="bhero-sub" id="grSub">No budget set</div>
+            <div class="bpb"><div class="bpb-fill" id="grPbar" style="width:0%"></div></div>
+            <div class="bhero-meta"><span id="grL">₹0 spent</span><span id="grR">No limit</span></div>
+          </div>
+          <div class="sgrid">
+            <div class="sc"><label>Items</label><div class="sv" id="grItems">0</div></div>
+            <div class="sc"><label>Avg/Item</label><div class="sv" id="grAvg">₹0</div></div>
+            <div class="sc"><label>Categories</label><div class="sv" id="grCats">0</div></div>
+            <div class="sc"><label>Price ↑</label><div class="sv" id="grInc">0</div></div>
+          </div>
           <div class="card" id="grAlertCard" style="display:none"><div class="card-hd">⚠️ Price Changes</div><div class="card-body" id="grAlertBody"></div></div>
           <div class="card"><div class="card-hd">Recent <button class="card-link" onclick="grPage('hist')">All →</button></div><div style="padding:0 4px" id="grRecent"></div></div>
           <div style="height:6px"></div>
@@ -302,10 +324,29 @@ input[type=file]{display:none}
           <div class="card" style="padding:12px">
             <div style="font-size:.86rem;font-weight:700;margin-bottom:10px" id="grAddTitle">➕ New Entry</div>
             <div class="ff"><label>Date</label><input type="date" id="grDate"></div>
-            <div class="ff"><label>Category</label><select id="grCat" onchange="grRefreshChips()"><option value="Vegetables">🥬 Vegetables</option><option value="Fruits">🍎 Fruits</option><option value="Grains">🌾 Grains</option><option value="Lentils">🫘 Lentils</option><option value="Spices">🌶️ Spices</option><option value="Oils">🫙 Oils</option><option value="Dairy">🥛 Dairy</option><option value="Meat">🍖 Meat</option><option value="Fish">🐟 Fish</option><option value="Other">📦 Other</option></select></div>
-            <div class="ff"><label>Item Name</label><input type="text" id="grName" placeholder="e.g. Rice, Onion…" oninput="grNameTyped()"><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px" id="grChips"></div></div>
-            <div class="ff2"><div class="ff"><label>Quantity</label><input type="number" id="grQty" placeholder="0" min="0" step="0.1" oninput="grCalc('qty')"></div><div class="ff"><label>Unit</label><select id="grUnit"><option value="kg">kg</option><option value="g">g</option><option value="litre">L</option><option value="ml">ml</option><option value="nos">nos</option><option value="packet">pkt</option><option value="bunch">bunch</option></select></div></div>
-            <div class="ff2"><div class="ff"><label>₹/Unit</label><input type="number" id="grPPU" placeholder="0.00" step="0.01" oninput="grCalc('ppu')"></div><div class="ff"><label>Total ₹</label><input type="number" id="grTot" placeholder="0.00" step="0.01" oninput="grCalc('tot')"></div></div>
+            <div class="ff"><label>Category</label>
+              <select id="grCat" onchange="grRefreshChips()">
+                <option value="Vegetables">🥬 Vegetables</option><option value="Fruits">🍎 Fruits</option>
+                <option value="Grains">🌾 Grains</option><option value="Lentils">🫘 Lentils</option>
+                <option value="Spices">🌶️ Spices</option><option value="Oils">🫙 Oils</option>
+                <option value="Dairy">🥛 Dairy</option><option value="Meat">🍖 Meat</option>
+                <option value="Fish">🐟 Fish</option><option value="Other">📦 Other</option>
+              </select>
+            </div>
+            <div class="ff"><label>Item Name</label>
+              <input type="text" id="grName" placeholder="e.g. Rice, Onion…" oninput="grNameTyped()">
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px" id="grChips"></div>
+            </div>
+            <div class="ff2">
+              <div class="ff"><label>Quantity</label><input type="number" id="grQty" placeholder="0" min="0" step="0.1" oninput="grCalc('qty')"></div>
+              <div class="ff"><label>Unit</label>
+                <select id="grUnit"><option value="kg">kg</option><option value="g">g</option><option value="litre">L</option><option value="ml">ml</option><option value="nos">nos</option><option value="packet">pkt</option><option value="bunch">bunch</option></select>
+              </div>
+            </div>
+            <div class="ff2">
+              <div class="ff"><label>₹/Unit</label><input type="number" id="grPPU" placeholder="0.00" step="0.01" oninput="grCalc('ppu')"></div>
+              <div class="ff"><label>Total ₹</label><input type="number" id="grTot" placeholder="0.00" step="0.01" oninput="grCalc('tot')"></div>
+            </div>
             <div style="font-size:.68rem;color:var(--accent);min-height:13px;margin-bottom:5px" id="grHint"></div>
             <div class="ff"><label>Notes</label><textarea id="grNotes" rows="2" placeholder="Shop name, notes…"></textarea></div>
             <div class="btn-grid2"><button class="btn btn-m" onclick="grClear()">Clear</button><button class="btn btn-p" id="grSaveBtn" onclick="grSave()">Save</button></div>
@@ -316,7 +357,12 @@ input[type=file]{display:none}
         <div class="page" id="gp-hist">
           <div class="sbar"><span style="font-size:.8rem;color:var(--muted)">🔍</span><input type="text" id="grSearch" placeholder="Search…" oninput="grRenderHist()"></div>
           <div class="chips" id="grHistChips"></div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:9px"><button class="btn btn-g btn-sm" onclick="grExpCSV()">CSV</button><button class="btn btn-r btn-sm" onclick="grExpPDF()">PDF</button><button class="btn btn-b btn-sm" onclick="grExpXLSX()">XLSX</button><button class="btn btn-y btn-sm" onclick="grExpJSON()">JSON</button></div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:9px">
+            <button class="btn btn-g btn-sm" onclick="grExpCSV()">CSV</button>
+            <button class="btn btn-r btn-sm" onclick="grExpPDF()">PDF</button>
+            <button class="btn btn-b btn-sm" onclick="grExpXLSX()">XLSX</button>
+            <button class="btn btn-y btn-sm" onclick="grExpJSON()">JSON</button>
+          </div>
           <div id="grHistList"></div>
         </div>
         <div class="page" id="gp-cmp">
@@ -325,14 +371,28 @@ input[type=file]{display:none}
         </div>
         <div class="page" id="gp-shop">
           <div class="card" style="padding:12px">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px"><span style="font-size:.84rem;font-weight:700">Shopping List</span><span id="grShopEst" style="font-size:.74rem;color:var(--accent);font-weight:700"></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+              <span style="font-size:.84rem;font-weight:700">Shopping List</span>
+              <span id="grShopEst" style="font-size:.74rem;color:var(--accent);font-weight:700"></span>
+            </div>
             <div style="display:flex;gap:6px;align-items:flex-start;margin-bottom:8px">
-              <div style="flex:1"><input type="text" id="grSName" placeholder="Item name…" oninput="grShopTyped()" style="width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:.84rem;outline:none"><div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px" id="grShopChips"></div></div>
-              <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0"><input type="number" id="grSQty" placeholder="Qty" min="0" step="0.1" style="width:58px;background:var(--card2);border:1.5px solid var(--border);border-radius:7px;padding:7px 6px;color:var(--text);font-size:.74rem;outline:none"><select id="grSUnit" style="width:58px;background:var(--card2);border:1.5px solid var(--border);border-radius:7px;padding:4px 5px;color:var(--text);font-size:.68rem;outline:none"><option value="kg">kg</option><option value="g">g</option><option value="litre">L</option><option value="nos">nos</option><option value="packet">pkt</option></select></div>
+              <div style="flex:1">
+                <input type="text" id="grSName" placeholder="Item name…" oninput="grShopTyped()" style="width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:.84rem;outline:none">
+                <div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px" id="grShopChips"></div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+                <input type="number" id="grSQty" placeholder="Qty" min="0" step="0.1" style="width:58px;background:var(--card2);border:1.5px solid var(--border);border-radius:7px;padding:7px 6px;color:var(--text);font-size:.74rem;outline:none">
+                <select id="grSUnit" style="width:58px;background:var(--card2);border:1.5px solid var(--border);border-radius:7px;padding:4px 5px;color:var(--text);font-size:.68rem;outline:none">
+                  <option value="kg">kg</option><option value="g">g</option><option value="litre">L</option><option value="nos">nos</option><option value="packet">pkt</option>
+                </select>
+              </div>
               <button onclick="grAddShopItem()" style="width:38px;height:38px;border-radius:9px;background:var(--accent);color:#fff;border:none;font-size:1.3rem;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">+</button>
             </div>
             <div id="grShopList"><div class="empty" style="padding:10px"><p>Nothing added yet</p></div></div>
-            <div id="grShopActs" style="display:none;flex-direction:column;gap:6px;margin-top:9px"><button class="btn btn-p btn-full" onclick="grMarkDone()">✓ Record checked items</button><button class="btn btn-m btn-full" onclick="grClearChecked()">🗑 Remove checked</button></div>
+            <div id="grShopActs" style="display:none;flex-direction:column;gap:6px;margin-top:9px">
+              <button class="btn btn-p btn-full" onclick="grMarkDone()">✓ Record checked items</button>
+              <button class="btn btn-m btn-full" onclick="grClearChecked()">🗑 Remove checked</button>
+            </div>
           </div>
           <div class="card" id="grEstCard" style="display:none"><div class="card-hd" style="font-size:.7rem">💡 Estimated Cost</div><div class="card-body" id="grEstBody"></div></div>
           <div style="height:6px"></div>
@@ -365,12 +425,10 @@ input[type=file]{display:none}
     <div class="app" id="ap-moidata">
       <div class="pages">
         <div class="page on" id="md-home"></div>
-        <div class="page" id="md-analytics"></div>
         <div class="page" id="md-detail"></div>
       </div>
       <div class="anav">
-        <button class="anav-btn on" id="mn-home" onclick="mdPage('home');moiRenderHome()"><div class="anav-ico">📋</div>Projects</button>
-        <button class="anav-btn" id="mn-analytics" onclick="mdPage('analytics');moiRenderAnalytics()"><div class="anav-ico">📊</div>Analytics</button>
+        <button class="anav-btn on" onclick="moiGoHome()"><div class="anav-ico">📋</div>Projects</button>
       </div>
       <button id="moiFab" onclick="moiOpenAddRec()" style="position:absolute;right:14px;bottom:calc(var(--nav)+var(--sab)+12px);width:46px;height:46px;border-radius:23px;background:linear-gradient(135deg,#8b5cf6,#6c63ff);border:none;color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 3px 14px #8b5cf655;z-index:10;display:none;align-items:center;justify-content:center">+</button>
     </div>
@@ -410,15 +468,6 @@ input[type=file]{display:none}
           <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="tmImpJSON(event)"></label></div>
           <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear Task Data</div></div><button class="btn btn-r btn-sm" onclick="tmClear()">Clear</button></div>
         </div>
-        <div class="sec-lbl">MoiData</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export All (CSV)</div></div><button class="btn btn-g btn-sm" onclick="moiExpAllCSV()">CSV</button></div>
-          <div class="prow"><div><div class="prow-l">Export All (Excel)</div></div><button class="btn btn-b btn-sm" onclick="moiExpAllXLSX()">XLSX</button></div>
-          <div class="prow"><div><div class="prow-l">Export All (PDF)</div></div><button class="btn btn-r btn-sm" onclick="moiExpAllPDF()">PDF</button></div>
-          <div class="prow"><div><div class="prow-l">Export JSON Backup</div></div><button class="btn btn-y btn-sm" onclick="moiExpAllJSON()">JSON</button></div>
-          <div class="prow"><div><div class="prow-l">Import JSON Backup</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="moiImpAllJSON(event)"></label></div>
-          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All MoiData</div></div><button class="btn btn-r btn-sm" onclick="moiClearAll()">Clear</button></div>
-        </div>
         <div class="sec-lbl">Account</div>
         <div class="card">
           <div class="prow"><div><div class="prow-l">Sign Out</div><div class="prow-s" id="soNote">—</div></div><button class="btn btn-m btn-sm" onclick="doSO()">Sign Out</button></div>
@@ -427,15 +476,20 @@ input[type=file]{display:none}
         <div style="height:6px"></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- OVERLAYS -->
+  </div><!-- /apps-wrap -->
+</div><!-- /shell -->
+
+<!-- EXPENSE OVERLAYS -->
 <div class="ov" id="addExpOv" onclick="if(event.target===this)closeOv('addExpOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="addExpTitle">Add Expense</h3>
+  <div class="sh">
+    <div class="sh-hdl"></div><h3 id="addExpTitle">Add Expense</h3>
     <input type="hidden" id="eEditId">
     <div class="ff"><label>Description *</label><input type="text" id="eName" placeholder="e.g. Grocery"></div>
-    <div class="ff2"><div class="ff"><label>Amount ₹ *</label><input type="number" id="eAmt" placeholder="0" inputmode="decimal"></div><div class="ff"><label>Date *</label><input type="date" id="eDate"></div></div>
+    <div class="ff2">
+      <div class="ff"><label>Amount ₹ *</label><input type="number" id="eAmt" placeholder="0" inputmode="decimal"></div>
+      <div class="ff"><label>Date *</label><input type="date" id="eDate"></div>
+    </div>
     <div class="ff"><label>Category</label><select id="eCat"></select></div>
     <div class="ff"><label>Note</label><textarea id="eNote" rows="2" placeholder="Optional…"></textarea></div>
     <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addExpOv')">Cancel</button><button class="btn btn-p" onclick="eSave()">Save</button></div>
@@ -443,31 +497,43 @@ input[type=file]{display:none}
   </div>
 </div>
 <div class="ov" id="addCatOv" onclick="if(event.target===this)closeOv('addCatOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3>New Category</h3>
+  <div class="sh">
+    <div class="sh-hdl"></div><h3>New Category</h3>
     <div class="ff"><label>Name *</label><input type="text" id="catName" placeholder="e.g. Health" maxlength="28"></div>
     <div class="ff"><label>Color</label><input type="color" id="catColor" value="#6c63ff" style="height:38px;cursor:pointer"></div>
-    <div class="ff"><label>Monthly Budget ₹</label><input type="number" id="catBudget" placeholder="0 = no limit" min="0"></div>
+    <div class="ff"><label>Monthly Budget ₹</label><input type="number" id="catBudget" placeholder="0 = no limit" min="0" inputmode="decimal"></div>
     <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addCatOv')">Cancel</button><button class="btn btn-p" onclick="eSaveCat()">Add</button></div>
   </div>
 </div>
+
+<!-- GROCERY OVERLAYS -->
 <div class="ov" id="grDetailOv" onclick="if(event.target===this)closeOv('grDetailOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="grDetailTitle">Entry</h3><div id="grDetailBody"></div>
+  <div class="sh">
+    <div class="sh-hdl"></div><h3 id="grDetailTitle">Entry</h3>
+    <div id="grDetailBody"></div>
     <div class="sh-btns" style="margin-top:10px"><button class="btn btn-m" onclick="closeOv('grDetailOv')">Close</button><button class="btn btn-b" onclick="grEditSel()">✏ Edit</button></div>
     <button class="btn btn-r btn-full" style="margin-top:7px" onclick="grDelSel()">Delete</button>
   </div>
 </div>
 <div class="ov" id="grBudgetOv" onclick="if(event.target===this)closeOv('grBudgetOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3>Set Budget</h3>
+  <div class="sh">
+    <div class="sh-hdl"></div><h3>Set Budget</h3>
     <div class="ff"><label>Month</label><input type="month" id="grBudgM"></div>
-    <div class="ff"><label>Budget ₹</label><input type="number" id="grBudgA" placeholder="5000" min="0"></div>
+    <div class="ff"><label>Budget ₹</label><input type="number" id="grBudgA" placeholder="5000" min="0" inputmode="decimal"></div>
     <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('grBudgetOv')">Cancel</button><button class="btn btn-p" onclick="grSaveBudget()">Save</button></div>
   </div>
 </div>
+
+<!-- TASK OVERLAYS -->
 <div class="ov" id="addTaskOv" onclick="if(event.target===this)closeOv('addTaskOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="addTaskTitle">Add Habit</h3>
+  <div class="sh">
+    <div class="sh-hdl"></div><h3 id="addTaskTitle">Add Habit</h3>
     <input type="hidden" id="tEditId"><input type="hidden" id="tEditType">
     <div class="ff"><label>Name *</label><input type="text" id="tName" placeholder="e.g. Drink Water"></div>
-    <div class="ff2"><div class="ff"><label>Category</label><input type="text" id="tCat" placeholder="e.g. Health"></div><div class="ff"><label>Icon</label><input type="text" id="tIco" placeholder="💧" maxlength="2"></div></div>
+    <div class="ff2">
+      <div class="ff"><label>Category</label><input type="text" id="tCat" placeholder="e.g. Health"></div>
+      <div class="ff"><label>Icon / Emoji</label><input type="text" id="tIco" placeholder="💧" maxlength="2"></div>
+    </div>
     <div id="txH" style="display:none"><div class="ff"><label>Daily Target</label><input type="number" id="tHT" value="1" min="1"></div></div>
     <div id="txO" style="display:none"><div class="ff2"><div class="ff"><label>Due Date</label><input type="date" id="tOD"></div><div class="ff"><label>Priority</label><select id="tOP"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div></div></div>
     <div id="txI" style="display:none"><div class="ff2"><div class="ff"><label>Every N Days</label><input type="number" id="tID" value="7" min="1"></div><div class="ff"><label>Start Date</label><input type="date" id="tIS"></div></div></div>
@@ -477,7 +543,8 @@ input[type=file]{display:none}
   </div>
 </div>
 <div class="ov" id="logOv" onclick="if(event.target===this)closeOv('logOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="logTitle">Log Entry</h3>
+  <div class="sh">
+    <div class="sh-hdl"></div><h3 id="logTitle">Log Entry</h3>
     <input type="hidden" id="logId"><input type="hidden" id="logType">
     <div class="ff"><label>Date</label><input type="date" id="logDate"></div>
     <div class="ff"><label>Status</label><select id="logSt"><option value="done">✅ Done</option><option value="skip">⏭ Skipped</option><option value="miss">❌ Missed</option></select></div>
@@ -488,32 +555,46 @@ input[type=file]{display:none}
 
 <!-- MOIDATA OVERLAYS -->
 <div class="ov" id="addMoiProjOv" onclick="if(event.target===this)closeOv('addMoiProjOv')">
-  <div class="sh"><div class="sh-hdl"></div>
+  <div class="sh">
+    <div class="sh-hdl"></div>
     <h3 id="moiProjTitle">📋 New Project</h3>
     <input type="hidden" id="moiProjEditId">
-    <div class="ff"><label>Project Name *</label><input type="text" id="moiProjName" placeholder="e.g. Murugan Vizha 2024"></div>
-    <div class="ff2">
-      <div class="ff"><label>Date</label><input type="date" id="moiProjDate"></div>
-      <div class="ff"><label>Status</label><select id="moiProjStatus"><option value="active">🟢 Active</option><option value="completed">✅ Completed</option></select></div>
+    <div class="ff">
+      <label>Project Name * <span style="font-size:.55rem;color:var(--purple);background:rgba(139,92,246,.12);padding:1px 5px;border-radius:4px">Tanglish→Tamil</span></label>
+      <input type="text" id="moiProjName" placeholder="e.g. Murugan Vizha" oninput="tlPrev('moiProjName','moiProjNamePv')">
+      <div class="tl-prev" id="moiProjNamePv"></div>
     </div>
-    <div class="ff"><label>Place / Location</label><input type="text" id="moiProjPlace" placeholder="e.g. Chennai"></div>
-    <div class="ff"><label>Target Amount ₹ (optional)</label><input type="number" id="moiProjTarget" placeholder="0 = no target" min="0"></div>
-    <div class="ff"><label>Comments / Notes</label><textarea id="moiProjComments" rows="2" placeholder="Additional details…"></textarea></div>
+    <div class="ff"><label>Date</label><input type="date" id="moiProjDate"></div>
+    <div class="ff">
+      <label>Place / இடம் <span style="font-size:.55rem;color:var(--purple);background:rgba(139,92,246,.12);padding:1px 5px;border-radius:4px">Tanglish→Tamil</span></label>
+      <input type="text" id="moiProjPlace" placeholder="e.g. Thanjavur" oninput="tlPrev('moiProjPlace','moiProjPlacePv')">
+      <div class="tl-prev" id="moiProjPlacePv"></div>
+    </div>
+    <div class="ff">
+      <label>Comments <span style="font-size:.55rem;color:var(--purple);background:rgba(139,92,246,.12);padding:1px 5px;border-radius:4px">Tanglish→Tamil</span></label>
+      <textarea id="moiProjComments" rows="2" placeholder="Optional notes…" oninput="tlPrev('moiProjComments','moiProjCommentsPv')"></textarea>
+      <div class="tl-prev" id="moiProjCommentsPv"></div>
+    </div>
     <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addMoiProjOv')">Cancel</button><button class="btn btn-p" onclick="moiSaveProject()">Save</button></div>
   </div>
 </div>
 
 <div class="ov" id="addMoiRecOv" onclick="if(event.target===this)closeOv('addMoiRecOv')">
-  <div class="sh"><div class="sh-hdl"></div>
+  <div class="sh">
+    <div class="sh-hdl"></div>
     <h3 id="moiRecTitle">➕ New Record</h3>
     <input type="hidden" id="moiRecEditId">
-    <div class="ff"><label>Contributor Name *</label><input type="text" id="moiRecName" placeholder="e.g. Murugan"></div>
-    <div class="ff2">
-      <div class="ff"><label>City / Village</label><input type="text" id="moiRecCity" placeholder="e.g. Chennai"></div>
-      <div class="ff"><label>Date</label><input type="date" id="moiRecDate"></div>
+    <div class="ff">
+      <label>City / Village <span style="font-size:.55rem;color:var(--purple);background:rgba(139,92,246,.12);padding:1px 5px;border-radius:4px">Tanglish→Tamil</span></label>
+      <input type="text" id="moiRecCity" placeholder="e.g. Thanjavur" oninput="tlPrev('moiRecCity','moiRecCityPv')">
+      <div class="tl-prev" id="moiRecCityPv"></div>
+    </div>
+    <div class="ff">
+      <label>Contributor Name <span style="font-size:.55rem;color:var(--purple);background:rgba(139,92,246,.12);padding:1px 5px;border-radius:4px">Tanglish→Tamil</span></label>
+      <input type="text" id="moiRecName" placeholder="e.g. Murugan" oninput="tlPrev('moiRecName','moiRecNamePv')">
+      <div class="tl-prev" id="moiRecNamePv"></div>
     </div>
     <div class="ff"><label>Amount ₹ *</label><input type="number" id="moiRecAmt" placeholder="0" inputmode="decimal" min="0"></div>
-    <div class="ff"><label>Notes</label><textarea id="moiRecNotes" rows="2" placeholder="Optional notes…"></textarea></div>
     <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addMoiRecOv')">Cancel</button><button class="btn btn-p" onclick="moiSaveRecord()">Save</button></div>
     <button class="btn btn-r btn-full" id="moiRecDelBtn" onclick="moiDeleteFromModal()" style="display:none;margin-top:7px">Delete Record</button>
   </div>
@@ -523,7 +604,7 @@ input[type=file]{display:none}
 
 <script>
 // ══════════════════════════════════════════════════
-//  FIREBASE  — all paths under users/{uid}/...
+//  FIREBASE CONFIG  — paths under users/{uid}/...
 //  matches rule: match /users/{userId}/{document=**}
 // ══════════════════════════════════════════════════
 const FC={apiKey:"AIzaSyAyhylRj-T56Bf3tbbpHdNjPktlqoh7cBY",authDomain:"my-apps-dashboard-a2fbe.firebaseapp.com",projectId:"my-apps-dashboard-a2fbe",storageBucket:"my-apps-dashboard-a2fbe.firebasestorage.app",messagingSenderId:"164745687990",appId:"1:164745687990:web:731d6cfccd3e4048330717"};
@@ -535,14 +616,13 @@ let user=null;
 let eExp=[],eCats=[],ePeriod='month',eCatFilter='',eDonutC=null,eBarC=null;
 let grList=[],grBudgets={},grShop=[],grMonth=new Date().toISOString().slice(0,7),grHFF='all',grSelId=null,grEditId=null,grCmpC=null;
 let tHabits=[],tOT=[],tIV=[],tLogs=[],tmTab='h';
-let moiProjects=[],moiCurProj=null,moiCurRecords=[],moiRecSearch='',moiBarC=null,moiDonutC=null;
+let moiProjects=[],moiCurProj=null,moiCurRecords=[],moiRecSearch='';
 
 const td=()=>new Date().toISOString().slice(0,10);
 const uid=()=>user?.uid||null;
 const MO=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const PROJ_COLORS=['#8b5cf6','#6c63ff','#3b82f6','#22c55e','#f59e0b','#ef4444','#ec4899','#06b6d4','#f97316','#84cc16'];
 
-// ══ COLLECTIONS ════════════════════════════════════
+// ══ COLLECTION HELPERS (all under users/{uid}/) ════
 const uDoc=()=>db.collection('users').doc(uid());
 const eC=()=>uDoc().collection('expenses');
 const eCatC=()=>uDoc().collection('exp_categories');
@@ -553,23 +633,97 @@ const tC=n=>uDoc().collection('t_'+n);
 const moiPC=()=>uDoc().collection('moi_projects');
 const moiRC=pid=>moiPC().doc(pid).collection('moi_records');
 
+// ══ CONSTANTS ══════════════════════════════════════
 const GR_SUGG={Vegetables:['Tomato','Onion','Potato','Brinjal','Beans','Carrot','Ladyfinger','Cabbage','Spinach','Garlic','Ginger'],Fruits:['Banana','Apple','Grapes','Mango','Papaya','Orange','Pomegranate'],Grains:['Rice','Wheat Flour','Semolina','Maida','Ragi','Millet'],Lentils:['Toor Dal','Chana Dal','Urad Dal','Moong Dal','Peanuts','Rajma'],Spices:['Mustard','Cumin','Turmeric','Pepper','Garam Masala','Coriander'],Oils:['Groundnut Oil','Coconut Oil','Sunflower Oil','Sesame Oil','Ghee'],Dairy:['Milk','Curd','Butter','Paneer','Buttermilk'],Meat:['Chicken','Mutton','Beef','Eggs'],Fish:['Catfish','Seer Fish','Prawn','Crab'],Other:['Salt','Sugar','Jaggery','Coconut','Tamarind','Honey','Coffee','Tea']};
 const GR_EMO={Vegetables:'🥬',Fruits:'🍎',Grains:'🌾',Lentils:'🫘',Spices:'🌶️',Oils:'🫙',Dairy:'🥛',Meat:'🍖',Fish:'🐟',Other:'📦'};
 const E_DEFS=[{name:'Food & Dining',color:'#f59e0b',budget:5000},{name:'Housing',color:'#6c63ff',budget:15000},{name:'Transport',color:'#3b82f6',budget:3000},{name:'Shopping',color:'#ec4899',budget:4000},{name:'Health',color:'#22c55e',budget:2000},{name:'Entertainment',color:'#f97316',budget:2000},{name:'Education',color:'#06b6d4',budget:3000},{name:'Utilities',color:'#8b5cf6',budget:2500},{name:'Others',color:'#94a3b8',budget:0}];
 
-// ══ AUTH ══════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  TANGLISH → TAMIL CONVERTER
+// ══════════════════════════════════════════════════
+const tanglishToTamil=(()=>{
+  const PU='்';
+  // Uppercase special consonants (case-sensitive, processed FIRST, longest first)
+  const UPPER=[['Zh','ழ'],['Sh','ஷ'],['Ch','ச'],['Th','ட'],['Ng','ங'],['Nj','ஞ'],['Nn','ண'],['Ll','ள'],['Rr','ற'],['Tr','ற'],['N','ண'],['T','ட'],['L','ள'],['R','ற']];
+  // Consonants lowercase
+  const CONS=[['ksh','க்ஷ'],['nj','ஞ'],['ng','ங'],['th','த'],['dh','த'],['zh','ழ'],['sh','ஷ'],['ch','ச'],['rr','ற'],['tr','ற'],['tt','ட'],['ll','ள'],['nn','ண'],['k','க'],['g','க'],['c','ச'],['j','ஜ'],['t','ட'],['d','ட'],['n','ந'],['p','ப'],['b','ப'],['m','ம'],['y','ய'],['r','ர'],['l','ல'],['v','வ'],['w','வ'],['s','ஸ'],['h','ஹ'],['z','ழ'],['f','ஃப'],['q','க']];
+  // Vowel signs (after consonant, longest first)
+  const VS=[['aa','ா'],['ii','ீ'],['ee','ீ'],['uu','ூ'],['oo','ூ'],['ae','ே'],['ai','ை'],['au','ௌ'],['ow','ௌ'],['oa','ோ'],['a',null],['i','ி'],['u','ு'],['e','ெ'],['o','ொ']];
+  // Independent vowels
+  const IV=[['aa','ஆ'],['ii','ஈ'],['ee','ஈ'],['uu','ஊ'],['oo','ஊ'],['ae','ஏ'],['ai','ஐ'],['au','ஔ'],['ow','ஔ'],['oa','ஓ'],['a','அ'],['i','இ'],['u','உ'],['e','எ'],['o','ஒ']];
+
+  function cvtWord(w){
+    let s=w;
+    const phMap={};
+    let code=0xE100;
+    for(const[pat,val]of UPPER){
+      const ph=String.fromCodePoint(code++);
+      phMap[ph]=val;
+      while(s.includes(pat)){const i=s.indexOf(pat);s=s.slice(0,i)+ph+s.slice(i+pat.length);}
+    }
+    s=s.toLowerCase();
+    const CE=[...Object.entries(phMap),...CONS];
+    let out='',i=0;
+    while(i<s.length){
+      let cm=null;
+      for(const[p,v]of CE){if(s.substr(i,p.length)===p){cm={v,l:p.length};break;}}
+      if(cm){
+        const j=i+cm.l;
+        let vm=null;
+        for(const[p,v]of VS){if(s.substr(j,p.length)===p){vm={v,l:p.length};break;}}
+        if(vm){out+=vm.v===null?cm.v:(cm.v+vm.v);i=j+vm.l;}
+        else{out+=cm.v+PU;i+=cm.l;}
+      } else {
+        let vm=null;
+        for(const[p,v]of IV){if(s.substr(i,p.length)===p){vm={v,l:p.length};break;}}
+        if(vm){out+=vm.v;i+=vm.l;}else{out+=s[i];i++;}
+      }
+    }
+    // Post-process: word-final ந் → ன், ந் after Tamil vowel → ன்
+    out=out.replace(/ந்$/,'ன்');
+    out=out.replace(/([\u0B85-\u0B94\u0BBE-\u0BCC])ந்/g,'$1ன்');
+    return out;
+  }
+  return txt=>{
+    if(!txt||!txt.trim())return txt;
+    return txt.replace(/[a-zA-Z\uE100-\uE1FF]+/g,cvtWord);
+  };
+})();
+
+function tlPrev(inId,prevId){
+  const v=document.getElementById(inId)?.value||'';
+  const t=v.trim()?tanglishToTamil(v):'';
+  const el=document.getElementById(prevId);
+  if(!el)return;
+  if(t&&/[\u0B80-\u0BFF]/.test(t)){el.textContent=t;el.classList.add('show');}
+  else{el.textContent='';el.classList.remove('show');}
+}
+function tlGet(inId){
+  const v=document.getElementById(inId)?.value.trim()||'';
+  if(!v)return'';
+  const t=tanglishToTamil(v);
+  return t||v;
+}
+
+// ══════════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════════
 let aMode='login';
 function setAM(m){aMode=m;document.querySelectorAll('.atab').forEach((t,i)=>t.classList.toggle('on',(i===0)===(m==='login')));document.getElementById('aNameRow').style.display=m==='signup'?'block':'none';document.getElementById('authBtn').textContent=m==='login'?'Sign In':'Create Account';document.getElementById('aerr').textContent='';}
 async function doAuth(){
   const e=document.getElementById('aEmail').value.trim(),p=document.getElementById('aPass').value,n=document.getElementById('aName').value.trim(),err=document.getElementById('aerr'),btn=document.getElementById('authBtn');
   err.textContent='';if(!e||!p){err.textContent='Enter email and password.';return;}
   btn.textContent='…';btn.disabled=true;
-  try{if(aMode==='login')await auth.signInWithEmailAndPassword(e,p);else{if(!n){err.textContent='Enter your name.';btn.textContent='Create Account';btn.disabled=false;return;}const{user:u}=await auth.createUserWithEmailAndPassword(e,p);await u.updateProfile({displayName:n});await u.reload();user=auth.currentUser;}}
-  catch(ex){err.textContent=ex.message.replace('Firebase: ','').replace(/\(auth[^)]*\)/,'').trim();}
+  try{
+    if(aMode==='login')await auth.signInWithEmailAndPassword(e,p);
+    else{if(!n){err.textContent='Enter your name.';btn.textContent='Create Account';btn.disabled=false;return;}
+    const{user:u}=await auth.createUserWithEmailAndPassword(e,p);await u.updateProfile({displayName:n});await u.reload();user=auth.currentUser;}
+  }catch(ex){err.textContent=ex.message.replace('Firebase: ','').replace(/\(auth[^)]*\)/,'').trim();}
   finally{btn.textContent=aMode==='login'?'Sign In':'Create Account';btn.disabled=false;}
 }
 async function doGoogle(){const p=new firebase.auth.GoogleAuthProvider();try{await auth.signInWithPopup(p);}catch(ex){if(ex.code==='auth/popup-blocked')auth.signInWithRedirect(p);else if(ex.code!=='auth/popup-closed-by-user')document.getElementById('aerr').textContent=ex.message;}}
 async function doSO(){if(!confirm('Sign out?'))return;await auth.signOut();}
+
 auth.onAuthStateChanged(async u=>{
   if(u){user=u;try{await u.reload();user=auth.currentUser;}catch(e){}
     document.getElementById('authWrap').style.display='none';
@@ -578,7 +732,9 @@ auth.onAuthStateChanged(async u=>{
   }else{user=null;document.getElementById('authWrap').style.display='flex';document.getElementById('shell').style.display='none';}
 });
 
-// ══ BOOT ══════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════════════════
 async function boot(){
   renderProfileSheet();setGreet();renderHubGrid();
   try{await Promise.all([loadExpense(),loadGrocery(),loadTasks(),loadMoiData()]);}
@@ -594,7 +750,7 @@ function renderProfileSheet(){
   const btn=document.getElementById('profAvBtn');
   if(btn){if(user.photoURL)btn.innerHTML=`<img src="${user.photoURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" referrerpolicy="no-referrer">`;else btn.textContent=n[0].toUpperCase();}
   const av=document.getElementById('profAv');
-  if(av){if(user.photoURL)av.innerHTML=`<img src="${user.photoURL}" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">`;else av.textContent=n[0].toUpperCase();}
+  if(av){if(user.photoURL)av.innerHTML=`<img src="${user.photoURL}" alt="${n}" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">`;else av.textContent=n[0].toUpperCase();}
   const ne=document.getElementById('profName');if(ne)ne.textContent=n;
   const ee=document.getElementById('profEmail');if(ee)ee.textContent=user.email||'—';
   const since=user.metadata?.creationTime?new Date(user.metadata.creationTime).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):'—';
@@ -602,8 +758,10 @@ function renderProfileSheet(){
   const so=document.getElementById('soNote');if(so)so.textContent=user.email||'';
 }
 
-// ══ HUB ══════════════════════════════════════════
-const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Contribution tracker'}];
+// ══════════════════════════════════════════════════
+//  HUB
+// ══════════════════════════════════════════════════
+const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Tamil contributions'}];
 function renderHubGrid(){document.getElementById('hubGrid').innerHTML=APPS.map(a=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')"><div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div><div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div><div style="font-size:.66rem;color:var(--muted)">${a.desc}</div></div>`).join('');}
 function switchApp(id){
   document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));
@@ -614,7 +772,7 @@ function switchApp(id){
   if(id==='grocery'){grRenderHome();grFillCmp();}
   if(id==='tasks')tmRender();
   if(id==='expense')eRenderDash();
-  if(id==='moidata'){mdPage('home');moiRenderHome();}
+  if(id==='moidata')moiRenderHome();
 }
 function goHub(){document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));document.getElementById('ap-hub').classList.add('active');const ico=document.getElementById('tbarIco');ico.style.background='linear-gradient(135deg,#6c63ff,#3b82f6)';ico.textContent='🚀';document.getElementById('tbarTitle').textContent='My Apps Hub';}
 document.addEventListener('DOMContentLoaded',()=>{document.querySelector('.topbar-left').style.cursor='pointer';document.querySelector('.topbar-left').onclick=goHub;document.getElementById('grDate').value=td();document.getElementById('eDate').value=td();});
@@ -635,12 +793,16 @@ function eRenderDash(){
   document.getElementById('ePeriodRow').innerHTML=prds.map(([v,l])=>`<button class="chip ${ePeriod===v?'on':''}" onclick="ePeriod='${v}';eRenderDash()">${l}</button>`).join('');
   const f=eDashF(),tot=f.reduce((s,e)=>s+Number(e.amt),0);
   const lbl={month:'this month',last:'last month','3m':'3 months',year:'this year',all:'all time'};
-  document.getElementById('eTotal').textContent='₹'+tot.toLocaleString('en-IN');document.getElementById('eTotalSub').textContent=lbl[ePeriod]||'';document.getElementById('eCount').textContent=f.length;
+  document.getElementById('eTotal').textContent='₹'+tot.toLocaleString('en-IN');
+  document.getElementById('eTotalSub').textContent=lbl[ePeriod]||'';
+  document.getElementById('eCount').textContent=f.length;
   const bc={};f.forEach(e=>{bc[e.cat]=(bc[e.cat]||0)+Number(e.amt);});
   const top=Object.entries(bc).sort((a,b)=>b[1]-a[1])[0];
-  document.getElementById('eTopCat').textContent=top?top[0]:'—';document.getElementById('eTopAmt').textContent=top?'₹'+top[1].toLocaleString('en-IN'):'';
-  const budCats=eCats.filter(c=>c.budget>0),bh=document.getElementById('eBH');
-  if(!budCats.length){bh.textContent='—';}else{const ov=budCats.filter(c=>(bc[c.name]||0)>c.budget).length,nr=budCats.filter(c=>{const p=(bc[c.name]||0)/c.budget;return p>=.8&&p<1;}).length;if(ov){bh.textContent='⚠ '+ov+' Over';bh.style.color='var(--red)';}else if(nr){bh.textContent='🔔 '+nr+' Near';bh.style.color='var(--yellow)';}else{bh.textContent='✅ Good';bh.style.color='var(--green)';}}
+  document.getElementById('eTopCat').textContent=top?top[0]:'—';
+  document.getElementById('eTopAmt').textContent=top?'₹'+top[1].toLocaleString('en-IN'):'';
+  const budCats=eCats.filter(c=>c.budget>0),bh=document.getElementById('eBH'),bhs=document.getElementById('eBHs');
+  if(!budCats.length){bh.textContent='—';bhs.textContent='no budgets';}
+  else{const ov=budCats.filter(c=>(bc[c.name]||0)>c.budget).length,nr=budCats.filter(c=>{const p=(bc[c.name]||0)/c.budget;return p>=.8&&p<1;}).length;if(ov){bh.textContent='⚠ '+ov+' Over';bh.style.color='var(--red)';}else if(nr){bh.textContent='🔔 '+nr+' Near';bh.style.color='var(--yellow)';}else{bh.textContent='✅ Good';bh.style.color='var(--green)';}}
   eRenderDonut(f);eRenderBar();eRenderRecent();
   const bp=document.getElementById('eBudgetCard'),bb=document.getElementById('eBudgetBody'),bc2=eCats.filter(c=>c.budget>0);
   if(bc2.length){bp.style.display='block';let h='';bc2.forEach(c=>{const sp=bc[c.name]||0,pct=Math.min(100,Math.round((sp/c.budget)*100)),cl=pct>=100?'var(--red)':pct>=80?'var(--yellow)':'var(--green)';h+=`<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:.74rem;margin-bottom:3px"><span>${c.name}</span><span style="color:${cl}">₹${sp.toLocaleString('en-IN')} / ₹${c.budget.toLocaleString('en-IN')} (${pct}%)</span></div><div class="pb-wrap"><div class="pb" style="width:${pct}%;background:${cl}"></div></div></div>`;});bb.innerHTML=h;}else bp.style.display='none';
@@ -656,7 +818,8 @@ function renderEList(){eRenderList();}
 function eRenderList(){
   const f=eListF().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||String(b.id).localeCompare(String(a.id)));
   const tot=f.reduce((s,e)=>s+Number(e.amt),0);
-  document.getElementById('eListInfo').textContent=`${f.length} of ${eExp.length}`;document.getElementById('eListTot').textContent=f.length?'₹'+tot.toLocaleString('en-IN'):'';
+  document.getElementById('eListInfo').textContent=`${f.length} of ${eExp.length}`;
+  document.getElementById('eListTot').textContent=f.length?'₹'+tot.toLocaleString('en-IN'):'';
   const el=document.getElementById('eList'),q=(document.getElementById('eSearch')?.value||'').trim();
   if(!f.length){el.innerHTML='<div class="empty" style="padding:12px"><p>No expenses found</p></div>';return;}
   const hl=t=>{if(!q)return t;const re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');return t.replace(re,'<mark style="background:#6c63ff44;color:var(--text);border-radius:2px">$1</mark>');};
@@ -691,7 +854,14 @@ const grMo=m=>grList.filter(e=>e.date?.startsWith(m));
 function grSetLbl(){const[y,m]=grMonth.split('-');document.getElementById('grMonthLbl').textContent=`${MO[+m-1]} ${y}`;}
 function grChg(d){const dt=new Date(grMonth+'-01');dt.setMonth(dt.getMonth()+d);grMonth=dt.toISOString().slice(0,7);grSetLbl();grRenderHome();grRenderHist();}
 function grPage(tab){document.querySelectorAll('#ap-grocery .page').forEach(p=>p.classList.remove('on'));document.querySelectorAll('#ap-grocery .anav-btn').forEach(b=>b.classList.remove('on'));document.getElementById('gp-'+tab)?.classList.add('on');document.getElementById('gn-'+tab)?.classList.add('on');if(tab==='home')grRenderHome();if(tab==='hist')grRenderHist();if(tab==='cmp')grFillCmp();if(tab==='shop'){grRenderShop();grCalcEst();}if(tab==='add')document.getElementById('grDate').value=td();}
-function grRenderHome(){const mo=grMo(grMonth),tot=mo.reduce((s,e)=>s+(e.actualPrice||0),0);document.getElementById('grAmt').textContent='₹'+tot.toFixed(0);document.getElementById('grItems').textContent=mo.length;document.getElementById('grAvg').textContent=mo.length?'₹'+(tot/mo.length).toFixed(0):'₹0';document.getElementById('grCats').textContent=new Set(mo.map(e=>e.category)).size;const b=grBudgets[grMonth],fill=document.getElementById('grPbar');if(b?.limit>0){const p=Math.min((tot/b.limit)*100,100);fill.style.width=p+'%';fill.className='bpb-fill'+(p>90?' crit':p>70?' warn':'');document.getElementById('grSub').textContent=`Budget: ₹${b.limit}`;document.getElementById('grL').textContent=`₹${tot.toFixed(0)} spent`;document.getElementById('grR').textContent=`₹${Math.max(0,b.limit-tot).toFixed(0)} left`;}else{fill.style.width='0%';fill.className='bpb-fill';document.getElementById('grSub').textContent='No budget set';document.getElementById('grL').textContent=`₹${tot.toFixed(0)} spent`;document.getElementById('grR').textContent='No limit';}const al=grAlerts(mo);document.getElementById('grInc').textContent=al.filter(a=>a.chg>0).length;grRenderAlerts(al);grRenderRows(mo.slice(0,7),'grRecent',true);}
+function grRenderHome(){
+  const mo=grMo(grMonth),tot=mo.reduce((s,e)=>s+(e.actualPrice||0),0);
+  document.getElementById('grAmt').textContent='₹'+tot.toFixed(0);document.getElementById('grItems').textContent=mo.length;document.getElementById('grAvg').textContent=mo.length?'₹'+(tot/mo.length).toFixed(0):'₹0';document.getElementById('grCats').textContent=new Set(mo.map(e=>e.category)).size;
+  const b=grBudgets[grMonth],fill=document.getElementById('grPbar');
+  if(b?.limit>0){const p=Math.min((tot/b.limit)*100,100);fill.style.width=p+'%';fill.className='bpb-fill'+(p>90?' crit':p>70?' warn':'');document.getElementById('grSub').textContent=`Budget: ₹${b.limit}`;document.getElementById('grL').textContent=`₹${tot.toFixed(0)} spent`;document.getElementById('grR').textContent=`₹${Math.max(0,b.limit-tot).toFixed(0)} left`;}
+  else{fill.style.width='0%';fill.className='bpb-fill';document.getElementById('grSub').textContent='No budget set';document.getElementById('grL').textContent=`₹${tot.toFixed(0)} spent`;document.getElementById('grR').textContent='No limit';}
+  const al=grAlerts(mo);document.getElementById('grInc').textContent=al.filter(a=>a.chg>0).length;grRenderAlerts(al);grRenderRows(mo.slice(0,7),'grRecent',true);
+}
 function grAlerts(mo){const[y,m]=grMonth.split('-');const prev=grMo(new Date(+y,+m-2,1).toISOString().slice(0,7));return mo.filter(e=>e.pricePerUnit).map(e=>{const p=prev.find(x=>x.name===e.name&&x.pricePerUnit);if(!p)return null;const chg=((e.pricePerUnit-p.pricePerUnit)/p.pricePerUnit)*100;return Math.abs(chg)>=5?{name:e.name,chg,prev:p.pricePerUnit,cur:e.pricePerUnit}:null;}).filter(Boolean);}
 function grRenderAlerts(al){if(!al.length){document.getElementById('grAlertCard').style.display='none';return;}document.getElementById('grAlertCard').style.display='block';document.getElementById('grAlertBody').innerHTML=al.slice(0,5).map(a=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><span style="font-weight:700;font-size:.8rem">${a.name}</span><div><span class="badge ${a.chg>0?'bu':'bd'}">${a.chg>0?'↑':'↓'}${Math.abs(a.chg).toFixed(0)}%</span><div style="font-size:.62rem;color:var(--muted);margin-top:1px">₹${a.prev.toFixed(0)} → ₹${a.cur.toFixed(0)}</div></div></div>`).join('');}
 function grRenderRows(list,cid,trend=false){const el=document.getElementById(cid);if(!list.length){el.innerHTML='<div class="empty" style="padding:10px"><p>No entries</p></div>';return;}const[y,m]=grMonth.split('-');const prev=grMo(new Date(+y,+m-2,1).toISOString().slice(0,7));el.innerHTML=list.map(e=>{const em=GR_EMO[e.category]||'📦';let tb='';if(trend&&e.pricePerUnit){const p=prev.find(x=>x.name===e.name&&x.pricePerUnit);if(p){const c=((e.pricePerUnit-p.pricePerUnit)/p.pricePerUnit)*100;if(Math.abs(c)>=2)tb=`<span class="badge ${c>0?'bu':'bd'}">${c>0?'↑':'↓'}${Math.abs(c).toFixed(0)}%</span>`;}}return`<div class="row" style="cursor:pointer" onclick="grOpenDetail('${e.id}')"><div class="row-ico">${em}</div><div class="row-body"><div class="row-name">${e.name}${tb}</div><div class="row-sub">${e.amount} ${e.unit} · ${fmtD(e.date)}</div></div><div class="row-right"><div class="row-amt">₹${(e.actualPrice||0).toFixed(0)}</div><div class="row-sub2">₹${(e.pricePerUnit||0).toFixed(0)}/${e.unit}</div></div></div>`;}).join('');}
@@ -733,7 +903,7 @@ async function grImpJSON(evt){const file=evt.target.files[0];if(!file)return;try
 async function loadTasks(){if(!uid())return;const[hs,os,is,ls]=await Promise.all([tC('habits').get(),tC('onetasks').get(),tC('ivtasks').get(),tC('logs').orderBy('date','desc').limit(300).get()]);tHabits=hs.docs.map(d=>({id:d.id,...d.data()}));tOT=os.docs.map(d=>({id:d.id,...d.data()}));tIV=is.docs.map(d=>({id:d.id,...d.data()}));tLogs=ls.docs.map(d=>({id:d.id,...d.data()}));}
 function setTT(t){tmTab=t;document.querySelectorAll('#tp-main .chip').forEach(c=>c.classList.remove('on'));document.getElementById('tt-'+t)?.classList.add('on');tmRender();}
 function tmRender(){const el=document.getElementById('tmBody');if(!el)return;if(tmTab==='h')el.innerHTML=tmHabitsHTML();else if(tmTab==='o')el.innerHTML=tmOTHTML();else if(tmTab==='i')el.innerHTML=tmIVHTML();else el.innerHTML=tmReportHTML();}
-function tmHabitsHTML(){if(!tHabits.length)return`<div class="empty"><div class="empty-ico">💪</div><p>No habits yet!</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('h')">+ Add First Habit</button></div>`;let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">Today: ${fmtD(td())}</span><button class="add-btn" onclick="openAddTask('h')">+ Add</button></div>`;const grps=groupBy(tHabits,h=>h.category||'General');for(const[cat,items]of Object.entries(grps)){html+=`<div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin:8px 0 5px">${cat}</div>`;for(const h of items){const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done'),score=tScore(h.id),streak=tStreak(h.id),dots=tDots(h.id,7),fc=score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';html+=`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'}">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name">${h.name}</div><div class="tc-sub">🔥 ${streak} streak · ${score}% this month</div></div><div class="tc-acts"><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div><div class="ia ia-e" onclick="openEditTask('${h.id}','h')">✏</div><div class="ia ia-l" onclick="openLog('${h.id}','h')">📝</div></div></div><div class="sdots">${dots.map((d,i)=>`<div class="dot ${d?'hit':''} ${i===6?'now':''}"></div>`).join('')}</div><div class="scr"><span>Consistency</span><span style="color:${fc}">${score}%</span></div><div class="sbar2"><div class="sbar2-fill" style="width:${score}%;background:${fc}"></div></div></div>`;}}return html;}
+function tmHabitsHTML(){if(!tHabits.length)return`<div class="empty"><div class="empty-ico">💪</div><p>No habits yet. Start building streaks!</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('h')">+ Add First Habit</button></div>`;let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">Today: ${fmtD(td())}</span><button class="add-btn" onclick="openAddTask('h')">+ Add</button></div>`;const grps=groupBy(tHabits,h=>h.category||'General');for(const[cat,items]of Object.entries(grps)){html+=`<div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin:8px 0 5px">${cat}</div>`;for(const h of items){const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done'),score=tScore(h.id),streak=tStreak(h.id),dots=tDots(h.id,7),fc=score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';html+=`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'}">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name">${h.name}</div><div class="tc-sub">🔥 ${streak} streak · ${score}% this month</div></div><div class="tc-acts"><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div><div class="ia ia-e" onclick="openEditTask('${h.id}','h')">✏</div><div class="ia ia-l" onclick="openLog('${h.id}','h')">📝</div></div></div><div class="sdots">${dots.map((d,i)=>`<div class="dot ${d?'hit':''} ${i===6?'now':''}"></div>`).join('')}</div><div class="scr"><span>Consistency</span><span style="color:${fc}">${score}%</span></div><div class="sbar2"><div class="sbar2-fill" style="width:${score}%;background:${fc}"></div></div></div>`;}}return html;}
 function tmOTHTML(){if(!tOT.length)return`<div class="empty"><div class="empty-ico">📋</div><p>No one-time tasks yet.</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('o')">+ Add Task</button></div>`;const pending=tOT.filter(t=>t.status!=='done'),done=tOT.filter(t=>t.status==='done');const pc={high:'#ef4444',medium:'#f59e0b',low:'#22c55e'};const ri=t=>{const ov=t.dueDate&&t.dueDate<td()&&t.status!=='done';return`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${t.status==='done'?'#22c55e22':ov?'#ef444415':'var(--card2)'}">${t.status==='done'?'✅':ov?'⚠️':(t.icon||'📌')}</div><div class="tc-body"><div class="tc-name" style="${t.status==='done'?'text-decoration:line-through;opacity:.5':''}">${t.name}</div><div class="tc-sub">${t.dueDate?'📅 '+fmtD(t.dueDate):'No due date'}${t.priority?` · <span style="color:${pc[t.priority]}">${t.priority}</span>`:''}${ov?' · <span style="color:#ef4444">OVERDUE</span>':''}</div></div><div class="tc-acts">${t.status!=='done'?`<div class="ia ia-g" onclick="tMarkOTDone('${t.id}')">✓</div>`:''}<div class="ia ia-e" onclick="openEditTask('${t.id}','o')">✏</div><div class="ia ia-r" onclick="tDelItem('${t.id}','o')">✕</div></div></div>${t.notes?`<div style="padding:0 11px 8px;font-size:.68rem;color:var(--muted)">${t.notes}</div>`:''}</div>`;};let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">${pending.length} pending</span><button class="add-btn" onclick="openAddTask('o')">+ Add</button></div>`;if(pending.length)html+=`<div class="sec-lbl" style="margin-top:4px">Pending</div>`+pending.map(ri).join('');if(done.length)html+=`<div class="sec-lbl" style="margin-top:8px">Done</div>`+done.map(ri).join('');return html;}
 function tmIVHTML(){if(!tIV.length)return`<div class="empty"><div class="empty-ico">🔁</div><p>No interval tasks yet.</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('i')">+ Add</button></div>`;let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">${tIV.length} tasks</span><button class="add-btn" onclick="openAddTask('i')">+ Add</button></div>`;for(const t of tIV){const ll=tLogs.filter(l=>l.taskId===t.id&&l.status==='done').sort((a,b)=>b.date>a.date?1:-1)[0];const ld=ll?.date||t.startDate||td(),nd=addDays(ld,t.intervalDays||7),dl=dateDiff(td(),nd);const ov=dl<0,ds=dl>=0&&dl<=2,score=tIVScore(t.id,t.intervalDays||7),fc=score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';html+=`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${ov?'#ef444415':ds?'#f59e0b15':'var(--card2)'}">${t.icon||'🔁'}</div><div class="tc-body"><div class="tc-name">${t.name}</div><div class="tc-sub">Every ${t.intervalDays||7}d · ${ov?`<span style="color:#ef4444">Overdue ${Math.abs(dl)}d</span>`:ds?`<span style="color:#f59e0b">Due in ${dl}d</span>`:`Due in ${dl}d`}</div></div><div class="tc-acts"><div class="ia ia-g" onclick="tQuick('${t.id}','i')">✓</div><div class="ia ia-e" onclick="openEditTask('${t.id}','i')">✏</div><div class="ia ia-r" onclick="tDelItem('${t.id}','i')">✕</div></div></div><div class="scr"><span>Last done: ${fmtD(ld)}</span><span style="color:${fc}">${score}%</span></div><div class="sbar2"><div class="sbar2-fill" style="width:${score}%;background:${fc}"></div></div></div>`;}return html;}
 function tmReportHTML(){const hs=tHabits.length?Math.round(tHabits.reduce((s,h)=>s+tScore(h.id),0)/tHabits.length):0,ivs=tIV.length?Math.round(tIV.reduce((s,t)=>s+tIVScore(t.id,t.intervalDays||7),0)/tIV.length):0,od=tOT.filter(t=>t.status==='done').length,ot=tOT.length,os2=ot?Math.round((od/ot)*100):0,arr=[hs,ivs,os2].filter(s=>s>0),avg=arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):0,rc=avg>=80?'#22c55e':avg>=50?'#f59e0b':'#ef4444',circ=2*Math.PI*30,off=circ-(avg/100)*circ;let html=`<div class="card" style="padding:13px;margin-bottom:9px"><div style="font-size:.6rem;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.07em;margin-bottom:8px">Overall Consistency</div><div style="display:flex;align-items:center;gap:14px"><div class="ring-wrap"><svg viewBox="0 0 80 80" width="72" height="72" style="transform:rotate(-90deg)"><circle cx="40" cy="40" r="30" fill="none" stroke="var(--border)" stroke-width="8"/><circle cx="40" cy="40" r="30" fill="none" stroke="${rc}" stroke-width="8" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/></svg><div class="ring-val" style="color:${rc}">${avg}%</div></div><div style="flex:1"><div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>Daily Habits</span><span>${hs}%</span></div><div class="pb-wrap"><div class="pb" style="width:${hs}%;background:${hs>=70?'#22c55e':'#f59e0b'}"></div></div></div><div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>Interval Tasks</span><span>${ivs}%</span></div><div class="pb-wrap"><div class="pb" style="width:${ivs}%;background:${ivs>=70?'#22c55e':'#f59e0b'}"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>One-Time</span><span>${os2}%</span></div><div class="pb-wrap"><div class="pb" style="width:${os2}%;background:${os2>=70?'#22c55e':'#f59e0b'}"></div></div></div></div></div></div>`;if(tHabits.length){html+=`<div class="card" style="padding:13px;margin-bottom:9px"><div style="font-size:.6rem;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.07em;margin-bottom:8px">Habit Breakdown</div>`;tHabits.forEach(h=>{const sc=tScore(h.id),st=tStreak(h.id),c=sc>=80?'#22c55e':sc>=50?'#f59e0b':'#ef4444';html+=`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>${h.icon||'✅'} ${h.name} <span style="color:var(--muted)">🔥${st}</span></span><span style="color:${c}">${sc}%</span></div><div class="pb-wrap"><div class="pb" style="width:${sc}%;background:${c}"></div></div></div>`;});html+=`</div>`;}html+=`<div class="btn-grid2"><button class="btn btn-p" onclick="tmPDF()">📑 PDF Report</button><button class="btn btn-m" onclick="tmExpCSV()">📄 Export CSV</button></div>`;return html;}
@@ -763,206 +933,103 @@ async function loadMoiData(){if(!uid())return;const snap=await moiPC().orderBy('
 
 function mdPage(tab){
   document.querySelectorAll('#ap-moidata .page').forEach(p=>p.classList.remove('on'));
-  document.querySelectorAll('#ap-moidata .anav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('md-'+tab)?.classList.add('on');
-  document.getElementById('mn-'+tab)?.classList.add('on');
   const fab=document.getElementById('moiFab');
   if(fab)fab.style.display=tab==='detail'?'flex':'none';
 }
 
-// ── Projects Home ─────────────────────────────────
+// ── Projects ─────────────────────────────────────
 function moiRenderHome(){
   const el=document.getElementById('md-home');if(!el)return;
-  const q=moiProjSearch||'';
-  const list=q?moiProjects.filter(p=>(p.name||'').toLowerCase().includes(q.toLowerCase())||(p.place||'').toLowerCase().includes(q.toLowerCase())):moiProjects;
-
+  mdPage('home');
   let html=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <div><div style="font-size:1rem;font-weight:700">📋 MoiData</div><div style="font-size:.7rem;color:var(--muted)">Contribution Tracker</div></div>
-      <button class="btn btn-p btn-sm" onclick="moiOpenAddProj()">+ New Project</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div><div style="font-size:1rem;font-weight:700">📋 MoiData</div><div style="font-size:.7rem;color:var(--muted)">Tamil contribution tracker</div></div>
+      <button class="btn btn-p btn-sm" onclick="moiOpenAddProj()">+ Add Project</button>
+    </div>
+    <div style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:8px 11px;margin-bottom:12px;font-size:.7rem;color:#a78bfa;line-height:1.6">
+      💡 <b>Tanglish tip:</b> Type in English phonetics. Examples:<br>
+      <code style="background:rgba(139,92,246,.15);padding:1px 5px;border-radius:3px">murugan</code> → முருகன் &nbsp;
+      <code style="background:rgba(139,92,246,.15);padding:1px 5px;border-radius:3px">thanjavur</code> → தஞ்சாவூர்<br>
+      Use <b>th</b>=த, <b>zh</b>=ழ, <b>aa</b>=ஆ, <b>N</b>=ண, <b>T</b>=ட, <b>R</b>=ற, <b>L</b>=ள
     </div>`;
-
-  if(moiProjects.length>0){
-    const grand=moiProjects.reduce((s,p)=>s+Number(p.total||0),0),totalC=moiProjects.reduce((s,p)=>s+Number(p.recordCount||0),0);
-    html+=`<div class="moi-grand-hero">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-        <div><div style="font-size:.65rem;color:var(--muted);margin-bottom:3px">ALL PROJECTS GRAND TOTAL</div><div style="font-size:1.5rem;font-weight:900;color:var(--purple)">₹${grand.toLocaleString('en-IN')}</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">${moiProjects.length} projects · ${totalC} contributors</div></div>
-        <button class="btn btn-v btn-sm" onclick="mdPage('analytics');moiRenderAnalytics()">📊 Analytics</button>
+  if(!moiProjects.length){html+=`<div class="empty"><div class="empty-ico">📋</div><p>No projects yet.<br>Tap + Add Project to create one!</p></div>`;}
+  else{html+=moiProjects.map(p=>`
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;cursor:pointer" onclick="moiOpenProject('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.92rem;font-weight:700;font-family:'Noto Sans Tamil',sans-serif;word-break:break-word">${p.name||'—'}</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:2px">
+            ${p.date?'📅 '+fmtD(p.date):''} ${p.place?'· 📍'+p.place:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0;margin-left:8px">
+          <div class="ia ia-e" onclick="event.stopPropagation();moiEditProject('${p.id}')">✏</div>
+          <div class="ia ia-r" onclick="event.stopPropagation();moiConfirmDelProject('${p.id}')">✕</div>
+        </div>
       </div>
-    </div>`;
-  }
-
-  html+=`<div class="sbar" style="margin-bottom:10px"><span style="font-size:.8rem;color:var(--muted)">🔍</span><input type="search" value="${q}" placeholder="Search projects…" oninput="moiProjSearch=this.value;moiRenderHome()" style="flex:1;border:none;outline:none;font-size:.84rem;background:transparent;color:var(--text)">${q?`<button onclick="moiProjSearch='';moiRenderHome()" style="background:none;border:none;color:var(--muted);cursor:pointer">✕</button>`:''}</div>`;
-
-  if(!list.length){
-    html+=`<div class="empty"><div class="empty-ico">📋</div><p>${q?'No projects match your search':'No projects yet.\nCreate your first project!'}</p></div>`;
-  } else {
-    html+=list.map((p,i)=>{
-      const clr=PROJ_COLORS[i%PROJ_COLORS.length];
-      const pct=p.target>0?Math.min(100,Math.round((Number(p.total||0)/p.target)*100)):0;
-      const statusBadge=p.status==='completed'?'<span style="font-size:.58rem;background:#22c55e20;color:#22c55e;border-radius:4px;padding:1px 6px;margin-left:5px;font-weight:700">✅ Done</span>':'<span style="font-size:.58rem;background:#8b5cf620;color:#a78bfa;border-radius:4px;padding:1px 6px;margin-left:5px;font-weight:700">🟢 Active</span>';
-      return`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;margin-bottom:10px;cursor:pointer;border-left:3px solid ${clr}" onclick="moiOpenProject('${p.id}')">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:.92rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||'—'}${statusBadge}</div>
-            <div style="font-size:.69rem;color:var(--muted);margin-top:3px">${p.date?'📅 '+fmtD(p.date):''} ${p.place?'· 📍'+p.place:''}</div>
-          </div>
-          <div style="display:flex;gap:5px;flex-shrink:0;margin-left:8px">
-            <div class="ia ia-e" onclick="event.stopPropagation();moiEditProject('${p.id}')">✏</div>
-            <div class="ia ia-r" onclick="event.stopPropagation();moiConfirmDelProject('${p.id}')">✕</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <div style="flex:1">
-            <div style="display:flex;justify-content:space-between;font-size:.7rem;margin-bottom:3px">
-              <span style="color:var(--muted)">₹${Number(p.total||0).toLocaleString('en-IN')} collected ${p.target>0?'· '+pct+'% of target':''}</span>
-              <span style="font-weight:700;color:${clr}">${p.recordCount||0} contribs</span>
-            </div>
-            ${p.target>0?`<div class="pb-wrap"><div class="pb" style="width:${pct}%;background:${clr}"></div></div>`:`<div style="height:3px;background:var(--border);border-radius:2px"><div style="height:100%;width:100%;background:${clr};border-radius:2px;opacity:.4"></div></div>`}
-          </div>
-          <div style="font-size:1rem;font-weight:900;color:${clr}">₹${Number(p.total||0)>=1000?(Number(p.total||0)/1000).toFixed(1)+'k':Number(p.total||0)}</div>
-        </div>
-        ${p.comments?`<div style="font-size:.66rem;color:var(--muted);margin-top:6px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">💬 ${p.comments}</div>`:''}
-      </div>`;
-    }).join('');
-  }
-  html+='<div style="height:6px"></div>';
+      <div class="sgrid" style="margin-bottom:0">
+        <div class="sc" style="padding:8px"><label>Contributors</label><div class="sv">${p.recordCount||0}</div></div>
+        <div class="sc" style="padding:8px"><label>Total Amount</label><div class="sv" style="font-size:.9rem;color:var(--green)">₹${Number(p.total||0).toLocaleString('en-IN')}</div></div>
+      </div>
+    </div>`).join('');}
   el.innerHTML=html;
 }
-let moiProjSearch='';
 
-// ── Analytics ─────────────────────────────────────
-function moiRenderAnalytics(){
-  const el=document.getElementById('md-analytics');if(!el)return;
-  if(!moiProjects.length){el.innerHTML='<div class="empty"><div class="empty-ico">📊</div><p>No projects yet.<br>Create projects to see analytics.</p></div>';return;}
-
-  const grand=moiProjects.reduce((s,p)=>s+Number(p.total||0),0);
-  const totalC=moiProjects.reduce((s,p)=>s+Number(p.recordCount||0),0);
-  const sorted=[...moiProjects].sort((a,b)=>Number(b.total||0)-Number(a.total||0));
-  const avgPer=moiProjects.length?grand/moiProjects.length:0;
-  const highest=sorted[0];
-  const active=moiProjects.filter(p=>p.status!=='completed').length;
-
-  const statsHTML=`
-    <div class="sc"><label>Grand Total</label><div class="sv" style="font-size:.9rem;color:var(--purple)">₹${grand>=1000?(grand/1000).toFixed(1)+'k':grand}</div><div class="ss">${moiProjects.length} projects</div></div>
-    <div class="sc"><label>Contributors</label><div class="sv">${totalC}</div><div class="ss">total</div></div>
-    <div class="sc"><label>Avg / Project</label><div class="sv" style="font-size:.9rem">₹${Math.round(avgPer).toLocaleString('en-IN')}</div></div>
-    <div class="sc"><label>Active</label><div class="sv">${active}</div><div class="ss">${moiProjects.length-active} completed</div></div>`;
-
-  const tableRows=sorted.map((p,i)=>{
-    const pct=grand>0?((Number(p.total||0)/grand)*100).toFixed(1):0;
-    const clr=PROJ_COLORS[moiProjects.indexOf(p)%PROJ_COLORS.length];
-    return`<div class="row" style="cursor:pointer" onclick="moiOpenProject('${p.id}')">
-      <div style="width:30px;height:30px;border-radius:8px;background:${clr}22;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;color:${clr};flex-shrink:0">${i+1}</div>
-      <div class="row-body">
-        <div class="row-name">${p.name||'—'}</div>
-        <div class="row-sub">${p.recordCount||0} contributors · ${pct}% of total${p.date?' · '+fmtD(p.date):''}</div>
-        <div class="pb-wrap" style="margin-top:4px"><div class="pb" style="width:${pct}%;background:${clr}"></div></div>
-      </div>
-      <div class="row-right"><div class="row-amt" style="color:${clr}">₹${Number(p.total||0).toLocaleString('en-IN')}</div></div>
-    </div>`;
-  }).join('');
-
-  const chartH=Math.max(200,sorted.length*52);
-  el.innerHTML=`
-    <div class="sgrid" style="margin-bottom:10px">${statsHTML}</div>
-    ${highest?`<div style="background:linear-gradient(135deg,#8b5cf620,#6c63ff15);border:1px solid rgba(139,92,246,.2);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;align-items:center;gap:10px"><div style="font-size:1.8rem">🏆</div><div><div style="font-size:.72rem;color:var(--muted)">TOP PROJECT</div><div style="font-size:.88rem;font-weight:700">${highest.name||'—'}</div><div style="font-size:.72rem;color:var(--purple);font-weight:700">₹${Number(highest.total||0).toLocaleString('en-IN')} · ${highest.recordCount||0} contributors</div></div></div>`:''}
-    <div class="card">
-      <div class="card-hd">📊 Projects Comparison</div>
-      <div class="card-body">
-        <div style="height:${chartH}px;position:relative"><canvas id="moiBarChart"></canvas></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hd">🍩 Amount Distribution</div>
-      <div class="card-body">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div style="position:relative;width:100px;height:100px;flex-shrink:0"><canvas id="moiDonutChart"></canvas></div>
-          <div style="flex:1" id="moiDonutLegend"></div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-hd">All Projects Ranked</div>
-      <div style="padding:0 4px">${tableRows}</div>
-    </div>
-    <div style="height:6px"></div>`;
-
-  setTimeout(()=>{
-    // Bar chart (horizontal)
-    if(moiBarC)moiBarC.destroy();
-    const bc=document.getElementById('moiBarChart');if(bc){
-      moiBarC=new Chart(bc.getContext('2d'),{
-        type:'bar',
-        data:{labels:sorted.map(p=>p.name&&p.name.length>14?p.name.slice(0,14)+'…':(p.name||'—')),datasets:[{data:sorted.map(p=>Number(p.total||0)),backgroundColor:sorted.map((_,i)=>PROJ_COLORS[(moiProjects.indexOf(sorted[i]))%PROJ_COLORS.length]+'bb'),borderColor:sorted.map((_,i)=>PROJ_COLORS[(moiProjects.indexOf(sorted[i]))%PROJ_COLORS.length]),borderWidth:2,borderRadius:5}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' ₹'+Number(c.parsed.x).toLocaleString('en-IN')}}},scales:{x:{grid:{color:'#2d314820'},ticks:{color:'#94a3b8',font:{size:9},callback:v=>'₹'+(v>=1000?(v/1000).toFixed(0)+'k':v)}},y:{grid:{display:false},ticks:{color:'#e2e8f0',font:{size:9}}}}}
-      });
-    }
-    // Donut chart
-    if(moiDonutC)moiDonutC.destroy();
-    const dc=document.getElementById('moiDonutChart');if(dc&&sorted.length){
-      const labels=sorted.slice(0,6).map(p=>p.name||'—'),data=sorted.slice(0,6).map(p=>Number(p.total||0)),clrs=sorted.slice(0,6).map((_,i)=>PROJ_COLORS[i%PROJ_COLORS.length]);
-      moiDonutC=new Chart(dc.getContext('2d'),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:clrs,borderWidth:0,hoverOffset:4}]},options:{cutout:'60%',responsive:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' ₹'+Number(c.parsed).toLocaleString('en-IN')}}}}});
-      const leg=document.getElementById('moiDonutLegend');
-      if(leg)leg.innerHTML=labels.map((l,i)=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:5px"><div style="width:8px;height:8px;border-radius:50%;background:${clrs[i]};flex-shrink:0"></div><span style="font-size:.68rem;color:var(--text)">${l}</span></div>`).join('');
-    }
-  },80);
-}
-
-// ── Project CRUD ──────────────────────────────────
 function moiOpenAddProj(){
   document.getElementById('moiProjEditId').value='';
   document.getElementById('moiProjTitle').textContent='📋 New Project';
-  ['moiProjName','moiProjPlace','moiProjComments'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('moiProjDate').value=td();
-  document.getElementById('moiProjStatus').value='active';
-  document.getElementById('moiProjTarget').value='';
+  ['moiProjName','moiProjDate','moiProjPlace','moiProjComments'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='moiProjDate'?td():'';});
+  ['moiProjNamePv','moiProjPlacePv','moiProjCommentsPv'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='';el.classList.remove('show');}});
   openOv('addMoiProjOv');
 }
+
 function moiEditProject(id){
   const p=moiProjects.find(x=>x.id===id);if(!p)return;
   document.getElementById('moiProjEditId').value=id;
   document.getElementById('moiProjTitle').textContent='✏️ Edit Project';
-  document.getElementById('moiProjName').value=p.name||'';
+  document.getElementById('moiProjName').value=p.nameInput||p.name||'';
   document.getElementById('moiProjDate').value=p.date||'';
-  document.getElementById('moiProjStatus').value=p.status||'active';
-  document.getElementById('moiProjPlace').value=p.place||'';
-  document.getElementById('moiProjTarget').value=p.target||'';
-  document.getElementById('moiProjComments').value=p.comments||'';
+  document.getElementById('moiProjPlace').value=p.placeInput||p.place||'';
+  document.getElementById('moiProjComments').value=p.commentsInput||p.comments||'';
+  ['moiProjName','moiProjPlace','moiProjComments'].forEach((inId,i)=>tlPrev(inId,['moiProjNamePv','moiProjPlacePv','moiProjCommentsPv'][i]));
   openOv('addMoiProjOv');
 }
+
 async function moiSaveProject(){
   const id=document.getElementById('moiProjEditId').value;
-  const name=document.getElementById('moiProjName').value.trim();
-  if(!name){toast('Enter project name','err');return;}
+  const nameInput=document.getElementById('moiProjName').value.trim();
+  const name=tanglishToTamil(nameInput)||nameInput;
+  const date=document.getElementById('moiProjDate').value;
+  const placeInput=document.getElementById('moiProjPlace').value.trim();
+  const place=tanglishToTamil(placeInput)||placeInput;
+  const commentsInput=document.getElementById('moiProjComments').value.trim();
+  const comments=tanglishToTamil(commentsInput)||commentsInput;
+  if(!nameInput){toast('Enter project name','err');return;}
   if(!uid()){toast('Not signed in','err');return;}
-  const data={
-    name,
-    date:document.getElementById('moiProjDate').value,
-    status:document.getElementById('moiProjStatus').value||'active',
-    place:document.getElementById('moiProjPlace').value.trim(),
-    target:parseFloat(document.getElementById('moiProjTarget').value)||0,
-    comments:document.getElementById('moiProjComments').value.trim(),
-    updatedAt:new Date().toISOString()
-  };
+  const data={name,nameInput,date,place,placeInput,comments,commentsInput,updatedAt:new Date().toISOString()};
   try{
     if(id){await moiPC().doc(id).update(data);const i=moiProjects.findIndex(p=>p.id===id);if(i>=0)moiProjects[i]={...moiProjects[i],...data};}
     else{data.createdAt=new Date().toISOString();data.recordCount=0;data.total=0;const r=await moiPC().add(data);moiProjects.unshift({id:r.id,...data});}
     closeOv('addMoiProjOv');moiRenderHome();toast(id?'Updated ✅':'Project created ✅','ok');
   }catch(ex){console.error(ex);toast('Error: '+ex.message,'err');}
 }
+
 async function moiConfirmDelProject(id){
   const p=moiProjects.find(x=>x.id===id);
-  if(!p||!confirm(`Delete "${p.name}" and all its records? Cannot undo.`))return;
-  try{const snap=await moiRC(id).get();const b=db.batch();snap.docs.forEach(d=>b.delete(d.ref));b.delete(moiPC().doc(id));await b.commit();moiProjects=moiProjects.filter(p=>p.id!==id);moiRenderHome();toast('Deleted','ok');}
-  catch(ex){toast('Error: '+ex.message,'err');}
+  if(!p||!confirm(`Delete "${p.name}" and all records?`))return;
+  try{
+    const snap=await moiRC(id).get();
+    const b=db.batch();snap.docs.forEach(d=>b.delete(d.ref));b.delete(moiPC().doc(id));
+    await b.commit();
+    moiProjects=moiProjects.filter(p=>p.id!==id);moiRenderHome();toast('Deleted','ok');
+  }catch(ex){toast('Error: '+ex.message,'err');}
 }
 
 // ── Project Detail & Records ──────────────────────
 async function moiOpenProject(id){
   const p=moiProjects.find(x=>x.id===id);if(!p)return;
   moiCurProj=p;moiRecSearch='';
-  toast('Loading…','info');
   try{const snap=await moiRC(id).orderBy('createdAt','asc').get();moiCurRecords=snap.docs.map(d=>({id:d.id,...d.data()}));}
   catch(ex){console.error(ex);moiCurRecords=[];}
   mdPage('detail');moiRenderDetail();
@@ -973,239 +1040,254 @@ function moiRenderDetail(){
   const el=document.getElementById('md-detail');if(!el||!moiCurProj)return;
   const p=moiCurProj;
   const q=moiRecSearch.toLowerCase();
-  const filtered=q?moiCurRecords.filter(r=>(r.name||'').toLowerCase().includes(q)||(r.city||'').toLowerCase().includes(q)||(r.notes||'').toLowerCase().includes(q)):moiCurRecords;
+  const filtered=q?moiCurRecords.filter(r=>(r.name||'').toLowerCase().includes(q)||(r.city||'').toLowerCase().includes(q)||(r.nameInput||'').toLowerCase().includes(q)||(r.cityInput||'').toLowerCase().includes(q)):moiCurRecords;
   const total=moiCurRecords.reduce((s,r)=>s+Number(r.amount||0),0);
   const filtTotal=filtered.reduce((s,r)=>s+Number(r.amount||0),0);
-  const pct=p.target>0?Math.min(100,Math.round((total/p.target)*100)):0;
+  const snoMap=Object.fromEntries(moiCurRecords.map((r,i)=>[r.id,i+1]));
 
-  const recCards=filtered.map((r,i)=>{
-    const sno=moiCurRecords.indexOf(r)+1;
-    return`<div class="moi-rec-card">
-      <div class="moi-rec-num">${sno}</div>
-      <div class="moi-rec-body">
-        <div class="moi-rec-name">${r.name||'—'}</div>
-        <div class="moi-rec-sub">${r.city?'📍 '+r.city:''}${r.city&&r.date?' · ':''} ${r.date?'📅 '+fmtD(r.date):''}${r.notes?'<br>💬 '+r.notes:''}</div>
+  let rows=filtered.map(r=>`<tr>
+    <td style="color:var(--muted);font-size:.68rem;text-align:center">${snoMap[r.id]||''}</td>
+    <td>${r.city||'—'}</td>
+    <td>${r.name||'—'}</td>
+    <td style="text-align:right;font-weight:700;color:var(--green)">₹${Number(r.amount||0).toLocaleString('en-IN')}</td>
+    <td style="white-space:nowrap">
+      <div style="display:flex;gap:4px;justify-content:center">
+        <div class="ia ia-e" onclick="moiEditRecord('${r.id}')">✏</div>
+        <div class="ia ia-r" onclick="moiConfirmDelRecord('${r.id}')">✕</div>
       </div>
-      <div>
-        <div class="moi-rec-amt">₹${Number(r.amount||0).toLocaleString('en-IN')}</div>
-        <div style="display:flex;gap:4px;margin-top:5px;justify-content:flex-end">
-          <div class="ia ia-e" onclick="moiEditRecord('${r.id}')">✏</div>
-          <div class="ia ia-r" onclick="moiConfirmDelRecord('${r.id}')">✕</div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+    </td>
+  </tr>`).join('');
+  if(!rows)rows=`<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);font-size:.78rem">${q?'No matching records':'No records yet. Tap + to add!'}</td></tr>`;
 
   el.innerHTML=`
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
-      <button onclick="moiGoBack()" style="width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">←</button>
+      <button onclick="moiGoHome()" style="width:32px;height:32px;border-radius:50%;background:var(--card2);border:1px solid var(--border);color:var(--text);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">←</button>
       <div style="flex:1;min-width:0">
-        <div style="font-size:.92rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||'—'}</div>
-        <div style="font-size:.65rem;color:var(--muted)">${p.date?fmtD(p.date)+' · ':''}${p.place||''}${p.status==='completed'?' · ✅ Completed':''}</div>
+        <div style="font-size:.92rem;font-weight:700;font-family:'Noto Sans Tamil',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name||'—'}</div>
+        <div style="font-size:.65rem;color:var(--muted)">${p.date?fmtD(p.date)+' · ':''}${p.place||''}</div>
       </div>
       <button class="btn btn-sm" style="background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.3);padding:5px 9px;font-size:.66rem;flex-shrink:0" onclick="moiEditProject('${p.id}')">✏️ Edit</button>
     </div>
 
-    ${p.comments?`<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;font-size:.78rem;margin-bottom:10px">💬 ${p.comments}</div>`:''}
+    ${p.comments?`<div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;font-size:.78rem;margin-bottom:10px;font-family:'Noto Sans Tamil',sans-serif;line-height:1.7">📝 ${p.comments}</div>`:''}
 
     <div class="moi-hero">
-      <div style="font-size:.65rem;opacity:.8;margin-bottom:2px">TOTAL COLLECTED</div>
-      <div style="font-size:1.8rem;font-weight:900">₹${total.toLocaleString('en-IN')}</div>
-      ${p.target>0?`<div style="font-size:.7rem;opacity:.85;margin:5px 0 6px">₹${(p.target-total>0?p.target-total:0).toLocaleString('en-IN')} remaining of ₹${Number(p.target).toLocaleString('en-IN')} target</div><div style="background:rgba(255,255,255,.25);border-radius:100px;height:6px;overflow:hidden"><div style="width:${pct}%;height:100%;background:#fff;border-radius:100px;transition:width .4s"></div></div><div style="display:flex;justify-content:space-between;margin-top:4px;font-size:.62rem;opacity:.8"><span>${pct}% reached</span><span>Target: ₹${Number(p.target).toLocaleString('en-IN')}</span></div>`:``}
-      <div style="margin-top:8px;font-size:.68rem;opacity:.8">${moiCurRecords.length} contributors</div>
+      <div style="font-size:.68rem;opacity:.8;margin-bottom:2px">மொத்த தொகை (Total Amount)</div>
+      <div style="font-size:1.7rem;font-weight:900">₹${total.toLocaleString('en-IN')}</div>
+      <div style="font-size:.68rem;opacity:.8;margin-top:4px">${moiCurRecords.length} contributors · ${p.date?fmtD(p.date):''}</div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
-      <button class="btn btn-g btn-sm" onclick="moiExpXLSX()">📊 Excel</button>
+      <button class="btn btn-g btn-sm" onclick="moiExpXLSX()">📊 Export Excel</button>
       <button class="btn btn-b btn-sm" onclick="moiExpPDF()">📄 PDF Report</button>
     </div>
 
     <div class="sbar" style="margin-bottom:8px">
       <span style="font-size:.8rem;color:var(--muted)">🔍</span>
-      <input type="search" value="${moiRecSearch}" placeholder="Search by name, city, notes…" oninput="moiRecSearch=this.value;moiRenderDetail()" style="flex:1;border:none;outline:none;font-size:.82rem;background:transparent;color:var(--text)">
-      ${moiRecSearch?`<button onclick="moiRecSearch='';moiRenderDetail()" style="background:none;border:none;color:var(--muted);cursor:pointer">✕</button>`:''}
+      <input type="search" value="${moiRecSearch}" placeholder="Search by name or city…" oninput="moiRecSearch=this.value;moiRenderDetail()" style="flex:1;border:none;outline:none;font-size:.82rem;background:transparent;color:var(--text)">
+      ${moiRecSearch?`<button onclick="moiRecSearch='';moiRenderDetail()" style="background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer">✕</button>`:''}
     </div>
 
-    ${q?`<div style="font-size:.7rem;color:var(--muted);margin-bottom:8px">${filtered.length} of ${moiCurRecords.length} · ₹${filtTotal.toLocaleString('en-IN')}</div>`:''}
+    ${q?`<div style="font-size:.7rem;color:var(--muted);margin-bottom:7px">${filtered.length} of ${moiCurRecords.length} records · ₹${filtTotal.toLocaleString('en-IN')}</div>`:''}
 
-    ${filtered.length?recCards:`<div class="empty"><div class="empty-ico">👥</div><p>${q?'No matching records':'No records yet.\nTap + to add contributors!'}</p></div>`}
-
-    ${filtered.length>0?`<div style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.2);border-radius:10px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span style="font-size:.8rem;font-weight:700;color:var(--purple)">${q?'Filtered':'Grand'} Total</span><span style="font-size:1rem;font-weight:900;color:var(--purple)">₹${filtTotal.toLocaleString('en-IN')}</span></div>`:''}
+    <div class="moi-tbl-wrap">
+      <table class="moi-tbl">
+        <thead>
+          <tr>
+            <th style="width:36px;text-align:center">#</th>
+            <th>நகரம் / City or Village</th>
+            <th>பங்களிப்பாளர் / Name</th>
+            <th style="text-align:right">தொகை / Amount</th>
+            <th style="width:64px;text-align:center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+        ${filtered.length>0?`<tfoot><tr>
+          <td colspan="3" style="text-align:right;font-size:.78rem">மொத்தம் (${q?'Filtered ':''}Total)</td>
+          <td style="text-align:right">₹${filtTotal.toLocaleString('en-IN')}</td>
+          <td></td>
+        </tr></tfoot>`:''}
+      </table>
+    </div>
     <div style="height:70px"></div>`;
 }
 
-function moiGoBack(){
+function moiGoHome(){
   moiCurProj=null;moiCurRecords=[];moiRecSearch='';
   mdPage('home');
-  document.getElementById('tbarIco').style.background='#8b5cf622';
-  document.getElementById('tbarIco').textContent='📋';
+  const ico=document.getElementById('tbarIco');ico.style.background='#8b5cf622';ico.textContent='📋';
   document.getElementById('tbarTitle').textContent='MoiData';
   moiRenderHome();
 }
 
-// ── Record CRUD ───────────────────────────────────
 function moiOpenAddRec(){
   document.getElementById('moiRecEditId').value='';
   document.getElementById('moiRecTitle').textContent='➕ New Record';
-  ['moiRecName','moiRecCity','moiRecNotes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('moiRecAmt').value='';
-  document.getElementById('moiRecDate').value=td();
+  ['moiRecCity','moiRecName','moiRecAmt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['moiRecCityPv','moiRecNamePv'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='';el.classList.remove('show');}});
   document.getElementById('moiRecDelBtn').style.display='none';
   openOv('addMoiRecOv');
 }
+
 function moiEditRecord(id){
   const r=moiCurRecords.find(x=>x.id===id);if(!r)return;
   document.getElementById('moiRecEditId').value=id;
   document.getElementById('moiRecTitle').textContent='✏️ Edit Record';
-  document.getElementById('moiRecName').value=r.name||'';
-  document.getElementById('moiRecCity').value=r.city||'';
+  document.getElementById('moiRecCity').value=r.cityInput||r.city||'';
+  document.getElementById('moiRecName').value=r.nameInput||r.name||'';
   document.getElementById('moiRecAmt').value=r.amount||'';
-  document.getElementById('moiRecDate').value=r.date||td();
-  document.getElementById('moiRecNotes').value=r.notes||'';
   document.getElementById('moiRecDelBtn').style.display='block';
+  tlPrev('moiRecCity','moiRecCityPv');tlPrev('moiRecName','moiRecNamePv');
   openOv('addMoiRecOv');
 }
+
 async function moiSaveRecord(){
   if(!moiCurProj){toast('No project open','err');return;}
   const id=document.getElementById('moiRecEditId').value;
-  const name=document.getElementById('moiRecName').value.trim();
-  const city=document.getElementById('moiRecCity').value.trim();
+  const cityInput=document.getElementById('moiRecCity').value.trim();
+  const city=tanglishToTamil(cityInput)||cityInput;
+  const nameInput=document.getElementById('moiRecName').value.trim();
+  const name=tanglishToTamil(nameInput)||nameInput;
   const amount=parseFloat(document.getElementById('moiRecAmt').value)||0;
-  const date=document.getElementById('moiRecDate').value;
-  const notes=document.getElementById('moiRecNotes').value.trim();
-  if(!name){toast('Enter contributor name','err');return;}
+  if(!cityInput&&!nameInput){toast('Enter city or name','err');return;}
   if(!uid()){toast('Not signed in','err');return;}
-  const data={name,city,amount,date,notes,updatedAt:new Date().toISOString()};
+  const data={city,cityInput,name,nameInput,amount,updatedAt:new Date().toISOString()};
   try{
     const pid=moiCurProj.id;
     if(id){await moiRC(pid).doc(id).update(data);const i=moiCurRecords.findIndex(r=>r.id===id);if(i>=0)moiCurRecords[i]={...moiCurRecords[i],...data};}
     else{data.createdAt=new Date().toISOString();const r=await moiRC(pid).add(data);moiCurRecords.push({id:r.id,...data});}
-    await moiUpdateStats(pid);closeOv('addMoiRecOv');moiRenderDetail();toast(id?'Updated ✅':'Record added ✅','ok');
+    await moiUpdateStats(pid);
+    closeOv('addMoiRecOv');moiRenderDetail();toast(id?'Updated ✅':'Record added ✅','ok');
   }catch(ex){console.error(ex);toast('Error: '+ex.message,'err');}
 }
+
 async function moiConfirmDelRecord(id){
   if(!confirm('Delete this record?'))return;
   const pid=moiCurProj?.id;if(!pid)return;
-  try{await moiRC(pid).doc(id).delete();moiCurRecords=moiCurRecords.filter(r=>r.id!==id);await moiUpdateStats(pid);moiRenderDetail();toast('Deleted','ok');}
-  catch(ex){toast('Error: '+ex.message,'err');}
+  try{
+    await moiRC(pid).doc(id).delete();
+    moiCurRecords=moiCurRecords.filter(r=>r.id!==id);
+    await moiUpdateStats(pid);moiRenderDetail();toast('Deleted','ok');
+  }catch(ex){toast('Error: '+ex.message,'err');}
 }
-async function moiDeleteFromModal(){const id=document.getElementById('moiRecEditId').value;if(!id)return;closeOv('addMoiRecOv');await moiConfirmDelRecord(id);}
+
+async function moiDeleteFromModal(){
+  const id=document.getElementById('moiRecEditId').value;
+  if(!id)return;closeOv('addMoiRecOv');await moiConfirmDelRecord(id);
+}
+
 async function moiUpdateStats(pid){
-  const total=moiCurRecords.reduce((s,r)=>s+Number(r.amount||0),0),count=moiCurRecords.length;
+  const total=moiCurRecords.reduce((s,r)=>s+Number(r.amount||0),0);
+  const count=moiCurRecords.length;
   try{await moiPC().doc(pid).update({recordCount:count,total,updatedAt:new Date().toISOString()});}catch(e){}
   const p=moiProjects.find(x=>x.id===pid);if(p){p.recordCount=count;p.total=total;}
   if(moiCurProj?.id===pid){moiCurProj.recordCount=count;moiCurProj.total=total;}
 }
 
-// ── Single Project Exports ─────────────────────────
+// ── MoiData Exports ──────────────────────────────
 function moiExpPDF(){
-  if(!moiCurProj||!moiCurRecords.length){toast('No records to export','err');return;}
-  const p=moiCurProj,recs=moiCurRecords,total=recs.reduce((s,r)=>s+Number(r.amount||0),0);
+  if(!moiCurProj){toast('No project open','err');return;}
+  if(!moiCurRecords.length){toast('No records to export','err');return;}
+  const p=moiCurProj,recs=moiCurRecords;
+  const total=recs.reduce((s,r)=>s+Number(r.amount||0),0);
   const genDate=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  const w=window.open('','_blank');if(!w){toast('Allow pop-ups to generate report','err');return;}
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${p.name}</title>
-  <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#f8f9ff;color:#1a1a2e;padding:20px;max-width:820px;margin:0 auto}.print-btn{background:#8b5cf6;color:#fff;border:none;padding:9px 22px;border-radius:8px;cursor:pointer;font-size:.9rem;margin-bottom:20px}.header{background:linear-gradient(135deg,#8b5cf6,#6c63ff);color:#fff;padding:22px 24px;border-radius:14px;margin-bottom:16px}.header h1{font-size:1.4rem;font-weight:700;margin-bottom:6px}.header p{font-size:.82rem;opacity:.85}.meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}.mc{background:#fff;border:1px solid #e0e0ff;border-radius:10px;padding:11px 14px;flex:1;min-width:100px}.mc label{font-size:.6rem;text-transform:uppercase;color:#888;display:block;margin-bottom:3px}.mc .val{font-size:.9rem;font-weight:700}.comments{background:#fff;border:1px solid #eee;border-radius:10px;padding:12px;margin-bottom:16px;font-size:.85rem}table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(139,92,246,.1)}th{background:linear-gradient(135deg,#8b5cf6,#6c63ff);color:#fff;padding:11px 13px;text-align:left;font-weight:700;font-size:.78rem}th.r,td.r{text-align:right}td{padding:10px 13px;border-bottom:1px solid #f0f0ff;font-size:.85rem}tr:nth-child(even) td{background:#faf8ff}.tf td{background:#f0ebff;font-weight:700;font-size:.9rem;border:none;color:#6c3fba}.footer{text-align:center;font-size:.7rem;color:#aaa;margin-top:20px;padding-top:14px;border-top:1px solid #eee}@media print{.print-btn{display:none}}</style></head>
-  <body><button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button>
-  <div class="header"><h1>${p.name}</h1><p>${p.date?'📅 '+p.date+' &nbsp;':''}${p.place?'📍 '+p.place:''}</p></div>
-  <div class="meta"><div class="mc"><label>Date</label><div class="val">${p.date?fmtD(p.date):'—'}</div></div><div class="mc"><label>Place</label><div class="val">${p.place||'—'}</div></div><div class="mc"><label>Contributors</label><div class="val">${recs.length}</div></div>${p.target>0?`<div class="mc"><label>Target</label><div class="val">₹${Number(p.target).toLocaleString('en-IN')}</div></div>`:''}<div class="mc"><label>Total Collected</label><div class="val" style="color:#8b5cf6;font-size:1.05rem">₹${total.toLocaleString('en-IN')}</div></div></div>
-  ${p.comments?`<div class="comments">💬 ${p.comments}</div>`:''}
-  <table><thead><tr><th style="width:42px">S.No</th><th>Contributor Name</th><th>City / Village</th><th>Date</th><th class="r">Amount</th></tr></thead>
-  <tbody>${recs.map((r,i)=>`<tr><td>${i+1}</td><td>${r.name||'—'}</td><td>${r.city||'—'}</td><td>${r.date?fmtD(r.date):'—'}</td><td class="r">₹${Number(r.amount||0).toLocaleString('en-IN')}</td></tr>${r.notes?`<tr><td></td><td colspan="4" style="font-size:.78rem;color:#666;padding-top:2px;padding-bottom:8px">💬 ${r.notes}</td></tr>`:''}`).join('')}</tbody>
-  <tfoot><tr class="tf"><td colspan="4" style="text-align:right">Total</td><td style="text-align:right">₹${total.toLocaleString('en-IN')}</td></tr></tfoot></table>
-  <div class="footer">Generated by MoiData · My Apps Hub · ${genDate}</div></body></html>`);
+  const w=window.open('','_blank');
+  if(!w){toast('Allow pop-ups to generate report','err');return;}
+  w.document.write(`<!DOCTYPE html>
+<html lang="ta"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${p.name}</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans Tamil',Arial,sans-serif;background:#f8f9ff;color:#1a1a2e;padding:20px;max-width:820px;margin:0 auto}
+.print-btn{background:#8b5cf6;color:#fff;border:none;padding:9px 22px;border-radius:8px;cursor:pointer;font-size:.9rem;margin-bottom:20px;font-family:inherit}
+.header{background:linear-gradient(135deg,#8b5cf6,#6c63ff);color:#fff;padding:22px 24px;border-radius:14px;margin-bottom:16px}
+.header h1{font-size:1.5rem;font-weight:700;margin-bottom:6px;line-height:1.4}
+.header p{font-size:.82rem;opacity:.85;line-height:1.6}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.mc{background:#fff;border:1px solid #e0e0ff;border-radius:10px;padding:11px 14px;flex:1;min-width:120px}
+.mc label{font-size:.6rem;text-transform:uppercase;letter-spacing:.05em;color:#888;display:block;margin-bottom:3px;font-family:Arial,sans-serif}
+.mc .val{font-size:.95rem;font-weight:700}
+.comments{background:#fff;border:1px solid #e8e8ff;border-radius:10px;padding:12px;margin-bottom:16px;font-size:.85rem;line-height:1.7;color:#444}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(139,92,246,.1)}
+th{background:linear-gradient(135deg,#8b5cf6,#6c63ff);color:#fff;padding:11px 13px;text-align:left;font-weight:700;font-size:.78rem}
+th.r,td.r{text-align:right}
+td{padding:10px 13px;border-bottom:1px solid #f0f0ff;font-size:.85rem;line-height:1.5}
+tr:nth-child(even) td{background:#faf8ff}
+.tfoot-row td{background:#f0ebff;font-weight:700;font-size:.9rem;border-bottom:none;color:#6c3fba}
+.footer{text-align:center;font-size:.7rem;color:#aaa;margin-top:20px;padding-top:14px;border-top:1px solid #eee;font-family:Arial,sans-serif}
+@media print{.print-btn{display:none}body{padding:10px;background:#fff}}
+</style></head><body>
+<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+<div class="header">
+  <h1>${p.name}</h1>
+  <p>${p.date?'📅 '+p.date+' &nbsp;':''}${p.place?'📍 '+p.place:''}</p>
+</div>
+<div class="meta">
+  <div class="mc"><label>Date / தேதி</label><div class="val">${p.date?fmtD(p.date):'—'}</div></div>
+  <div class="mc"><label>Place / இடம்</label><div class="val">${p.place||'—'}</div></div>
+  <div class="mc"><label>Contributors</label><div class="val">${recs.length}</div></div>
+  <div class="mc"><label>Total / மொத்தம்</label><div class="val" style="color:#8b5cf6;font-size:1.05rem">₹${total.toLocaleString('en-IN')}</div></div>
+</div>
+${p.comments?`<div class="comments">📝 ${p.comments}</div>`:''}
+<table>
+  <thead><tr><th style="width:42px;text-align:center">S.No</th><th>நகரம் / City or Village</th><th>பங்களிப்பாளர் / Contributor</th><th class="r">தொகை / Amount</th></tr></thead>
+  <tbody>${recs.map((r,i)=>`<tr><td style="text-align:center;color:#888;font-family:Arial">${i+1}</td><td>${r.city||'—'}</td><td>${r.name||'—'}</td><td class="r">₹${Number(r.amount||0).toLocaleString('en-IN')}</td></tr>`).join('')}</tbody>
+  <tfoot><tr class="tfoot-row"><td colspan="3" style="text-align:right">மொத்தம் (Total)</td><td style="text-align:right">₹${total.toLocaleString('en-IN')}</td></tr></tfoot>
+</table>
+<div class="footer">Generated by MoiData · My Apps Hub · ${genDate}</div>
+</body></html>`);
   w.document.close();
 }
+
 function moiExpXLSX(){
-  if(!moiCurProj||!moiCurRecords.length){toast('No records to export','err');return;}
-  const p=moiCurProj,recs=moiCurRecords,total=recs.reduce((s,r)=>s+Number(r.amount||0),0);
-  const data=[[p.name||''],['Date:',p.date||'','Place:',p.place||'','Status:',p.status||''],p.target?['Target: ₹'+p.target]:[''],p.comments?['Comments:',p.comments]:[],[''],['S.No','Contributor Name','City/Village','Date','Amount (₹)','Notes'],...recs.map((r,i)=>[i+1,r.name||'',r.city||'',r.date||'',Number(r.amount||0),r.notes||'']),[''],['','','','','Total:',total]].filter(r=>r.length);
-  const ws=XLSX.utils.aoa_to_sheet(data);ws['!cols']=[{wch:6},{wch:28},{wch:22},{wch:14},{wch:14},{wch:30}];
-  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,(p.name||'Sheet').replace(/[:\\\/?*\[\]]/g,'').slice(0,31)||'MoiData');
-  XLSX.writeFile(wb,(p.name||'moidata').replace(/[^a-zA-Z0-9\s]/g,'_').slice(0,40)+'_report.xlsx');
+  if(!moiCurProj){toast('No project open','err');return;}
+  if(!moiCurRecords.length){toast('No records to export','err');return;}
+  const p=moiCurProj,recs=moiCurRecords;
+  const total=recs.reduce((s,r)=>s+Number(r.amount||0),0);
+  const data=[
+    [p.name||''],
+    ['Date / தேதி:', p.date||'','Place / இடம்:', p.place||''],
+    p.comments?['Comments:', p.comments||'']:[],
+    [],
+    ['S.No','நகரம் / City or Village','பங்களிப்பாளர் / Contributor','தொகை / Amount (₹)'],
+    ...recs.map((r,i)=>[i+1,r.city||'',r.name||'',Number(r.amount||0)]),
+    [],
+    ['','','மொத்தம் (Total)',total],
+  ].filter(r=>r.length);
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:6},{wch:28},{wch:30},{wch:16}];
+  // Bold header row (row 5, index 4)
+  const wb=XLSX.utils.book_new();
+  const sheetName=(p.name||'Sheet').replace(/[:\\\/?*\[\]]/g,'').slice(0,31)||'MoiData';
+  XLSX.utils.book_append_sheet(wb,ws,sheetName);
+  const fname=(p.name||'moidata').replace(/[^a-zA-Z0-9\u0B80-\u0BFF\s]/g,'_').slice(0,40).trim()+'_report.xlsx';
+  XLSX.writeFile(wb,fname);
   toast('Excel downloaded ✅','ok');
 }
 
-// ── All Projects Exports (from Profile) ───────────
-async function moiExpAllCSV(){
-  if(!moiProjects.length){toast('No projects','err');return;}
-  toast('Preparing CSV…','info');
-  try{
-    const rows=[['Project','Date','Place','Status','Contributor','City/Village','Contributor Date','Amount','Notes']];
-    for(const p of moiProjects){const snap=await moiRC(p.id).get();const recs=snap.docs.map(d=>d.data());if(recs.length)recs.forEach(r=>rows.push([`"${p.name||''}"`,p.date||'',`"${p.place||''}"`,p.status||'active',`"${r.name||''}"`,`"${r.city||''}"`,r.date||'',Number(r.amount||0),`"${r.notes||''}"`]));else rows.push([`"${p.name||''}"`,p.date||'',`"${p.place||''}"`,p.status||'active','','','',0,'']);}
-    dlBlob(new Blob([rows.map(r=>r.join(',')).join('\n')],{type:'text/csv'}),`moidata_all_${td()}.csv`);
-    toast('CSV downloaded ✅','ok');
-  }catch(ex){toast('Error: '+ex.message,'err');}
+// ══════════════════════════════════════════════════
+//  HUB HELPERS
+// ══════════════════════════════════════════════════
+function hubRenderHabits(){
+  const el=document.getElementById('hubHabits');
+  if(!tHabits.length){el.innerHTML=`<div class="empty" style="padding:14px"><div class="empty-ico">✅</div><p>No habits yet. <span style="color:var(--accent);cursor:pointer" onclick="switchApp('tasks')">Add some →</span></p></div>`;return;}
+  el.innerHTML=tHabits.slice(0,5).map(h=>{const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done');return`<div class="tc" style="margin-bottom:6px"><div class="tc-top" style="padding:8px 10px"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'};width:28px;height:28px;font-size:13px">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name" style="font-size:.8rem">${h.name}</div></div><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div></div></div>`;}).join('');
+  if(tHabits.length>5)el.innerHTML+=`<div style="text-align:center;margin-top:4px;font-size:.72rem;color:var(--accent);cursor:pointer" onclick="switchApp('tasks')">View all ${tHabits.length} habits →</div>`;
 }
-async function moiExpAllXLSX(){
-  if(!moiProjects.length){toast('No projects','err');return;}
-  toast('Preparing Excel…','info');
-  try{
-    const wb=XLSX.utils.book_new();
-    // Summary sheet
-    const sumData=[['MoiData Export - '+new Date().toLocaleDateString('en-IN')],[''],['Project','Date','Place','Status','Contributors','Total (₹)','Target (₹)'],...moiProjects.map(p=>[p.name||'',p.date||'',p.place||'',p.status||'active',p.recordCount||0,Number(p.total||0),Number(p.target||0)])];
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(sumData),'Summary');
-    // Individual sheets per project
-    for(const p of moiProjects){
-      const snap=await moiRC(p.id).get();const recs=snap.docs.map(d=>d.data());
-      const shData=[[p.name||''],['Date:',p.date||'','Place:',p.place||''],[''],['S.No','Contributor','City/Village','Date','Amount (₹)','Notes'],...recs.map((r,i)=>[i+1,r.name||'',r.city||'',r.date||'',Number(r.amount||0),r.notes||'']),[''],['','','','Total:',recs.reduce((s,r)=>s+Number(r.amount||0),0)]];
-      const sn=(p.name||'Sheet').replace(/[:\\\/?*\[\]]/g,'').slice(0,28)||'Project';
-      XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(shData),sn);
-    }
-    XLSX.writeFile(wb,`moidata_export_${td()}.xlsx`);
-    toast('Excel downloaded ✅','ok');
-  }catch(ex){toast('Error: '+ex.message,'err');}
-}
-async function moiExpAllPDF(){
-  if(!moiProjects.length){toast('No projects','err');return;}
-  toast('Building report…','info');
-  try{
-    const allData=await Promise.all(moiProjects.map(async p=>{const snap=await moiRC(p.id).get();return{...p,records:snap.docs.map(d=>d.data())};} ));
-    const grand=allData.reduce((s,p)=>s+Number(p.total||0),0);
-    const w=window.open('','_blank');if(!w){toast('Allow pop-ups','err');return;}
-    const projHTML=allData.map((p,pi)=>{const clr=PROJ_COLORS[pi%PROJ_COLORS.length];const t=p.records.reduce((s,r)=>s+Number(r.amount||0),0);return`<div style="margin-bottom:28px"><div style="background:linear-gradient(135deg,${clr},${PROJ_COLORS[(pi+1)%PROJ_COLORS.length]});color:#fff;padding:14px 18px;border-radius:12px;margin-bottom:10px"><div style="font-size:1.1rem;font-weight:700">${p.name||'—'}</div><div style="font-size:.8rem;opacity:.85">${p.date?'📅 '+p.date+' ':''} ${p.place?'📍 '+p.place:''} · ${p.records.length} contributors · ₹${t.toLocaleString('en-IN')}</div></div>${p.comments?`<div style="background:#f9f9ff;border:1px solid #eee;border-radius:8px;padding:10px;font-size:.82rem;margin-bottom:10px">💬 ${p.comments}</div>`:''}<table style="width:100%;border-collapse:collapse;font-size:.82rem"><thead><tr style="background:#f0f0ff"><th style="padding:8px;text-align:left;border-bottom:2px solid ${clr}">S.No</th><th style="padding:8px;text-align:left;border-bottom:2px solid ${clr}">Contributor</th><th style="padding:8px;text-align:left;border-bottom:2px solid ${clr}">City/Village</th><th style="padding:8px;text-align:left;border-bottom:2px solid ${clr}">Date</th><th style="padding:8px;text-align:right;border-bottom:2px solid ${clr}">Amount</th></tr></thead><tbody>${p.records.map((r,i)=>`<tr style="background:${i%2?'#fafaff':'#fff'}"><td style="padding:8px">${i+1}</td><td style="padding:8px;font-weight:600">${r.name||'—'}</td><td style="padding:8px">${r.city||'—'}</td><td style="padding:8px">${r.date?fmtD(r.date):'—'}</td><td style="padding:8px;text-align:right;font-weight:700">₹${Number(r.amount||0).toLocaleString('en-IN')}</td></tr>`).join('')}</tbody><tfoot><tr style="background:${clr}20"><td colspan="4" style="padding:8px;text-align:right;font-weight:700;color:${clr}">Total</td><td style="padding:8px;text-align:right;font-weight:900;color:${clr}">₹${t.toLocaleString('en-IN')}</td></tr></tfoot></table></div>`;}).join('');
-    w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>MoiData — All Projects</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:20px;max-width:900px;margin:0 auto;color:#1a1a2e}.print-btn{background:#8b5cf6;color:#fff;border:none;padding:9px 22px;border-radius:8px;cursor:pointer;margin-bottom:20px}@media print{.print-btn{display:none}}</style></head><body><button class="print-btn" onclick="window.print()">🖨️ Print / Save PDF</button><div style="text-align:center;margin-bottom:24px"><div style="font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#8b5cf6,#6c63ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent">MoiData Report</div><div style="font-size:.9rem;color:#666;margin-top:4px">${new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})} · ${allData.length} Projects · Grand Total: ₹${grand.toLocaleString('en-IN')}</div></div>${projHTML}<div style="text-align:center;font-size:.72rem;color:#aaa;margin-top:30px;padding-top:16px;border-top:1px solid #eee">Generated by MoiData · My Apps Hub</div></body></html>`);
-    w.document.close();
-  }catch(ex){toast('Error: '+ex.message,'err');}
-}
-async function moiExpAllJSON(){
-  if(!moiProjects.length){toast('No projects','err');return;}
-  toast('Preparing backup…','info');
-  try{
-    const data=await Promise.all(moiProjects.map(async p=>{const snap=await moiRC(p.id).get();return{...p,records:snap.docs.map(d=>({id:d.id,...d.data()}))};} ));
-    dlBlob(new Blob([JSON.stringify({version:'2.0',exportedAt:new Date().toISOString(),projects:data},null,2)],{type:'application/json'}),`moidata_backup_${td()}.json`);
-    toast('Backup downloaded ✅','ok');
-  }catch(ex){toast('Error: '+ex.message,'err');}
-}
-async function moiImpAllJSON(evt){
-  const file=evt.target.files[0];if(!file)return;
-  try{
-    const bk=JSON.parse(await file.text());
-    if(!bk.projects||!Array.isArray(bk.projects)){toast('Invalid MoiData backup file','err');return;}
-    if(!confirm(`Import ${bk.projects.length} projects?`))return;
-    toast('Importing…','info');
-    for(const proj of bk.projects){
-      const records=proj.records||[];
-      const pData={...proj};delete pData.id;delete pData.records;
-      const ref=await moiPC().add(pData);
-      if(records.length){const b=db.batch();records.forEach(r=>{const rd={...r};delete rd.id;b.set(moiRC(ref.id).doc(),rd);});await b.commit();}
-    }
-    await loadMoiData();moiRenderHome();closeOv('profOv');toast(`Imported ${bk.projects.length} projects ✅`,'ok');
-  }catch(ex){toast('Failed: '+ex.message,'err');}
-  evt.target.value='';
-}
-async function moiClearAll(){
-  if(!confirm('Delete ALL MoiData projects and records? Cannot undo.'))return;
-  try{
-    for(const p of moiProjects){const snap=await moiRC(p.id).get();const b=db.batch();snap.docs.forEach(d=>b.delete(d.ref));b.delete(moiPC().doc(p.id));await b.commit();}
-    moiProjects=[];moiCurProj=null;moiCurRecords=[];
-    if(moiBarC){moiBarC.destroy();moiBarC=null;}if(moiDonutC){moiDonutC.destroy();moiDonutC=null;}
-    mdPage('home');moiRenderHome();closeOv('profOv');toast('All MoiData cleared','ok');
-  }catch(ex){toast('Error: '+ex.message,'err');}
-}
-
-// ══ HUB HELPERS ══════════════════════════════════
-function hubRenderHabits(){const el=document.getElementById('hubHabits');if(!tHabits.length){el.innerHTML=`<div class="empty" style="padding:14px"><div class="empty-ico">✅</div><p>No habits yet. <span style="color:var(--accent);cursor:pointer" onclick="switchApp('tasks')">Add some →</span></p></div>`;return;}el.innerHTML=tHabits.slice(0,5).map(h=>{const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done');return`<div class="tc" style="margin-bottom:6px"><div class="tc-top" style="padding:8px 10px"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'};width:28px;height:28px;font-size:13px">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name" style="font-size:.8rem">${h.name}</div></div><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div></div></div>`;}).join('');if(tHabits.length>5)el.innerHTML+=`<div style="text-align:center;margin-top:4px;font-size:.72rem;color:var(--accent);cursor:pointer" onclick="switchApp('tasks')">View all ${tHabits.length} →</div>`;}
 function updateHubStat(){const done=tHabits.filter(h=>tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done')).length;document.getElementById('hubHabitStat').textContent=`${done}/${tHabits.length}`;}
 
-// ══ UTILS ════════════════════════════════════════
-function fmtD(d){if(!d)return'—';try{return new
+// ══════════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════════
+function fmtD(d){if(!d)return'—';try{const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch{return d;}}
+function addDays(ds,n){const d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10);}
+function dateDiff(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
+function groupBy(arr,fn){return arr.reduce((acc,x)=>{const k=fn(x);(acc[k]=acc[k]||[]).push(x);return acc;},{});}
+function dlBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
+function openOv(id){const el=document.getElementById(id);if(!el)return;el.classList.add('on');if(id==='profOv')renderProfileSheet();}
+function closeOv(id){document.getElementById(id)?.classList.remove('on');}
+function toast(msg,type='ok'){const t=document.getElementById('toast');clearTimeout(t._t);t.className='toast';t.textContent=msg;requestAnimationFrame(()=>requestAnimationFrame(()=>{t.className=`toast ${type} show`;t._t=setTimeout(()=>t.className='toast',2500);}));}
+</script>
+</body>
+</html>
