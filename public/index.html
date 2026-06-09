@@ -2268,8 +2268,7 @@ async function savingsExpAllCSV(){
   if(!savingsGoals.length){toast("No goals","err");return;}
   const rows=[["Goal","Target","Saved","Pct","Deadline"]];
   savingsGoals.forEach(g=>rows.push([`"${g.name||""}"`,g.target||0,g.saved||0,g.target>0?Math.round((Number(g.saved||0)/g.target)*100)+"%":"—",g.deadline||""]));
-  dlBlob(new Blob([rows.map(r=>r.join(",")).join("
-")],{type:"text/csv"}),"savings_"+td()+".csv");
+  dlBlob(new Blob([rows.map(r=>r.join(",")).join("")],{type:"text/csv"}),"savings_"+td()+".csv");
   toast("Exported","ok");
 }
 async function healthDelAll(){
