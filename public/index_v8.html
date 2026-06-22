@@ -438,6 +438,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
         <div class="page" id="sp-analytics"><div id="savingsAnalyticsBody"></div><div style="height:6px"></div></div>
       </div>
       <div class="anav"><button class="anav-btn on" id="savn-home" onclick="savingsPage('home')"><div class="anav-ico">🏦</div>Goals</button><button class="anav-btn" id="savn-analytics" onclick="savingsPage('analytics');savingsRenderAnalytics()"><div class="anav-ico">📊</div>Analytics</button></div>
+      <button id="savingsFab" onclick="savingsOpenDepositFab()" style="position:absolute;right:14px;bottom:calc(var(--nav)+var(--sab)+12px);width:46px;height:46px;border-radius:23px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 3px 14px #22c55e55;z-index:10;display:none;align-items:center;justify-content:center">+</button>
     </div>
 
     <!-- HEALTH LOG APP -->
@@ -446,7 +447,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
         <div class="page on" id="hp-dash">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><div style="font-size:1rem;font-weight:700">🩺 Health Log</div><div style="font-size:.7rem;color:var(--muted)" id="healthDateLbl">Today</div></div><button class="btn btn-p btn-sm" onclick="healthOpenLog()">+ Log</button></div>
           <div class="sgrid" id="healthTodaySummary"></div>
-          <div class="card" style="margin-bottom:10px"><div class="card-hd" style="flex-wrap:wrap;gap:6px"><span>7-Day Trend</span><div class="chips" id="healthTrendChips" style="margin:0"></div></div><div class="card-body"><div class="cwrap" style="height:140px"><canvas id="healthTrendChart"></canvas></div></div></div>
+          <div class="card" style="margin-bottom:10px"><div class="card-hd">7-Day Vitals Trend</div><div class="card-body"><div class="cwrap" style="height:140px"><canvas id="healthTrendChart"></canvas></div></div></div>
           <div class="card"><div class="card-hd">Recent Entries <button class="card-link" onclick="healthPage('history')">See all →</button></div><div style="padding:0 4px" id="healthRecentList"></div></div>
           <div style="height:6px"></div>
         </div>
@@ -463,8 +464,233 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
       </div>
       <div class="anav"><button class="anav-btn on" id="hn-dash" onclick="healthPage('dash')"><div class="anav-ico">🩺</div>Dashboard</button><button class="anav-btn" id="hn-history" onclick="healthPage('history')"><div class="anav-ico">📋</div>History</button><button class="anav-btn" id="hn-meds" onclick="healthPage('meds')"><div class="anav-ico">💊</div>Meds</button></div>
     </div>
+    <!-- PROFILE OVERLAY -->
+    <div class="ov" id="profOv" onclick="if(event.target===this)closeOv('profOv')">
+      <div class="sh">
+        <div class="sh-hdl"></div>
+        <div style="text-align:center;margin-bottom:14px">
+          <div class="pav" id="profAv"></div>
+          <div style="font-size:.92rem;font-weight:700" id="profName">Loading…</div>
+          <div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="profEmail">—</div>
+          <div style="font-size:.66rem;color:var(--muted);margin-top:2px" id="profSince">—</div>
+          <div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:#22c55e15;border:1px solid #22c55e33;border-radius:20px;padding:3px 10px;font-size:.62rem;font-weight:700;color:#22c55e">🚀 My Apps Hub · SSO</div>
+        </div>
+        <div class="sec-lbl">Expense Tracker</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="eExpCSV()">CSV</button></div>
+          <div class="prow"><div><div class="prow-l">Export PDF</div></div><button class="btn btn-b btn-sm" onclick="eExpPDF()">PDF</button></div>
+          <div class="prow"><div><div class="prow-l">Export JSON</div></div><button class="btn btn-y btn-sm" onclick="eExpJSON()">JSON</button></div>
+          <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="eImpJSON(event)"></label></div>
+          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Delete All Expenses</div></div><button class="btn btn-r btn-sm" onclick="eReset()">Delete</button></div>
+        </div>
+        <div class="sec-lbl">Grocery Planner</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="grExpCSV()">CSV</button></div>
+          <div class="prow"><div><div class="prow-l">Export PDF</div></div><button class="btn btn-r btn-sm" onclick="grExpPDF()">PDF</button></div>
+          <div class="prow"><div><div class="prow-l">Export XLSX</div></div><button class="btn btn-b btn-sm" onclick="grExpXLSX()">XLSX</button></div>
+          <div class="prow"><div><div class="prow-l">Export JSON</div></div><button class="btn btn-y btn-sm" onclick="grExpJSON()">JSON</button></div>
+          <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="grImpJSON(event)"></label></div>
+        </div>
+        <div class="sec-lbl">Task Manager</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="tmExpCSV()">CSV</button></div>
+          <div class="prow"><div><div class="prow-l">Export JSON</div></div><button class="btn btn-y btn-sm" onclick="tmExpJSON()">JSON</button></div>
+          <div class="prow"><div><div class="prow-l">PDF Report</div></div><button class="btn btn-b btn-sm" onclick="tmPDF()">PDF</button></div>
+          <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="tmImpJSON(event)"></label></div>
+          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear Task Data</div></div><button class="btn btn-r btn-sm" onclick="tmClear()">Clear</button></div>
+        </div>
+        <div class="sec-lbl">MoiData</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export All (CSV)</div></div><button class="btn btn-g btn-sm" onclick="moiExpAllCSV()">CSV</button></div>
+          <div class="prow"><div><div class="prow-l">Export All (Excel)</div></div><button class="btn btn-b btn-sm" onclick="moiExpAllXLSX()">XLSX</button></div>
+          <div class="prow"><div><div class="prow-l">Export All (PDF)</div></div><button class="btn btn-r btn-sm" onclick="moiExpAllPDF()">PDF</button></div>
+          <div class="prow"><div><div class="prow-l">Export JSON Backup</div></div><button class="btn btn-y btn-sm" onclick="moiExpAllJSON()">JSON</button></div>
+          <div class="prow"><div><div class="prow-l">Import JSON Backup</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="moiImpAllJSON(event)"></label></div>
+          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All MoiData</div></div><button class="btn btn-r btn-sm" onclick="moiClearAll()">Clear</button></div>
+        </div>
+        <div class="sec-lbl">Notes</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export All Notes (JSON)</div></div><button class="btn btn-y btn-sm" onclick="notesExpAllJSON()">JSON</button></div>
+          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All Notes</div></div><button class="btn btn-r btn-sm" onclick="notesDelAll()">Clear</button></div>
+        </div>
+        <div class="sec-lbl">Savings Goals</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export All Goals (CSV)</div></div><button class="btn btn-g btn-sm" onclick="savingsExpAllCSV()">CSV</button></div>
+        </div>
+        <div class="sec-lbl">Health Log</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="healthExpCSV()">CSV</button></div>
+          <div class="prow"><div><div class="prow-l">Export PDF</div></div><button class="btn btn-r btn-sm" onclick="healthExpPDF()">PDF</button></div>
+          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All Logs</div></div><button class="btn btn-r btn-sm" onclick="healthDelAll()">Clear</button></div>
+        </div>
+        <div class="sec-lbl">Account</div>
+        <div class="card">
+          <div class="prow"><div><div class="prow-l">Sign Out</div><div class="prow-s" id="soNote">—</div></div><button class="btn btn-m btn-sm" onclick="doSO()">Sign Out</button></div>
+        </div>
+        <button class="btn btn-m btn-full" style="margin-top:10px" onclick="closeOv('profOv')">Close</button>
+        <div style="height:6px"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- ════ BUDGET PLANNER ════ -->
+<!-- OVERLAYS -->
+<div class="ov" id="addExpOv" onclick="if(event.target===this)closeOv('addExpOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="addExpTitle">Add Expense</h3>
+    <input type="hidden" id="eEditId">
+    <div class="ff"><label>Description *</label><input type="text" id="eName" placeholder="e.g. Grocery"></div>
+    <div class="ff2"><div class="ff"><label>Amount ₹ *</label><input type="number" id="eAmt" placeholder="0" inputmode="decimal"></div><div class="ff"><label>Date *</label><input type="date" id="eDate"></div></div>
+    <div class="ff"><label>Category</label><select id="eCat"></select></div>
+    <div class="ff"><label>Note</label><textarea id="eNote" rows="2" placeholder="Optional…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addExpOv')">Cancel</button><button class="btn btn-p" onclick="eSave()">Save</button></div>
+    <button class="btn btn-r btn-full" id="eDelBtn" onclick="eDel()" style="display:none;margin-top:7px">Delete Expense</button>
+  </div>
+</div>
+<div class="ov" id="addCatOv" onclick="if(event.target===this)closeOv('addCatOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3>New Category</h3>
+    <div class="ff"><label>Name *</label><input type="text" id="catName" placeholder="e.g. Health" maxlength="28"></div>
+    <div class="ff"><label>Color</label><input type="color" id="catColor" value="#6c63ff" style="height:38px;cursor:pointer"></div>
+    <div class="ff"><label>Monthly Budget ₹</label><input type="number" id="catBudget" placeholder="0 = no limit" min="0"></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addCatOv')">Cancel</button><button class="btn btn-p" onclick="eSaveCat()">Add</button></div>
+  </div>
+</div>
+<div class="ov" id="grDetailOv" onclick="if(event.target===this)closeOv('grDetailOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="grDetailTitle">Entry</h3><div id="grDetailBody"></div>
+    <div class="sh-btns" style="margin-top:10px"><button class="btn btn-m" onclick="closeOv('grDetailOv')">Close</button><button class="btn btn-b" onclick="grEditSel()">✏ Edit</button></div>
+    <button class="btn btn-r btn-full" style="margin-top:7px" onclick="grDelSel()">Delete</button>
+  </div>
+</div>
+<div class="ov" id="grBudgetOv" onclick="if(event.target===this)closeOv('grBudgetOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3>Set Budget</h3>
+    <div class="ff"><label>Month</label><input type="month" id="grBudgM"></div>
+    <div class="ff"><label>Budget ₹</label><input type="number" id="grBudgA" placeholder="5000" min="0"></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('grBudgetOv')">Cancel</button><button class="btn btn-p" onclick="grSaveBudget()">Save</button></div>
+  </div>
+</div>
+<div class="ov" id="addTaskOv" onclick="if(event.target===this)closeOv('addTaskOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="addTaskTitle">Add Habit</h3>
+    <input type="hidden" id="tEditId"><input type="hidden" id="tEditType">
+    <div class="ff"><label>Name *</label><input type="text" id="tName" placeholder="e.g. Drink Water"></div>
+    <div class="ff2"><div class="ff"><label>Category</label><input type="text" id="tCat" placeholder="e.g. Health"></div><div class="ff"><label>Icon</label><input type="text" id="tIco" placeholder="💧" maxlength="2"></div></div>
+    <div id="txH" style="display:none"><div class="ff"><label>Daily Target</label><input type="number" id="tHT" value="1" min="1"></div></div>
+    <div id="txO" style="display:none"><div class="ff2"><div class="ff"><label>Due Date</label><input type="date" id="tOD"></div><div class="ff"><label>Priority</label><select id="tOP"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div></div></div>
+    <div id="txI" style="display:none"><div class="ff2"><div class="ff"><label>Every N Days</label><input type="number" id="tID" value="7" min="1"></div><div class="ff"><label>Start Date</label><input type="date" id="tIS"></div></div></div>
+    <div class="ff"><label>Notes</label><textarea id="tNotes" rows="2" placeholder="Optional…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addTaskOv')">Cancel</button><button class="btn btn-p" onclick="tSave()">Save</button></div>
+    <button class="btn btn-r btn-full" id="tDelBtn" onclick="tDelTask()" style="display:none;margin-top:7px">Delete</button>
+  </div>
+</div>
+<div class="ov" id="logOv" onclick="if(event.target===this)closeOv('logOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="logTitle">Log Entry</h3>
+    <input type="hidden" id="logId"><input type="hidden" id="logType">
+    <div class="ff"><label>Date</label><input type="date" id="logDate"></div>
+    <div class="ff"><label>Status</label><select id="logSt"><option value="done">✅ Done</option><option value="skip">⏭ Skipped</option><option value="miss">❌ Missed</option></select></div>
+    <div class="ff"><label>Notes</label><textarea id="logNotes" rows="2" placeholder="Optional…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('logOv')">Cancel</button><button class="btn btn-p" onclick="logSave()">Save</button></div>
+  </div>
+</div>
+
+<!-- MOIDATA OVERLAYS -->
+<div class="ov" id="addMoiProjOv" onclick="if(event.target===this)closeOv('addMoiProjOv')">
+  <div class="sh"><div class="sh-hdl"></div>
+    <h3 id="moiProjTitle">📋 New Project</h3>
+    <input type="hidden" id="moiProjEditId">
+    <div class="ff"><label>Project Name *</label><input type="text" id="moiProjName" placeholder="e.g. Murugan Vizha 2024"></div>
+    <div class="ff2">
+      <div class="ff"><label>Date</label><input type="date" id="moiProjDate"></div>
+      <div class="ff"><label>Status</label><select id="moiProjStatus"><option value="active">🟢 Active</option><option value="completed">✅ Completed</option></select></div>
+    </div>
+    <div class="ff"><label>Place / Location</label><input type="text" id="moiProjPlace" placeholder="e.g. Chennai"></div>
+    <div class="ff"><label>Target Amount ₹ (optional)</label><input type="number" id="moiProjTarget" placeholder="0 = no target" min="0"></div>
+    <div class="ff"><label>Comments / Notes</label><textarea id="moiProjComments" rows="2" placeholder="Additional details…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addMoiProjOv')">Cancel</button><button class="btn btn-p" onclick="moiSaveProject()">Save</button></div>
+  </div>
+</div>
+
+<div class="ov" id="addMoiRecOv" onclick="if(event.target===this)closeOv('addMoiRecOv')">
+  <div class="sh"><div class="sh-hdl"></div>
+    <h3 id="moiRecTitle">➕ New Record</h3>
+    <input type="hidden" id="moiRecEditId">
+    <div class="ff"><label>Contributor Name *</label><input type="text" id="moiRecName" placeholder="e.g. Murugan"></div>
+    <div class="ff2">
+      <div class="ff"><label>City / Village</label><input type="text" id="moiRecCity" placeholder="e.g. Chennai"></div>
+      <div class="ff"><label>Date</label><input type="date" id="moiRecDate"></div>
+    </div>
+    <div class="ff"><label>Amount ₹ *</label><input type="number" id="moiRecAmt" placeholder="0" inputmode="decimal" min="0"></div>
+    <div class="ff"><label>Notes</label><textarea id="moiRecNotes" rows="2" placeholder="Optional notes…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addMoiRecOv')">Cancel</button><button class="btn btn-p" onclick="moiSaveRecord()">Save</button></div>
+    <button class="btn btn-r btn-full" id="moiRecDelBtn" onclick="moiDeleteFromModal()" style="display:none;margin-top:7px">Delete Record</button>
+  </div>
+</div>
+
+
+<!-- NOTES OVERLAYS -->
+<div class="ov" id="addNotebookOv" onclick="if(event.target===this)closeOv('addNotebookOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="notebookOvTitle">New Notebook</h3>
+    <input type="hidden" id="notebookEditId">
+    <div class="ff"><label>Name *</label><input type="text" id="notebookName" placeholder="e.g. Work, Personal…" maxlength="40"></div>
+    <div class="ff"><label>Color</label><input type="color" id="notebookColor" value="#06b6d4" style="height:38px;cursor:pointer"></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addNotebookOv')">Cancel</button><button class="btn btn-p" onclick="notesSaveNotebook()">Save</button></div>
+    <button class="btn btn-r btn-full" id="notebookDelBtn" onclick="notesDelNotebook()" style="display:none;margin-top:7px">Delete Notebook</button>
+  </div>
+</div>
+
+<!-- SAVINGS OVERLAYS -->
+<div class="ov" id="addSavingsGoalOv" onclick="if(event.target===this)closeOv('addSavingsGoalOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="savingsGoalOvTitle">New Goal</h3>
+    <input type="hidden" id="savingsGoalEditId">
+    <div class="ff"><label>Goal Name *</label><input type="text" id="savingsGoalName" placeholder="e.g. Emergency Fund" maxlength="60"></div>
+    <div class="ff2"><div class="ff"><label>Target ₹ *</label><input type="number" id="savingsGoalTarget" placeholder="50000" min="1" inputmode="decimal"></div><div class="ff"><label>Deadline</label><input type="date" id="savingsGoalDeadline"></div></div>
+    <div class="ff"><label>Icon (emoji)</label><input type="text" id="savingsGoalIcon" placeholder="🏠" maxlength="2" value="🎯"></div>
+    <div class="ff"><label>Notes</label><textarea id="savingsGoalNotes" rows="2" placeholder="Optional…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addSavingsGoalOv')">Cancel</button><button class="btn btn-p" onclick="savingsSaveGoal()">Save</button></div>
+    <button class="btn btn-r btn-full" id="savingsGoalDelBtn" onclick="savingsDelGoal()" style="display:none;margin-top:7px">Delete Goal</button>
+  </div>
+</div>
+
+<div class="ov" id="addSavingsDepositOv" onclick="if(event.target===this)closeOv('addSavingsDepositOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="savingsDepOvTitle">Add Deposit</h3>
+    <input type="hidden" id="savingsDepGoalId">
+    <div class="ff"><label>Amount ₹ *</label><input type="number" id="savingsDepAmt" placeholder="0" min="0.01" inputmode="decimal"></div>
+    <div class="ff2"><div class="ff"><label>Date *</label><input type="date" id="savingsDepDate"></div><div class="ff"><label>Type</label><select id="savingsDepType"><option value="deposit">💰 Deposit</option><option value="withdraw">↩️ Withdraw</option></select></div></div>
+    <div class="ff"><label>Note</label><input type="text" id="savingsDepNote" placeholder="Optional" maxlength="80"></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addSavingsDepositOv')">Cancel</button><button class="btn btn-p" onclick="savingsSaveDeposit()">Save</button></div>
+  </div>
+</div>
+
+<!-- HEALTH OVERLAYS -->
+<div class="ov" id="addHealthLogOv" onclick="if(event.target===this)closeOv('addHealthLogOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="healthLogOvTitle">Log Health Entry</h3>
+    <input type="hidden" id="healthLogEditId">
+    <div class="ff2"><div class="ff"><label>Date *</label><input type="date" id="healthLogDate"></div><div class="ff"><label>Time</label><input type="time" id="healthLogTime"></div></div>
+    <div class="ff"><label>Type *</label><select id="healthLogType" onchange="healthToggleFields()"><option value="vitals">❤️ Vitals</option><option value="weight">⚖️ Weight</option><option value="sleep">😴 Sleep</option><option value="water">💧 Water</option><option value="exercise">🏃 Exercise</option><option value="mood">😊 Mood</option><option value="symptoms">🤒 Symptoms</option><option value="medication">💊 Medication Taken</option><option value="custom">📝 Custom</option></select></div>
+    <div id="healthVitalsFields"><div class="ff2"><div class="ff"><label>Systolic (mmHg)</label><input type="number" id="healthSystolic" placeholder="120" min="50" max="250"></div><div class="ff"><label>Diastolic (mmHg)</label><input type="number" id="healthDiastolic" placeholder="80" min="30" max="150"></div></div><div class="ff"><label>Pulse (bpm)</label><input type="number" id="healthPulse" placeholder="72" min="30" max="250"></div></div>
+    <div id="healthWeightField" style="display:none"><div class="ff"><label>Weight (kg)</label><input type="number" id="healthWeight" placeholder="70.5" min="1" max="500" step="0.1"></div></div>
+    <div id="healthSleepField" style="display:none"><div class="ff"><label>Hours slept</label><input type="number" id="healthSleep" placeholder="7.5" min="0" max="24" step="0.5"></div></div>
+    <div id="healthWaterField" style="display:none"><div class="ff"><label>Water (ml)</label><input type="number" id="healthWater" placeholder="2000" min="0" max="10000"></div></div>
+    <div id="healthExerciseField" style="display:none"><div class="ff2"><div class="ff"><label>Activity</label><input type="text" id="healthExType" placeholder="e.g. Running" maxlength="40"></div><div class="ff"><label>Duration (min)</label><input type="number" id="healthExDur" placeholder="30" min="1" max="600"></div></div></div>
+    <div id="healthMoodField" style="display:none"><div class="ff"><label>Mood (1-10)</label><input type="range" id="healthMood" min="1" max="10" value="7" style="width:100%;accent-color:var(--accent)"><div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:2px"><span>😞 1</span><span id="healthMoodVal" style="font-weight:700">7</span><span>10 😁</span></div></div></div>
+    <div id="healthSymptomsField" style="display:none"><div class="ff"><label>Symptom</label><input type="text" id="healthSymptom" placeholder="e.g. Headache, Fever" maxlength="80"></div><div class="ff"><label>Severity (1-10)</label><input type="number" id="healthSeverity" placeholder="5" min="1" max="10"></div></div>
+    <div id="healthMedTakenField" style="display:none"><div class="ff"><label>Medication Name</label><select id="healthMedTakenSel"></select></div></div>
+    <div id="healthCustomField" style="display:none"><div class="ff"><label>Label *</label><input type="text" id="healthCustomLabel" placeholder="e.g. Blood Sugar" maxlength="50"></div><div class="ff"><label>Value</label><input type="text" id="healthCustomVal" placeholder="e.g. 110 mg/dL" maxlength="50"></div></div>
+    <div class="ff"><label>Notes</label><textarea id="healthLogNotes" rows="2" placeholder="Optional…"></textarea></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addHealthLogOv')">Cancel</button><button class="btn btn-p" onclick="healthSaveLog()">Save</button></div>
+    <button class="btn btn-r btn-full" id="healthLogDelBtn" onclick="healthDelLog()" style="display:none;margin-top:7px">Delete Entry</button>
+  </div>
+</div>
+
+<div class="ov" id="addHealthMedOv" onclick="if(event.target===this)closeOv('addHealthMedOv')">
+  <div class="sh"><div class="sh-hdl"></div><h3 id="healthMedOvTitle">Add Medication</h3>
+    <input type="hidden" id="healthMedEditId">
+    <div class="ff"><label>Name *</label><input type="text" id="healthMedName" placeholder="e.g. Metformin 500mg" maxlength="80"></div>
+    <div class="ff2"><div class="ff"><label>Dosage</label><input type="text" id="healthMedDose" placeholder="e.g. 1 tablet" maxlength="40"></div><div class="ff"><label>Frequency</label><select id="healthMedFreq"><option value="daily">Daily</option><option value="twice">Twice daily</option><option value="weekly">Weekly</option><option value="as-needed">As needed</option></select></div></div>
+    <div class="ff"><label>Instructions</label><input type="text" id="healthMedInstr" placeholder="e.g. After meals" maxlength="100"></div>
+    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addHealthMedOv')">Cancel</button><button class="btn btn-p" onclick="healthSaveMed()">Save</button></div>
+    <button class="btn btn-r btn-full" id="healthMedDelBtn" onclick="healthDelMed()" style="display:none;margin-top:7px">Delete Medication</button>
+  </div>
+</div>
+
+<!-- ════ BUDGET PLANNER ════ -->
 <div class="app" id="ap-budget">
   <div class="pages">
     <div class="page on" id="bp-dash">
@@ -609,77 +835,6 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
   <div class="anav"><button class="anav-btn on"><div class="anav-ico">💡</div>Ideas</button></div>
 </div>
 
-    </div>
-    <!-- PROFILE OVERLAY -->
-    <div class="ov" id="profOv" onclick="if(event.target===this)closeOv('profOv')">
-      <div class="sh">
-        <div class="sh-hdl"></div>
-        <div style="text-align:center;margin-bottom:14px">
-          <div class="pav" id="profAv"></div>
-          <div style="font-size:.92rem;font-weight:700" id="profName">Loading…</div>
-          <div style="font-size:.7rem;color:var(--muted);margin-top:2px" id="profEmail">—</div>
-          <div style="font-size:.66rem;color:var(--muted);margin-top:2px" id="profSince">—</div>
-          <div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;background:#22c55e15;border:1px solid #22c55e33;border-radius:20px;padding:3px 10px;font-size:.62rem;font-weight:700;color:#22c55e">🚀 My Apps Hub · SSO</div>
-        </div>
-        <div class="sec-lbl">Expense Tracker</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="eExpCSV()">CSV</button></div>
-          <div class="prow"><div><div class="prow-l">Export PDF</div></div><button class="btn btn-b btn-sm" onclick="eExpPDF()">PDF</button></div>
-          <div class="prow"><div><div class="prow-l">Export JSON</div></div><button class="btn btn-y btn-sm" onclick="eExpJSON()">JSON</button></div>
-          <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="eImpJSON(event)"></label></div>
-          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Delete All Expenses</div></div><button class="btn btn-r btn-sm" onclick="eReset()">Delete</button></div>
-        </div>
-        <div class="sec-lbl">Grocery Planner</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="grExpCSV()">CSV</button></div>
-          <div class="prow"><div><div class="prow-l">Export PDF</div></div><button class="btn btn-r btn-sm" onclick="grExpPDF()">PDF</button></div>
-          <div class="prow"><div><div class="prow-l">Export XLSX</div></div><button class="btn btn-b btn-sm" onclick="grExpXLSX()">XLSX</button></div>
-          <div class="prow"><div><div class="prow-l">Export JSON</div></div><button class="btn btn-y btn-sm" onclick="grExpJSON()">JSON</button></div>
-          <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="grImpJSON(event)"></label></div>
-        </div>
-        <div class="sec-lbl">Task Manager</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="tmExpCSV()">CSV</button></div>
-          <div class="prow"><div><div class="prow-l">Export JSON</div></div><button class="btn btn-y btn-sm" onclick="tmExpJSON()">JSON</button></div>
-          <div class="prow"><div><div class="prow-l">PDF Report</div></div><button class="btn btn-b btn-sm" onclick="tmPDF()">PDF</button></div>
-          <div class="prow"><div><div class="prow-l">Import JSON</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="tmImpJSON(event)"></label></div>
-          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear Task Data</div></div><button class="btn btn-r btn-sm" onclick="tmClear()">Clear</button></div>
-        </div>
-        <div class="sec-lbl">MoiData</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export All (CSV)</div></div><button class="btn btn-g btn-sm" onclick="moiExpAllCSV()">CSV</button></div>
-          <div class="prow"><div><div class="prow-l">Export All (Excel)</div></div><button class="btn btn-b btn-sm" onclick="moiExpAllXLSX()">XLSX</button></div>
-          <div class="prow"><div><div class="prow-l">Export All (PDF)</div></div><button class="btn btn-r btn-sm" onclick="moiExpAllPDF()">PDF</button></div>
-          <div class="prow"><div><div class="prow-l">Export JSON Backup</div></div><button class="btn btn-y btn-sm" onclick="moiExpAllJSON()">JSON</button></div>
-          <div class="prow"><div><div class="prow-l">Import JSON Backup</div></div><label class="btn btn-b btn-sm" style="cursor:pointer">Import<input type="file" accept=".json" onchange="moiImpAllJSON(event)"></label></div>
-          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All MoiData</div></div><button class="btn btn-r btn-sm" onclick="moiClearAll()">Clear</button></div>
-        </div>
-        <div class="sec-lbl">Notes</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export All Notes (JSON)</div></div><button class="btn btn-y btn-sm" onclick="notesExpAllJSON()">JSON</button></div>
-          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All Notes</div></div><button class="btn btn-r btn-sm" onclick="notesDelAll()">Clear</button></div>
-        </div>
-        <div class="sec-lbl">Savings Goals</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export All Goals (CSV)</div></div><button class="btn btn-g btn-sm" onclick="savingsExpAllCSV()">CSV</button></div>
-        </div>
-        <div class="sec-lbl">Health Log</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Export CSV</div></div><button class="btn btn-g btn-sm" onclick="healthExpCSV()">CSV</button></div>
-          <div class="prow"><div><div class="prow-l">Export PDF</div></div><button class="btn btn-r btn-sm" onclick="healthExpPDF()">PDF</button></div>
-          <div class="prow"><div><div class="prow-l" style="color:var(--red)">Clear All Logs</div></div><button class="btn btn-r btn-sm" onclick="healthDelAll()">Clear</button></div>
-        </div>
-        <div class="sec-lbl">Account</div>
-        <div class="card">
-          <div class="prow"><div><div class="prow-l">Sign Out</div><div class="prow-s" id="soNote">—</div></div><button class="btn btn-m btn-sm" onclick="doSO()">Sign Out</button></div>
-        </div>
-        <button class="btn btn-m btn-full" style="margin-top:10px" onclick="closeOv('profOv')">Close</button>
-        <div style="height:6px"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ════ OVERLAYS ════ -->
 <!-- Budget TX -->
 <div class="ov" id="addBOv" onclick="if(event.target===this)closeOv('addBOv')">
@@ -761,10 +916,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
   <div class="sh"><div class="sh-hdl"></div><h3 id="mealOvTitle">Log Meal</h3>
     <input type="hidden" id="mealEditId">
     <div class="ff2"><div class="ff"><label>Date *</label><input type="date" id="mealDate"></div><div class="ff"><label>Type</label><select id="mealType"><option value="breakfast">🌅 Breakfast</option><option value="lunch">☀️ Lunch</option><option value="dinner">🌙 Dinner</option><option value="snack">🍎 Snack</option></select></div></div>
-    <div class="ff"><label>Meal Name *</label><input type="text" id="mealName" placeholder="e.g. Idli Sambar" maxlength="100" oninput="mealNameTyped()" autocomplete="off">
-      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:5px" id="mealSuggChips"></div>
-    </div>
-    <div style="font-size:.68rem;color:var(--accent);min-height:14px;margin:2px 0 4px" id="mealAutofillHint"></div>
+    <div class="ff"><label>Meal Name *</label><input type="text" id="mealName" placeholder="e.g. Idli Sambar" maxlength="100"></div>
     <div class="ff2"><div class="ff"><label>Calories</label><input type="number" id="mealCal" placeholder="kcal" min="0"></div><div class="ff"><label>Protein (g)</label><input type="number" id="mealProt" placeholder="g" min="0" step="0.1"></div></div>
     <div class="ff2"><div class="ff"><label>Carbs (g)</label><input type="number" id="mealCarbs" placeholder="g" min="0" step="0.1"></div><div class="ff"><label>Fat (g)</label><input type="number" id="mealFat" placeholder="g" min="0" step="0.1"></div></div>
     <div class="ff"><label>Notes</label><input type="text" id="mealNotes" placeholder="Optional" maxlength="100"></div>
@@ -821,163 +973,6 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
   </div>
 </div>
 
-
-<!-- OVERLAYS -->
-<div class="ov" id="addExpOv" onclick="if(event.target===this)closeOv('addExpOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="addExpTitle">Add Expense</h3>
-    <input type="hidden" id="eEditId">
-    <div class="ff"><label>Description *</label><input type="text" id="eName" placeholder="e.g. Grocery"></div>
-    <div class="ff2"><div class="ff"><label>Amount ₹ *</label><input type="number" id="eAmt" placeholder="0" inputmode="decimal"></div><div class="ff"><label>Date *</label><input type="date" id="eDate"></div></div>
-    <div class="ff"><label>Category</label><select id="eCat"></select></div>
-    <div class="ff"><label>Note</label><textarea id="eNote" rows="2" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addExpOv')">Cancel</button><button class="btn btn-p" onclick="eSave()">Save</button></div>
-    <button class="btn btn-r btn-full" id="eDelBtn" onclick="eDel()" style="display:none;margin-top:7px">Delete Expense</button>
-  </div>
-</div>
-<div class="ov" id="addCatOv" onclick="if(event.target===this)closeOv('addCatOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3>New Category</h3>
-    <div class="ff"><label>Name *</label><input type="text" id="catName" placeholder="e.g. Health" maxlength="28"></div>
-    <div class="ff"><label>Color</label><input type="color" id="catColor" value="#6c63ff" style="height:38px;cursor:pointer"></div>
-    <div class="ff"><label>Monthly Budget ₹</label><input type="number" id="catBudget" placeholder="0 = no limit" min="0"></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addCatOv')">Cancel</button><button class="btn btn-p" onclick="eSaveCat()">Add</button></div>
-  </div>
-</div>
-<div class="ov" id="grDetailOv" onclick="if(event.target===this)closeOv('grDetailOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="grDetailTitle">Entry</h3><div id="grDetailBody"></div>
-    <div class="sh-btns" style="margin-top:10px"><button class="btn btn-m" onclick="closeOv('grDetailOv')">Close</button><button class="btn btn-b" onclick="grEditSel()">✏ Edit</button></div>
-    <button class="btn btn-r btn-full" style="margin-top:7px" onclick="grDelSel()">Delete</button>
-  </div>
-</div>
-<div class="ov" id="grBudgetOv" onclick="if(event.target===this)closeOv('grBudgetOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3>Set Budget</h3>
-    <div class="ff"><label>Month</label><input type="month" id="grBudgM"></div>
-    <div class="ff"><label>Budget ₹</label><input type="number" id="grBudgA" placeholder="5000" min="0"></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('grBudgetOv')">Cancel</button><button class="btn btn-p" onclick="grSaveBudget()">Save</button></div>
-  </div>
-</div>
-<div class="ov" id="addTaskOv" onclick="if(event.target===this)closeOv('addTaskOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="addTaskTitle">Add Habit</h3>
-    <input type="hidden" id="tEditId"><input type="hidden" id="tEditType">
-    <div class="ff"><label>Name *</label><input type="text" id="tName" placeholder="e.g. Drink Water"></div>
-    <div class="ff2"><div class="ff"><label>Category</label><input type="text" id="tCat" placeholder="e.g. Health"></div><div class="ff"><label>Icon</label><input type="text" id="tIco" placeholder="💧" maxlength="2"></div></div>
-    <div id="txH" style="display:none"><div class="ff"><label>Daily Target</label><input type="number" id="tHT" value="1" min="1"></div></div>
-    <div id="txO" style="display:none"><div class="ff2"><div class="ff"><label>Due Date</label><input type="date" id="tOD"></div><div class="ff"><label>Priority</label><select id="tOP"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div></div></div>
-    <div id="txI" style="display:none"><div class="ff2"><div class="ff"><label>Every N Days</label><input type="number" id="tID" value="7" min="1"></div><div class="ff"><label>Start Date</label><input type="date" id="tIS"></div></div></div>
-    <div class="ff"><label>Notes</label><textarea id="tNotes" rows="2" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addTaskOv')">Cancel</button><button class="btn btn-p" onclick="tSave()">Save</button></div>
-    <button class="btn btn-r btn-full" id="tDelBtn" onclick="tDelTask()" style="display:none;margin-top:7px">Delete</button>
-  </div>
-</div>
-<div class="ov" id="logOv" onclick="if(event.target===this)closeOv('logOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="logTitle">Log Entry</h3>
-    <input type="hidden" id="logId"><input type="hidden" id="logType">
-    <div class="ff"><label>Date</label><input type="date" id="logDate"></div>
-    <div class="ff"><label>Status</label><select id="logSt"><option value="done">✅ Done</option><option value="skip">⏭ Skipped</option><option value="miss">❌ Missed</option></select></div>
-    <div class="ff"><label>Notes</label><textarea id="logNotes" rows="2" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('logOv')">Cancel</button><button class="btn btn-p" onclick="logSave()">Save</button></div>
-  </div>
-</div>
-
-<!-- MOIDATA OVERLAYS -->
-<div class="ov" id="addMoiProjOv" onclick="if(event.target===this)closeOv('addMoiProjOv')">
-  <div class="sh"><div class="sh-hdl"></div>
-    <h3 id="moiProjTitle">📋 New Project</h3>
-    <input type="hidden" id="moiProjEditId">
-    <div class="ff"><label>Project Name *</label><input type="text" id="moiProjName" placeholder="e.g. Murugan Vizha 2024"></div>
-    <div class="ff2">
-      <div class="ff"><label>Date</label><input type="date" id="moiProjDate"></div>
-      <div class="ff"><label>Status</label><select id="moiProjStatus"><option value="active">🟢 Active</option><option value="completed">✅ Completed</option></select></div>
-    </div>
-    <div class="ff"><label>Place / Location</label><input type="text" id="moiProjPlace" placeholder="e.g. Chennai"></div>
-    <div class="ff"><label>Target Amount ₹ (optional)</label><input type="number" id="moiProjTarget" placeholder="0 = no target" min="0"></div>
-    <div class="ff"><label>Comments / Notes</label><textarea id="moiProjComments" rows="2" placeholder="Additional details…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addMoiProjOv')">Cancel</button><button class="btn btn-p" onclick="moiSaveProject()">Save</button></div>
-  </div>
-</div>
-
-<div class="ov" id="addMoiRecOv" onclick="if(event.target===this)closeOv('addMoiRecOv')">
-  <div class="sh"><div class="sh-hdl"></div>
-    <h3 id="moiRecTitle">➕ New Record</h3>
-    <input type="hidden" id="moiRecEditId">
-    <div class="ff"><label>Contributor Name *</label><input type="text" id="moiRecName" placeholder="e.g. Murugan"></div>
-    <div class="ff2">
-      <div class="ff"><label>City / Village</label><input type="text" id="moiRecCity" placeholder="e.g. Chennai"></div>
-      <div class="ff"><label>Date</label><input type="date" id="moiRecDate"></div>
-    </div>
-    <div class="ff"><label>Amount ₹ *</label><input type="number" id="moiRecAmt" placeholder="0" inputmode="decimal" min="0"></div>
-    <div class="ff"><label>Notes</label><textarea id="moiRecNotes" rows="2" placeholder="Optional notes…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addMoiRecOv')">Cancel</button><button class="btn btn-p" onclick="moiSaveRecord()">Save</button></div>
-    <button class="btn btn-r btn-full" id="moiRecDelBtn" onclick="moiDeleteFromModal()" style="display:none;margin-top:7px">Delete Record</button>
-  </div>
-</div>
-
-
-<!-- NOTES OVERLAYS -->
-<div class="ov" id="addNotebookOv" onclick="if(event.target===this)closeOv('addNotebookOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="notebookOvTitle">New Notebook</h3>
-    <input type="hidden" id="notebookEditId">
-    <div class="ff"><label>Name *</label><input type="text" id="notebookName" placeholder="e.g. Work, Personal…" maxlength="40"></div>
-    <div class="ff"><label>Color</label><input type="color" id="notebookColor" value="#06b6d4" style="height:38px;cursor:pointer"></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addNotebookOv')">Cancel</button><button class="btn btn-p" onclick="notesSaveNotebook()">Save</button></div>
-    <button class="btn btn-r btn-full" id="notebookDelBtn" onclick="notesDelNotebook()" style="display:none;margin-top:7px">Delete Notebook</button>
-  </div>
-</div>
-
-<!-- SAVINGS OVERLAYS -->
-<div class="ov" id="addSavingsGoalOv" onclick="if(event.target===this)closeOv('addSavingsGoalOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="savingsGoalOvTitle">New Goal</h3>
-    <input type="hidden" id="savingsGoalEditId">
-    <div class="ff"><label>Goal Name *</label><input type="text" id="savingsGoalName" placeholder="e.g. Emergency Fund" maxlength="60"></div>
-    <div class="ff2"><div class="ff"><label>Target ₹ *</label><input type="number" id="savingsGoalTarget" placeholder="50000" min="1" inputmode="decimal"></div><div class="ff"><label>Deadline</label><input type="date" id="savingsGoalDeadline"></div></div>
-    <div class="ff"><label>Icon (emoji)</label><input type="text" id="savingsGoalIcon" placeholder="🏠" maxlength="2" value="🎯"></div>
-    <div class="ff"><label>Notes</label><textarea id="savingsGoalNotes" rows="2" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addSavingsGoalOv')">Cancel</button><button class="btn btn-p" onclick="savingsSaveGoal()">Save</button></div>
-    <button class="btn btn-r btn-full" id="savingsGoalDelBtn" onclick="savingsDelGoal()" style="display:none;margin-top:7px">Delete Goal</button>
-  </div>
-</div>
-
-<div class="ov" id="addSavingsDepositOv" onclick="if(event.target===this)closeOv('addSavingsDepositOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="savingsDepOvTitle">Add Deposit</h3>
-    <input type="hidden" id="savingsDepGoalId">
-    <div class="ff"><label>Amount ₹ *</label><input type="number" id="savingsDepAmt" placeholder="0" min="0.01" inputmode="decimal"></div>
-    <div class="ff2"><div class="ff"><label>Date *</label><input type="date" id="savingsDepDate"></div><div class="ff"><label>Type</label><select id="savingsDepType" onchange="document.getElementById('savingsDepOvTitle').textContent=this.value==='withdraw'?'Withdraw Funds':'Add Deposit'"><option value="deposit">💰 Deposit</option><option value="withdraw">↩️ Withdraw</option></select></div></div>
-    <div class="ff"><label>Note</label><input type="text" id="savingsDepNote" placeholder="Optional" maxlength="80"></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addSavingsDepositOv')">Cancel</button><button class="btn btn-p" onclick="savingsSaveDeposit()">Save</button></div>
-  </div>
-</div>
-
-<!-- HEALTH OVERLAYS -->
-<div class="ov" id="addHealthLogOv" onclick="if(event.target===this)closeOv('addHealthLogOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="healthLogOvTitle">Log Health Entry</h3>
-    <input type="hidden" id="healthLogEditId">
-    <div class="ff2"><div class="ff"><label>Date *</label><input type="date" id="healthLogDate"></div><div class="ff"><label>Time</label><input type="time" id="healthLogTime"></div></div>
-    <div class="ff"><label>Type *</label><select id="healthLogType" onchange="healthToggleFields()"><option value="vitals">❤️ Vitals</option><option value="weight">⚖️ Weight</option><option value="sleep">😴 Sleep</option><option value="water">💧 Water</option><option value="exercise">🏃 Exercise</option><option value="mood">😊 Mood</option><option value="symptoms">🤒 Symptoms</option><option value="medication">💊 Medication Taken</option><option value="custom">📝 Custom</option></select></div>
-    <div id="healthVitalsFields"><div class="ff2"><div class="ff"><label>Systolic (mmHg)</label><input type="number" id="healthSystolic" placeholder="120" min="50" max="250"></div><div class="ff"><label>Diastolic (mmHg)</label><input type="number" id="healthDiastolic" placeholder="80" min="30" max="150"></div></div><div class="ff"><label>Pulse (bpm)</label><input type="number" id="healthPulse" placeholder="72" min="30" max="250"></div></div>
-    <div id="healthWeightField" style="display:none"><div class="ff"><label>Weight (kg)</label><input type="number" id="healthWeight" placeholder="70.5" min="1" max="500" step="0.1"></div></div>
-    <div id="healthSleepField" style="display:none"><div class="ff"><label>Hours slept</label><input type="number" id="healthSleep" placeholder="7.5" min="0" max="24" step="0.5"></div></div>
-    <div id="healthWaterField" style="display:none"><div class="ff"><label>Water (ml)</label><input type="number" id="healthWater" placeholder="2000" min="0" max="10000"></div></div>
-    <div id="healthExerciseField" style="display:none"><div class="ff2"><div class="ff"><label>Activity</label><input type="text" id="healthExType" placeholder="e.g. Running" maxlength="40"></div><div class="ff"><label>Duration (min)</label><input type="number" id="healthExDur" placeholder="30" min="1" max="600"></div></div></div>
-    <div id="healthMoodField" style="display:none"><div class="ff"><label>Mood (1-10)</label><input type="range" id="healthMood" min="1" max="10" value="7" style="width:100%;accent-color:var(--accent)"><div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);margin-top:2px"><span>😞 1</span><span id="healthMoodVal" style="font-weight:700">7</span><span>10 😁</span></div></div></div>
-    <div id="healthSymptomsField" style="display:none"><div class="ff"><label>Symptom</label><input type="text" id="healthSymptom" placeholder="e.g. Headache, Fever" maxlength="80"></div><div class="ff"><label>Severity (1-10)</label><input type="number" id="healthSeverity" placeholder="5" min="1" max="10"></div></div>
-    <div id="healthMedTakenField" style="display:none"><div class="ff"><label>Medication Name</label><select id="healthMedTakenSel"></select></div></div>
-    <div id="healthCustomField" style="display:none"><div class="ff"><label>Label *</label><input type="text" id="healthCustomLabel" placeholder="e.g. Blood Sugar" maxlength="50"></div><div class="ff"><label>Value</label><input type="text" id="healthCustomVal" placeholder="e.g. 110 mg/dL" maxlength="50"></div></div>
-    <div class="ff"><label>Notes</label><textarea id="healthLogNotes" rows="2" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addHealthLogOv')">Cancel</button><button class="btn btn-p" onclick="healthSaveLog()">Save</button></div>
-    <button class="btn btn-r btn-full" id="healthLogDelBtn" onclick="healthDelLog()" style="display:none;margin-top:7px">Delete Entry</button>
-  </div>
-</div>
-
-<div class="ov" id="addHealthMedOv" onclick="if(event.target===this)closeOv('addHealthMedOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="healthMedOvTitle">Add Medication</h3>
-    <input type="hidden" id="healthMedEditId">
-    <div class="ff"><label>Name *</label><input type="text" id="healthMedName" placeholder="e.g. Metformin 500mg" maxlength="80"></div>
-    <div class="ff2"><div class="ff"><label>Dosage</label><input type="text" id="healthMedDose" placeholder="e.g. 1 tablet" maxlength="40"></div><div class="ff"><label>Frequency</label><select id="healthMedFreq"><option value="daily">Daily</option><option value="twice">Twice daily</option><option value="weekly">Weekly</option><option value="as-needed">As needed</option></select></div></div>
-    <div class="ff"><label>Instructions</label><input type="text" id="healthMedInstr" placeholder="e.g. After meals" maxlength="100"></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addHealthMedOv')">Cancel</button><button class="btn btn-p" onclick="healthSaveMed()">Save</button></div>
-    <button class="btn btn-r btn-full" id="healthMedDelBtn" onclick="healthDelMed()" style="display:none;margin-top:7px">Delete Medication</button>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -988,17 +983,12 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 const FC={apiKey:"AIzaSyAyhylRj-T56Bf3tbbpHdNjPktlqoh7cBY",authDomain:"my-apps-dashboard-a2fbe.firebaseapp.com",projectId:"my-apps-dashboard-a2fbe",storageBucket:"my-apps-dashboard-a2fbe.firebasestorage.app",messagingSenderId:"164745687990",appId:"1:164745687990:web:731d6cfccd3e4048330717"};
 firebase.initializeApp(FC);
 const auth=firebase.auth(),db=firebase.firestore();
-// Ensure login survives browser/app restarts. Some embedded/in-app browsers block
-// IndexedDB-based LOCAL persistence, so fall back gracefully instead of failing silently.
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{
-  return auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-}).catch(()=>{/* last resort: in-memory only for this tab */});
 
 // ══ STATE ══════════════════════════════════════════
 let user=null;
 let eExp=[],eCats=[],ePeriod='month',eCatFilter='',eDonutC=null,eBarC=null;
 let grList=[],grBudgets={},grShop=[],grMonth=new Date().toISOString().slice(0,7),grHFF='all',grSelId=null,grEditId=null,grCmpC=null;
-let tHabits=[],tOT=[],tIV=[],tLogs=[],tmTab='h',tDotsRange=7;
+let tHabits=[],tOT=[],tIV=[],tLogs=[],tmTab='h';
 let moiProjects=[],moiCurProj=null,moiCurRecords=[],moiRecSearch='',moiBarC=null,moiDonutC=null;
 
 const td=()=>new Date().toISOString().slice(0,10);
@@ -1020,66 +1010,6 @@ const moiRC=pid=>moiPC().doc(pid).collection('moi_records');
 const GR_SUGG={Vegetables:['Tomato','Onion','Potato','Brinjal','Beans','Carrot','Ladyfinger','Cabbage','Spinach','Garlic','Ginger'],Fruits:['Banana','Apple','Grapes','Mango','Papaya','Orange','Pomegranate'],Grains:['Rice','Wheat Flour','Semolina','Maida','Ragi','Millet'],Lentils:['Toor Dal','Chana Dal','Urad Dal','Moong Dal','Peanuts','Rajma'],Spices:['Mustard','Cumin','Turmeric','Pepper','Garam Masala','Coriander'],Oils:['Groundnut Oil','Coconut Oil','Sunflower Oil','Sesame Oil','Ghee'],Dairy:['Milk','Curd','Butter','Paneer','Buttermilk'],Meat:['Chicken','Mutton','Beef','Eggs'],Fish:['Catfish','Seer Fish','Prawn','Crab'],Other:['Salt','Sugar','Jaggery','Coconut','Tamarind','Honey','Coffee','Tea']};
 const GR_EMO={Vegetables:'🥬',Fruits:'🍎',Grains:'🌾',Lentils:'🫘',Spices:'🌶️',Oils:'🫙',Dairy:'🥛',Meat:'🍖',Fish:'🐟',Other:'📦'};
 const E_DEFS=[{name:'Food & Dining',color:'#f59e0b',budget:5000},{name:'Housing',color:'#6c63ff',budget:15000},{name:'Transport',color:'#3b82f6',budget:3000},{name:'Shopping',color:'#ec4899',budget:4000},{name:'Health',color:'#22c55e',budget:2000},{name:'Entertainment',color:'#f97316',budget:2000},{name:'Education',color:'#06b6d4',budget:3000},{name:'Utilities',color:'#8b5cf6',budget:2500},{name:'Others',color:'#94a3b8',budget:0}];
-
-// Built-in nutrition lookup (typical per-serving values) used to auto-fill calories/protein/carbs/fat
-// when a person logs a meal, so they don't need to know exact macro numbers themselves.
-// Values are reasonable estimates for one standard serving; user-entered values always take priority
-// and can still be edited manually after autofill.
-const NUTRITION_DB={
-  'idli':{cal:39,prot:2,carbs:8,fat:0.2},'idli sambar':{cal:180,prot:7,carbs:30,fat:4},
-  'dosa':{cal:133,prot:3.5,carbs:22,fat:3.5},'masala dosa':{cal:250,prot:5,carbs:38,fat:9},
-  'sambar':{cal:90,prot:5,carbs:14,fat:2},'rasam':{cal:50,prot:2,carbs:8,fat:1},
-  'chapati':{cal:104,prot:3,carbs:18,fat:2.5},'roti':{cal:104,prot:3,carbs:18,fat:2.5},
-  'naan':{cal:262,prot:9,carbs:45,fat:5},'paratha':{cal:260,prot:6,carbs:35,fat:11},
-  'rice':{cal:205,prot:4.3,carbs:45,fat:0.4},'white rice':{cal:205,prot:4.3,carbs:45,fat:0.4},
-  'brown rice':{cal:216,prot:5,carbs:45,fat:1.8},'biryani':{cal:420,prot:18,carbs:55,fat:14},
-  'fried rice':{cal:330,prot:8,carbs:50,fat:11},'pulao':{cal:300,prot:7,carbs:48,fat:9},
-  'dal':{cal:120,prot:9,carbs:18,fat:2},'dal tadka':{cal:150,prot:9,carbs:20,fat:5},
-  'rajma':{cal:140,prot:9,carbs:23,fat:1},'chole':{cal:210,prot:11,carbs:30,fat:6},
-  'paneer':{cal:265,prot:18,carbs:6,fat:21},'paneer tikka':{cal:280,prot:18,carbs:10,fat:18},
-  'palak paneer':{cal:220,prot:12,carbs:9,fat:15},'butter chicken':{cal:380,prot:24,carbs:10,fat:27},
-  'chicken curry':{cal:280,prot:25,carbs:8,fat:16},'chicken biryani':{cal:450,prot:22,carbs:50,fat:16},
-  'tandoori chicken':{cal:240,prot:30,carbs:3,fat:12},'fish curry':{cal:220,prot:22,carbs:6,fat:12},
-  'mutton curry':{cal:320,prot:24,carbs:7,fat:21},'egg curry':{cal:210,prot:13,carbs:6,fat:15},
-  'boiled egg':{cal:78,prot:6.3,carbs:0.6,fat:5.3},'omelette':{cal:154,prot:11,carbs:1,fat:12},
-  'poha':{cal:180,prot:4,carbs:33,fat:4},'upma':{cal:190,prot:5,carbs:30,fat:6},
-  'vada':{cal:97,prot:3,carbs:10,fat:5},'samosa':{cal:262,prot:5,carbs:30,fat:14},
-  'pakora':{cal:170,prot:4,carbs:18,fat:9},'curd':{cal:60,prot:3.5,carbs:4.7,fat:3.3},
-  'curd rice':{cal:170,prot:5,carbs:30,fat:3},'buttermilk':{cal:40,prot:2,carbs:5,fat:1},
-  'milk':{cal:103,prot:8,carbs:12,fat:2.4},'tea':{cal:40,prot:1,carbs:6,fat:1.5},
-  'coffee':{cal:45,prot:1,carbs:6,fat:2},'banana':{cal:105,prot:1.3,carbs:27,fat:0.4},
-  'apple':{cal:95,prot:0.5,carbs:25,fat:0.3},'orange':{cal:62,prot:1.2,carbs:15,fat:0.2},
-  'mango':{cal:99,prot:1.4,carbs:25,fat:0.6},'salad':{cal:80,prot:2,carbs:12,fat:3},
-  'soup':{cal:90,prot:4,carbs:12,fat:3},'sandwich':{cal:250,prot:9,carbs:32,fat:9},
-  'burger':{cal:354,prot:17,carbs:33,fat:17},'pizza':{cal:285,prot:12,carbs:36,fat:10},
-  'pasta':{cal:220,prot:8,carbs:43,fat:1.3},'noodles':{cal:230,prot:6,carbs:40,fat:5},
-  'fried noodles':{cal:330,prot:9,carbs:45,fat:12},'bread':{cal:79,prot:3,carbs:14,fat:1},
-  'toast':{cal:90,prot:3,carbs:15,fat:2},'oats':{cal:150,prot:5,carbs:27,fat:3},
-  'cornflakes':{cal:120,prot:2,carbs:26,fat:0.5},'yogurt':{cal:100,prot:6,carbs:8,fat:4},
-  'smoothie':{cal:180,prot:4,carbs:35,fat:2},'juice':{cal:110,prot:0.5,carbs:26,fat:0.2},
-  'cake':{cal:340,prot:4,carbs:48,fat:15},'ice cream':{cal:207,prot:3.5,carbs:24,fat:11},
-  'chocolate':{cal:155,prot:2,carbs:17,fat:9},'cookies':{cal:160,prot:2,carbs:22,fat:7},
-  'french fries':{cal:312,prot:4,carbs:41,fat:15},'chips':{cal:152,prot:2,carbs:15,fat:10},
-  'peanuts':{cal:170,prot:7,carbs:6,fat:14},'almonds':{cal:164,prot:6,carbs:6,fat:14},
-  'mixed nuts':{cal:175,prot:5,carbs:7,fat:15},'grilled chicken':{cal:165,prot:31,carbs:0,fat:3.6},
-  'steak':{cal:271,prot:26,carbs:0,fat:18},'salmon':{cal:208,prot:20,carbs:0,fat:13},
-  'sushi':{cal:200,prot:9,carbs:38,fat:1},'momos':{cal:210,prot:7,carbs:30,fat:6},
-  'pav bhaji':{cal:300,prot:7,carbs:45,fat:11},'vada pav':{cal:290,prot:6,carbs:40,fat:12},
-  'idiyappam':{cal:120,prot:2.5,carbs:27,fat:0.3},'appam':{cal:120,prot:2,carbs:22,fat:2.5}
-};
-function mealLookupNutrition(name){
-  const key=(name||'').trim().toLowerCase();
-  if(!key)return null;
-  if(NUTRITION_DB[key])return NUTRITION_DB[key];
-  // Partial match: prefer the longest (most specific) DB key that's a substring match,
-  // so "idli sambar" wins over plain "idli" when the typed text contains both.
-  const keys=Object.keys(NUTRITION_DB);
-  const candidates=keys.filter(k=>key.includes(k)||k.includes(key));
-  if(!candidates.length)return null;
-  candidates.sort((a,b)=>b.length-a.length);
-  return NUTRITION_DB[candidates[0]];
-}
-
 
 // ══ AUTH ══════════════════════════════════════════
 let aMode='login';
@@ -1265,7 +1195,7 @@ async function grImpJSON(evt){const file=evt.target.files[0];if(!file)return;try
 async function loadTasks(){if(!uid())return;const[hs,os,is,ls]=await Promise.all([tC('habits').get(),tC('onetasks').get(),tC('ivtasks').get(),tC('logs').orderBy('date','desc').limit(300).get()]);tHabits=hs.docs.map(d=>({id:d.id,...d.data()}));tOT=os.docs.map(d=>({id:d.id,...d.data()}));tIV=is.docs.map(d=>({id:d.id,...d.data()}));tLogs=ls.docs.map(d=>({id:d.id,...d.data()}));}
 function setTT(t){tmTab=t;document.querySelectorAll('#tp-main .chip').forEach(c=>c.classList.remove('on'));document.getElementById('tt-'+t)?.classList.add('on');tmRender();}
 function tmRender(){const el=document.getElementById('tmBody');if(!el)return;if(tmTab==='h')el.innerHTML=tmHabitsHTML();else if(tmTab==='o')el.innerHTML=tmOTHTML();else if(tmTab==='i')el.innerHTML=tmIVHTML();else el.innerHTML=tmReportHTML();}
-function tmHabitsHTML(){if(!tHabits.length)return`<div class="empty"><div class="empty-ico">💪</div><p>No habits yet!</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('h')">+ Add First Habit</button></div>`;let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">Today: ${fmtD(td())}</span><button class="add-btn" onclick="openAddTask('h')">+ Add</button></div><div class="chips" style="margin-bottom:8px"><button class="chip ${tDotsRange===7?'on':''}" onclick="tDotsRange=7;tmRender()">7 Days</button><button class="chip ${tDotsRange===30?'on':''}" onclick="tDotsRange=30;tmRender()">30 Days</button></div>`;const grps=groupBy(tHabits,h=>h.category||'General');for(const[cat,items]of Object.entries(grps)){html+=`<div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin:8px 0 5px">${cat}</div>`;for(const h of items){const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done'),score=tScore(h.id),streak=tStreak(h.id),dots=tDots(h.id,tDotsRange),fc=score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';html+=`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'}">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name">${h.name}</div><div class="tc-sub">🔥 ${streak} streak · ${score}% this month</div></div><div class="tc-acts"><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div><div class="ia ia-e" onclick="openEditTask('${h.id}','h')">✏</div><div class="ia ia-l" onclick="openLog('${h.id}','h')">📝</div></div></div><div class="sdots" style="${tDotsRange===30?'flex-wrap:wrap':''}" title="Last ${tDotsRange} days">${dots.map((d,i)=>`<div class="dot ${d?'hit':''} ${i===tDotsRange-1?'now':''}"></div>`).join('')}</div><div class="scr"><span>Consistency (last ${tDotsRange}d)</span><span style="color:${fc}">${score}%</span></div><div class="sbar2"><div class="sbar2-fill" style="width:${score}%;background:${fc}"></div></div></div>`;}}return html;}
+function tmHabitsHTML(){if(!tHabits.length)return`<div class="empty"><div class="empty-ico">💪</div><p>No habits yet!</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('h')">+ Add First Habit</button></div>`;let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">Today: ${fmtD(td())}</span><button class="add-btn" onclick="openAddTask('h')">+ Add</button></div>`;const grps=groupBy(tHabits,h=>h.category||'General');for(const[cat,items]of Object.entries(grps)){html+=`<div style="font-size:.6rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin:8px 0 5px">${cat}</div>`;for(const h of items){const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done'),score=tScore(h.id),streak=tStreak(h.id),dots=tDots(h.id,7),fc=score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';html+=`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'}">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name">${h.name}</div><div class="tc-sub">🔥 ${streak} streak · ${score}% this month</div></div><div class="tc-acts"><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div><div class="ia ia-e" onclick="openEditTask('${h.id}','h')">✏</div><div class="ia ia-l" onclick="openLog('${h.id}','h')">📝</div></div></div><div class="sdots">${dots.map((d,i)=>`<div class="dot ${d?'hit':''} ${i===6?'now':''}"></div>`).join('')}</div><div class="scr"><span>Consistency</span><span style="color:${fc}">${score}%</span></div><div class="sbar2"><div class="sbar2-fill" style="width:${score}%;background:${fc}"></div></div></div>`;}}return html;}
 function tmOTHTML(){if(!tOT.length)return`<div class="empty"><div class="empty-ico">📋</div><p>No one-time tasks yet.</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('o')">+ Add Task</button></div>`;const pending=tOT.filter(t=>t.status!=='done'),done=tOT.filter(t=>t.status==='done');const pc={high:'#ef4444',medium:'#f59e0b',low:'#22c55e'};const ri=t=>{const ov=t.dueDate&&t.dueDate<td()&&t.status!=='done';return`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${t.status==='done'?'#22c55e22':ov?'#ef444415':'var(--card2)'}">${t.status==='done'?'✅':ov?'⚠️':(t.icon||'📌')}</div><div class="tc-body"><div class="tc-name" style="${t.status==='done'?'text-decoration:line-through;opacity:.5':''}">${t.name}</div><div class="tc-sub">${t.dueDate?'📅 '+fmtD(t.dueDate):'No due date'}${t.priority?` · <span style="color:${pc[t.priority]}">${t.priority}</span>`:''}${ov?' · <span style="color:#ef4444">OVERDUE</span>':''}</div></div><div class="tc-acts">${t.status!=='done'?`<div class="ia ia-g" onclick="tMarkOTDone('${t.id}')">✓</div>`:''}<div class="ia ia-e" onclick="openEditTask('${t.id}','o')">✏</div><div class="ia ia-r" onclick="tDelItem('${t.id}','o')">✕</div></div></div>${t.notes?`<div style="padding:0 11px 8px;font-size:.68rem;color:var(--muted)">${t.notes}</div>`:''}</div>`;};let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">${pending.length} pending</span><button class="add-btn" onclick="openAddTask('o')">+ Add</button></div>`;if(pending.length)html+=`<div class="sec-lbl" style="margin-top:4px">Pending</div>`+pending.map(ri).join('');if(done.length)html+=`<div class="sec-lbl" style="margin-top:8px">Done</div>`+done.map(ri).join('');return html;}
 function tmIVHTML(){if(!tIV.length)return`<div class="empty"><div class="empty-ico">🔁</div><p>No interval tasks yet.</p></div><div style="text-align:center;margin-top:10px"><button class="btn btn-p" onclick="openAddTask('i')">+ Add</button></div>`;let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-size:.72rem;color:var(--muted)">${tIV.length} tasks</span><button class="add-btn" onclick="openAddTask('i')">+ Add</button></div>`;for(const t of tIV){const ll=tLogs.filter(l=>l.taskId===t.id&&l.status==='done').sort((a,b)=>b.date>a.date?1:-1)[0];const ld=ll?.date||t.startDate||td(),nd=addDays(ld,t.intervalDays||7),dl=dateDiff(td(),nd);const ov=dl<0,ds=dl>=0&&dl<=2,score=tIVScore(t.id,t.intervalDays||7),fc=score>=80?'#22c55e':score>=50?'#f59e0b':'#ef4444';html+=`<div class="tc"><div class="tc-top"><div class="tc-ico" style="background:${ov?'#ef444415':ds?'#f59e0b15':'var(--card2)'}">${t.icon||'🔁'}</div><div class="tc-body"><div class="tc-name">${t.name}</div><div class="tc-sub">Every ${t.intervalDays||7}d · ${ov?`<span style="color:#ef4444">Overdue ${Math.abs(dl)}d</span>`:ds?`<span style="color:#f59e0b">Due in ${dl}d</span>`:`Due in ${dl}d`}</div></div><div class="tc-acts"><div class="ia ia-g" onclick="tQuick('${t.id}','i')">✓</div><div class="ia ia-e" onclick="openEditTask('${t.id}','i')">✏</div><div class="ia ia-r" onclick="tDelItem('${t.id}','i')">✕</div></div></div><div class="scr"><span>Last done: ${fmtD(ld)}</span><span style="color:${fc}">${score}%</span></div><div class="sbar2"><div class="sbar2-fill" style="width:${score}%;background:${fc}"></div></div></div>`;}return html;}
 function tmReportHTML(){const hs=tHabits.length?Math.round(tHabits.reduce((s,h)=>s+tScore(h.id),0)/tHabits.length):0,ivs=tIV.length?Math.round(tIV.reduce((s,t)=>s+tIVScore(t.id,t.intervalDays||7),0)/tIV.length):0,od=tOT.filter(t=>t.status==='done').length,ot=tOT.length,os2=ot?Math.round((od/ot)*100):0,arr=[hs,ivs,os2].filter(s=>s>0),avg=arr.length?Math.round(arr.reduce((a,b)=>a+b,0)/arr.length):0,rc=avg>=80?'#22c55e':avg>=50?'#f59e0b':'#ef4444',circ=2*Math.PI*30,off=circ-(avg/100)*circ;let html=`<div class="card" style="padding:13px;margin-bottom:9px"><div style="font-size:.6rem;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.07em;margin-bottom:8px">Overall Consistency</div><div style="display:flex;align-items:center;gap:14px"><div class="ring-wrap"><svg viewBox="0 0 80 80" width="72" height="72" style="transform:rotate(-90deg)"><circle cx="40" cy="40" r="30" fill="none" stroke="var(--border)" stroke-width="8"/><circle cx="40" cy="40" r="30" fill="none" stroke="${rc}" stroke-width="8" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" stroke-linecap="round"/></svg><div class="ring-val" style="color:${rc}">${avg}%</div></div><div style="flex:1"><div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>Daily Habits</span><span>${hs}%</span></div><div class="pb-wrap"><div class="pb" style="width:${hs}%;background:${hs>=70?'#22c55e':'#f59e0b'}"></div></div></div><div style="margin-bottom:7px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>Interval Tasks</span><span>${ivs}%</span></div><div class="pb-wrap"><div class="pb" style="width:${ivs}%;background:${ivs>=70?'#22c55e':'#f59e0b'}"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>One-Time</span><span>${os2}%</span></div><div class="pb-wrap"><div class="pb" style="width:${os2}%;background:${os2>=70?'#22c55e':'#f59e0b'}"></div></div></div></div></div></div>`;if(tHabits.length){html+=`<div class="card" style="padding:13px;margin-bottom:9px"><div style="font-size:.6rem;text-transform:uppercase;color:var(--muted);font-weight:700;letter-spacing:.07em;margin-bottom:8px">Habit Breakdown</div>`;tHabits.forEach(h=>{const sc=tScore(h.id),st=tStreak(h.id),c=sc>=80?'#22c55e':sc>=50?'#f59e0b':'#ef4444';html+=`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span>${h.icon||'✅'} ${h.name} <span style="color:var(--muted)">🔥${st}</span></span><span style="color:${c}">${sc}%</span></div><div class="pb-wrap"><div class="pb" style="width:${sc}%;background:${c}"></div></div></div>`;});html+=`</div>`;}html+=`<div class="btn-grid2"><button class="btn btn-p" onclick="tmPDF()">📑 PDF Report</button><button class="btn btn-m" onclick="tmExpCSV()">📄 Export CSV</button></div>`;return html;}
@@ -1286,7 +1216,7 @@ function tmExpCSV(){const rows=[['Date','Task','Type','Status']];tLogs.forEach(l
 function tmExpJSON(){dlBlob(new Blob([JSON.stringify({habits:tHabits,onetasks:tOT,ivtasks:tIV,logs:tLogs,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'}),`tasks_${td()}.json`);toast('JSON downloaded','ok');}
 async function tmImpJSON(evt){const file=evt.target.files[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!d.habits&&!d.onetasks){toast('Invalid file','err');return;}if(!confirm(`Import ${(d.habits||[]).length} habits?`))return;const b=db.batch();(d.habits||[]).forEach(h=>{delete h.id;b.set(tC('habits').doc(),h);});(d.onetasks||[]).forEach(t=>{delete t.id;b.set(tC('onetasks').doc(),t);});(d.ivtasks||[]).forEach(t=>{delete t.id;b.set(tC('ivtasks').doc(),t);});(d.logs||[]).forEach(l=>{delete l.id;b.set(tC('logs').doc(),l);});await b.commit();await loadTasks();tmRender();toast('Imported ✅','ok');}catch(ex){toast('Failed: '+ex.message,'err');}evt.target.value='';}
 async function tmClear(){if(!confirm('Delete ALL task data?'))return;for(const cn of['habits','onetasks','ivtasks','logs']){const s=await tC(cn).get();const b=db.batch();s.docs.forEach(d=>b.delete(d.ref));await b.commit();}tHabits=[];tOT=[];tIV=[];tLogs=[];tmRender();updateHubStat();closeOv('profOv');toast('Cleared','ok');}
-function tmPDF(){const{jsPDF}=window.jspdf,doc=new jsPDF();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');doc.setTextColor(200,205,220);doc.setFontSize(13);doc.setFont(undefined,'bold');doc.text('Task Manager — Full Report',14,15);doc.setFontSize(8);doc.setFont(undefined,'normal');doc.setTextColor(120,130,160);doc.text(`${user?.email||'—'} | ${new Date().toLocaleDateString('en-IN')} | My Apps Hub`,14,23);const hs=tHabits.length?Math.round(tHabits.reduce((s,h)=>s+tScore(h.id),0)/tHabits.length):0;const ivs=tIV.length?Math.round(tIV.reduce((s,t)=>s+tIVScore(t.id,t.intervalDays||7),0)/tIV.length):0;const otDone=tOT.filter(t=>t.status==='done').length;doc.setFontSize(9);doc.setTextColor(200,205,220);doc.text(`Habits: ${hs}% avg  |  Interval: ${ivs}% avg  |  One-Time: ${otDone}/${tOT.length} done`,14,30);let cursorY=36;if(tHabits.length){doc.setFontSize(10);doc.setTextColor(108,99,255);doc.text('Daily Habits',14,cursorY);cursorY+=4;doc.autoTable({startY:cursorY,head:[['Habit','Category','Streak','Score']],body:tHabits.map(h=>[h.name,h.category||'—',tStreak(h.id)+'d',tScore(h.id)+'%']),styles:{fillColor:[26,29,39],textColor:[200,205,220],fontSize:8,cellPadding:3},headStyles:{fillColor:[108,99,255],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[33,37,58]}});cursorY=doc.lastAutoTable.finalY+10;}if(tIV.length){if(cursorY>250){doc.addPage();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');cursorY=15;}doc.setFontSize(10);doc.setTextColor(59,130,246);doc.text('Interval Tasks',14,cursorY);cursorY+=4;doc.autoTable({startY:cursorY,head:[['Task','Every N Days','Score']],body:tIV.map(t=>[t.name,(t.intervalDays||7)+'d',tIVScore(t.id,t.intervalDays||7)+'%']),styles:{fillColor:[26,29,39],textColor:[200,205,220],fontSize:8,cellPadding:3},headStyles:{fillColor:[59,130,246],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[33,37,58]}});cursorY=doc.lastAutoTable.finalY+10;}if(tOT.length){if(cursorY>250){doc.addPage();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');cursorY=15;}doc.setFontSize(10);doc.setTextColor(245,158,11);doc.text('One-Time Tasks',14,cursorY);cursorY+=4;doc.autoTable({startY:cursorY,head:[['Task','Due Date','Priority','Status']],body:tOT.map(t=>[t.name,t.dueDate?fmtD(t.dueDate):'—',t.priority||'—',t.status==='done'?'✅ Done':'⏳ Pending']),styles:{fillColor:[26,29,39],textColor:[200,205,220],fontSize:8,cellPadding:3},headStyles:{fillColor:[245,158,11],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[33,37,58]}});cursorY=doc.lastAutoTable.finalY+10;}if(tLogs.length){if(cursorY>240){doc.addPage();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');cursorY=15;}const all=[...tHabits,...tOT,...tIV];doc.setFontSize(10);doc.setTextColor(34,197,94);doc.text('Recent Activity Log',14,cursorY);cursorY+=4;doc.autoTable({startY:cursorY,head:[['Date','Task','Status']],body:tLogs.slice(0,40).map(l=>{const t=all.find(x=>x.id===l.taskId);return[l.date,t?.name||'—',l.status];}),styles:{fillColor:[26,29,39],textColor:[200,205,220],fontSize:8,cellPadding:3},headStyles:{fillColor:[34,197,94],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[33,37,58]}});}doc.save(`task_report_${td()}.pdf`);toast('PDF downloaded','ok');}
+function tmPDF(){const{jsPDF}=window.jspdf,doc=new jsPDF();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');doc.setTextColor(200,205,220);doc.setFontSize(13);doc.setFont(undefined,'bold');doc.text('Task Manager — Consistency Report',14,15);doc.setFontSize(8);doc.setFont(undefined,'normal');doc.setTextColor(120,130,160);doc.text(`${user?.email||'—'} | ${new Date().toLocaleDateString('en-IN')} | My Apps Hub`,14,23);const hs=tHabits.length?Math.round(tHabits.reduce((s,h)=>s+tScore(h.id),0)/tHabits.length):0;doc.setFontSize(9);doc.setTextColor(200,205,220);doc.text(`Habit Score: ${hs}%`,14,30);if(tHabits.length){doc.autoTable({startY:36,head:[['Habit','Category','Streak','Score']],body:tHabits.map(h=>[h.name,h.category||'—',tStreak(h.id)+'d',tScore(h.id)+'%']),styles:{fillColor:[26,29,39],textColor:[200,205,220],fontSize:8,cellPadding:3},headStyles:{fillColor:[108,99,255],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[33,37,58]}});}if(tLogs.length){const all=[...tHabits,...tOT,...tIV];doc.autoTable({startY:doc.lastAutoTable?.finalY?doc.lastAutoTable.finalY+8:70,head:[['Date','Task','Status']],body:tLogs.slice(0,40).map(l=>{const t=all.find(x=>x.id===l.taskId);return[l.date,t?.name||'—',l.status];}),styles:{fillColor:[26,29,39],textColor:[200,205,220],fontSize:8,cellPadding:3},headStyles:{fillColor:[34,197,94],textColor:[255,255,255],fontStyle:'bold'},alternateRowStyles:{fillColor:[33,37,58]}});}doc.save(`consistency_${td()}.pdf`);toast('PDF downloaded','ok');}
 
 // ══════════════════════════════════════════════════
 //  MOIDATA APP
@@ -1985,6 +1915,8 @@ function savingsPage(tab){
   document.querySelectorAll('#ap-savings .anav-btn').forEach(b=>b.classList.remove('on'));
   document.getElementById('sp-'+tab)?.classList.add('on');
   document.getElementById('savn-'+tab)?.classList.add('on');
+  const fab=document.getElementById('savingsFab');
+  if(fab)fab.style.display=tab==='detail'?'flex':'none';
   if(tab==='home')savingsRenderHome();
 }
 
@@ -2267,15 +2199,12 @@ function healthRenderDash(){
   const now=new Date();
   document.getElementById('healthDateLbl').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
   const todayLogs=healthLogs.filter(l=>l.date===td());
-  // Pick the entry with the most recent date+time, not just the first match in array order
-  // (array order can be stale once edits/imports/late-dated entries are added).
-  const byRecency=(arr)=>[...arr].sort((a,b)=>{const ka=(a.date||'')+'T'+(a.time||'00:00'),kb=(b.date||'')+'T'+(b.time||'00:00');return kb.localeCompare(ka);})[0];
-  const latestVitals=byRecency(healthLogs.filter(l=>l.type==='vitals'&&l.systolic));
-  const latestWeight=byRecency(healthLogs.filter(l=>l.type==='weight'&&l.weight));
+  const latestVitals=healthLogs.find(l=>l.type==='vitals'&&l.systolic);
+  const latestWeight=healthLogs.find(l=>l.type==='weight'&&l.weight);
   const sleepToday=todayLogs.find(l=>l.type==='sleep');
   const waterToday=todayLogs.filter(l=>l.type==='water').reduce((s,l)=>s+Number(l.water||0),0);
   document.getElementById('healthTodaySummary').innerHTML=`
-    <div class="sc"><label>Blood Pressure</label><div class="sv" style="font-size:.9rem">${latestVitals?latestVitals.systolic+'/'+latestVitals.diastolic:'—'}</div><div class="ss">${latestVitals?fmtD(latestVitals.date)+' · Pulse: '+latestVitals.pulse+' bpm':'No vitals'}</div></div>
+    <div class="sc"><label>Blood Pressure</label><div class="sv" style="font-size:.9rem">${latestVitals?latestVitals.systolic+'/'+latestVitals.diastolic:'—'}</div><div class="ss">${latestVitals?'Pulse: '+latestVitals.pulse+' bpm':'No vitals'}</div></div>
     <div class="sc"><label>Weight</label><div class="sv" style="font-size:.9rem">${latestWeight?latestWeight.weight+' kg':'—'}</div><div class="ss">${latestWeight?fmtD(latestWeight.date):''}</div></div>
     <div class="sc"><label>Sleep</label><div class="sv" style="font-size:.9rem">${sleepToday?sleepToday.sleep+'h':'—'}</div><div class="ss">last night</div></div>
     <div class="sc"><label>Water</label><div class="sv" style="font-size:.9rem">${waterToday?waterToday+'ml':'—'}</div><div class="ss">${waterToday?Math.round((waterToday/2000)*100)+'% of 2L':''}</div></div>`;
@@ -2283,36 +2212,18 @@ function healthRenderDash(){
   healthRenderRecentList();
 }
 
-let healthTrendMetric='bp';
 function healthRenderTrend(){
-  const metrics=[['bp','❤️ BP'],['weight','⚖️ Weight'],['sleep','😴 Sleep'],['water','💧 Water']];
-  const chipsEl=document.getElementById('healthTrendChips');
-  if(chipsEl)chipsEl.innerHTML=metrics.map(([v,l])=>`<button class="chip ${healthTrendMetric===v?'on':''}" style="font-size:.62rem;padding:3px 8px" onclick="healthTrendMetric='${v}';healthRenderTrend()">${l}</button>`).join('');
   const last7=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last7.push(d.toISOString().slice(0,10));}
+  const sys=last7.map(d=>{const l=healthLogs.find(x=>x.date===d&&x.type==='vitals'&&x.systolic);return l?l.systolic:null;});
+  const dia=last7.map(d=>{const l=healthLogs.find(x=>x.date===d&&x.type==='vitals'&&x.diastolic);return l?l.diastolic:null;});
   const labels=last7.map(d=>new Date(d+'T00:00:00').toLocaleDateString('en-IN',{month:'short',day:'numeric'}));
-  if(healthTrendC){healthTrendC.destroy();healthTrendC=null;}
+  if(healthTrendC)healthTrendC.destroy();
   const cv=document.getElementById('healthTrendChart');if(!cv)return;
-  let datasets=[];
-  if(healthTrendMetric==='bp'){
-    const sys=last7.map(d=>{const l=healthLogs.find(x=>x.date===d&&x.type==='vitals'&&x.systolic);return l?l.systolic:null;});
-    const dia=last7.map(d=>{const l=healthLogs.find(x=>x.date===d&&x.type==='vitals'&&x.diastolic);return l?l.diastolic:null;});
-    datasets=[
-      {label:'Systolic',data:sys,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#ef4444',pointRadius:4},
-      {label:'Diastolic',data:dia,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#3b82f6',pointRadius:4}
-    ];
-  }else if(healthTrendMetric==='weight'){
-    const w=last7.map(d=>{const l=healthLogs.find(x=>x.date===d&&x.type==='weight'&&x.weight);return l?l.weight:null;});
-    datasets=[{label:'Weight (kg)',data:w,borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#f59e0b',pointRadius:4}];
-  }else if(healthTrendMetric==='sleep'){
-    const s=last7.map(d=>{const l=healthLogs.find(x=>x.date===d&&x.type==='sleep'&&x.sleep!=null);return l?l.sleep:null;});
-    datasets=[{label:'Sleep (hrs)',data:s,borderColor:'#8b5cf6',backgroundColor:'rgba(139,92,246,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#8b5cf6',pointRadius:4}];
-  }else if(healthTrendMetric==='water'){
-    const w=last7.map(d=>{const tot=healthLogs.filter(x=>x.date===d&&x.type==='water').reduce((s,x)=>s+Number(x.water||0),0);return tot||null;});
-    datasets=[{label:'Water (ml)',data:w,borderColor:'#06b6d4',backgroundColor:'rgba(6,182,212,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#06b6d4',pointRadius:4}];
-  }
   healthTrendC=new Chart(cv.getContext('2d'),{
     type:'line',
-    data:{labels,datasets},
+    data:{labels,datasets:[
+      {label:'Systolic',data:sys,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#ef4444',pointRadius:4},
+      {label:'Diastolic',data:dia,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',tension:.3,fill:true,spanGaps:true,pointBackgroundColor:'#3b82f6',pointRadius:4}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#94a3b8',font:{size:9}}}},scales:{x:{grid:{color:'#2d314820'},ticks:{color:'#94a3b8',font:{size:9}}},y:{grid:{color:'#2d314820'},ticks:{color:'#94a3b8',font:{size:9}}}}}
   });
 }
@@ -2985,35 +2896,8 @@ function mealRenderRecipes(){
   if(!mealRecipes.length){el.innerHTML='<div class="empty"><div class="empty-ico">📖</div><p>No recipes yet</p></div>';return;}
   el.innerHTML=mealRecipes.map(r=>`<div class="card" style="margin-bottom:8px;padding:11px 12px;cursor:pointer" onclick="mealOpenEditRecipe('${r.id}')"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="flex:1"><div style="font-size:.86rem;font-weight:700">${r.name||'—'}</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">${r.calories||0} kcal · P:${r.protein||0}g</div>${r.ingredients?`<div style="font-size:.7rem;color:var(--muted);margin-top:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${r.ingredients}</div>`:''}</div><div style="display:flex;gap:4px;margin-left:6px"><div class="ia ia-l" onclick="event.stopPropagation();mealLogFromRec('${r.id}')">📋</div><div class="ia ia-r" onclick="event.stopPropagation();mealQDelRec('${r.id}')">✕</div></div></div></div>`).join('');
 }
-function mealOpenAdd(type='breakfast'){document.getElementById('mealEditId').value='';document.getElementById('mealOvTitle').textContent='Log Meal';document.getElementById('mealDate').value=td();document.getElementById('mealType').value=type;['mealName','mealCal','mealProt','mealCarbs','mealFat','mealNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('mealAutofillHint').textContent='';document.getElementById('mealSuggChips').innerHTML='';document.getElementById('mealDelBtn').style.display='none';openOv('addMealOv');}
-function mealNameTyped(){
-  const v=document.getElementById('mealName').value;
-  const hint=document.getElementById('mealAutofillHint');
-  const chipsEl=document.getElementById('mealSuggChips');
-  // suggestion chips from nutrition DB + past meal names the user has logged before
-  const dbNames=Object.keys(NUTRITION_DB);
-  const pastNames=[...new Set(mealLogs.map(l=>l.name).filter(Boolean))];
-  const all=[...new Set([...dbNames,...pastNames.map(n=>n.toLowerCase())])];
-  const q=v.trim().toLowerCase();
-  const matches=q?all.filter(n=>n.includes(q)).slice(0,6):[];
-  chipsEl.innerHTML=matches.map(n=>`<button class="chip" style="font-size:.63rem;padding:3px 8px" onclick="mealPickSuggestion('${n.replace(/'/g,"\\'")}')">${n}</button>`).join('');
-  const found=mealLookupNutrition(v);
-  if(found){
-    hint.textContent=`✓ Auto-filled from "${v.trim()}" — feel free to adjust`;
-    document.getElementById('mealCal').value=found.cal;
-    document.getElementById('mealProt').value=found.prot;
-    document.getElementById('mealCarbs').value=found.carbs;
-    document.getElementById('mealFat').value=found.fat;
-  }else{
-    hint.textContent=v.trim()?'No match found — enter calories/macros manually, or pick a suggestion below':'';
-  }
-}
-function mealPickSuggestion(name){
-  document.getElementById('mealName').value=name.charAt(0).toUpperCase()+name.slice(1);
-  mealNameTyped();
-  document.getElementById('mealSuggChips').innerHTML='';
-}
-function mealOpenEdit(id){const l=mealLogs.find(x=>x.id===id);if(!l)return;document.getElementById('mealEditId').value=id;document.getElementById('mealDate').value=l.date||td();document.getElementById('mealType').value=l.mealType||'breakfast';document.getElementById('mealName').value=l.name||'';document.getElementById('mealCal').value=l.calories||'';document.getElementById('mealProt').value=l.protein||'';document.getElementById('mealCarbs').value=l.carbs||'';document.getElementById('mealFat').value=l.fat||'';document.getElementById('mealNotes').value=l.notes||'';document.getElementById('mealAutofillHint').textContent='';document.getElementById('mealSuggChips').innerHTML='';document.getElementById('mealDelBtn').style.display='block';openOv('addMealOv');}
+function mealOpenAdd(type='breakfast'){document.getElementById('mealEditId').value='';document.getElementById('mealOvTitle').textContent='Log Meal';document.getElementById('mealDate').value=td();document.getElementById('mealType').value=type;['mealName','mealCal','mealProt','mealCarbs','mealFat','mealNotes'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});document.getElementById('mealDelBtn').style.display='none';openOv('addMealOv');}
+function mealOpenEdit(id){const l=mealLogs.find(x=>x.id===id);if(!l)return;document.getElementById('mealEditId').value=id;document.getElementById('mealDate').value=l.date||td();document.getElementById('mealType').value=l.mealType||'breakfast';document.getElementById('mealName').value=l.name||'';document.getElementById('mealCal').value=l.calories||'';document.getElementById('mealProt').value=l.protein||'';document.getElementById('mealCarbs').value=l.carbs||'';document.getElementById('mealFat').value=l.fat||'';document.getElementById('mealNotes').value=l.notes||'';document.getElementById('mealDelBtn').style.display='block';openOv('addMealOv');}
 async function mealSave(){const id=document.getElementById('mealEditId').value,name=document.getElementById('mealName').value.trim(),date=document.getElementById('mealDate').value;if(!name||!date){toast('Name and date required','err');return;}const data={name,date,mealType:document.getElementById('mealType').value,calories:parseInt(document.getElementById('mealCal').value)||0,protein:parseFloat(document.getElementById('mealProt').value)||0,carbs:parseFloat(document.getElementById('mealCarbs').value)||0,fat:parseFloat(document.getElementById('mealFat').value)||0,notes:document.getElementById('mealNotes').value.trim(),updatedAt:new Date().toISOString()};try{if(id){await mealColl().doc(id).update(data);const i=mealLogs.findIndex(x=>x.id===id);if(i>=0)mealLogs[i]={...mealLogs[i],...data};}else{data.createdAt=new Date().toISOString();const r=await mealColl().add(data);mealLogs.unshift({id:r.id,...data});}closeOv('addMealOv');mealRenderHome();mealRenderLog();toast('Saved ✅','ok');}catch(ex){toast('Error: '+ex.message,'err');}}
 async function mealDel(){const id=document.getElementById('mealEditId').value;if(!id||!confirm('Delete?'))return;await mealColl().doc(id).delete();mealLogs=mealLogs.filter(l=>l.id!==id);closeOv('addMealOv');mealRenderHome();mealRenderLog();toast('Deleted','ok');}
 async function mealQDel(id){if(!confirm('Delete?'))return;await mealColl().doc(id).delete();mealLogs=mealLogs.filter(l=>l.id!==id);mealRenderHome();toast('Deleted','ok');}
