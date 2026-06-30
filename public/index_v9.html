@@ -4,15 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#0f1117">
-<meta name="description" content="Your personal productivity hub — expenses, tasks, health, budgeting and more, all in one place.">
-<!-- PWA: installability -->
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Apps Hub">
-<meta name="mobile-web-app-capable" content="yes">
 <title>My Apps Hub</title>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -213,24 +204,6 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 .cal-cell:hover:not(.today){background:var(--card2)}
 .cal-hd{text-align:center;font-size:.58rem;font-weight:700;color:var(--muted);padding:3px 0}
 .meal-slot{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:7px}
-
-/* ══ PWA: install banner, offline indicator, pull-to-refresh ══ */
-.install-banner{position:fixed;left:10px;right:10px;bottom:calc(var(--sab) + 10px);background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px 14px;display:none;align-items:center;gap:11px;box-shadow:0 8px 28px #00000055;z-index:500}
-.install-banner.show{display:flex}
-.install-banner .ico{width:42px;height:42px;border-radius:11px;background:linear-gradient(135deg,#6c63ff,#3b82f6);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px}
-.install-banner .txt{flex:1;min-width:0}
-.install-banner .txt b{font-size:.82rem;display:block}
-.install-banner .txt span{font-size:.68rem;color:var(--muted)}
-.install-banner button.install-go{background:var(--accent);color:#fff;border:none;border-radius:9px;padding:7px 12px;font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0}
-.install-banner button.install-x{background:none;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;flex-shrink:0;padding:2px 4px}
-.offline-pill{position:fixed;top:calc(var(--hdr) + 8px);left:50%;transform:translateX(-50%) translateY(-40px);background:#f59e0b;color:#1a1d2e;font-size:.7rem;font-weight:700;padding:6px 14px;border-radius:20px;z-index:600;display:flex;align-items:center;gap:6px;box-shadow:0 4px 14px #00000055;transition:transform .3s;pointer-events:none}
-.offline-pill.show{transform:translateX(-50%) translateY(0)}
-.ptr-indicator{position:absolute;top:0;left:50%;transform:translateX(-50%) translateY(-40px) scale(.6);width:34px;height:34px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;z-index:20;transition:transform .15s,opacity .15s;opacity:0;pointer-events:none}
-.ptr-indicator.pulling{opacity:1}
-.ptr-indicator.spinning{animation:ptrspin 0.7s linear infinite}
-@keyframes ptrspin{from{transform:translateX(-50%) translateY(8px) rotate(0deg)}to{transform:translateX(-50%) translateY(8px) rotate(360deg)}}
-.skel{background:linear-gradient(90deg,var(--card2) 25%,var(--border) 37%,var(--card2) 63%);background-size:400% 100%;animation:skelshine 1.4s ease infinite;border-radius:8px}
-@keyframes skelshine{0%{background-position:100% 50%}100%{background-position:0 50%}}
 
 </style>
 </head>
@@ -636,88 +609,6 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
   <div class="anav"><button class="anav-btn on"><div class="anav-ico">💡</div>Ideas</button></div>
 </div>
 
-
-<!-- ════ SUBSCRIPTIONS TRACKER ════ -->
-<div class="app" id="ap-subs">
-  <div class="pages">
-    <div class="page on" id="subsp-list">
-      <div class="bhero" style="background:linear-gradient(135deg,#ec4899,#db2777)">
-        <div class="bhero-lbl">MONTHLY RECURRING COST</div>
-        <div class="bhero-amt" id="subsMonthlyTotal">₹0</div>
-        <div class="bhero-sub" id="subsYearlyNote">₹0/year if all renew</div>
-      </div>
-      <div class="sgrid">
-        <div class="sc"><label>Active</label><div class="sv" id="subsActiveCount">0</div></div>
-        <div class="sc"><label>Due in 7 Days</label><div class="sv" id="subsDueSoonCount" style="color:var(--yellow)">0</div></div>
-      </div>
-      <div class="card" id="subsDueCard" style="display:none"><div class="card-hd">⏰ Renewing Soon</div><div style="padding:0 4px" id="subsDueList"></div></div>
-      <div class="card"><div class="card-hd">All Subscriptions</div><div style="padding:0 4px" id="subsListEl"></div></div>
-      <div style="height:6px"></div>
-    </div>
-    <div class="page" id="subsp-cats">
-      <div class="card"><div class="card-hd">By Category</div><div class="card-body"><div class="cwrap" style="height:140px"><canvas id="subsCatChart"></canvas></div></div></div>
-      <div id="subsCatBreakdown"></div>
-      <div style="height:6px"></div>
-    </div>
-  </div>
-  <div class="anav">
-    <button class="anav-btn on" id="subsn-list" onclick="subsPage('list')"><div class="anav-ico">📦</div>All</button>
-    <button class="anav-btn" id="subsn-cats" onclick="subsPage('cats');subsRenderCats()"><div class="anav-ico">📊</div>Breakdown</button>
-  </div>
-  <button onclick="subsOpenAdd()" style="position:absolute;right:14px;bottom:calc(var(--nav)+var(--sab)+12px);width:46px;height:46px;border-radius:23px;background:linear-gradient(135deg,#ec4899,#db2777);border:none;color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 3px 14px #ec489955;z-index:10;display:flex;align-items:center;justify-content:center">+</button>
-</div>
-
-<!-- ════ READING TRACKER ════ -->
-<div class="app" id="ap-reading">
-  <div class="pages">
-    <div class="page on" id="readp-current">
-      <div class="sgrid">
-        <div class="sc"><label>Reading Now</label><div class="sv" id="readCurrentCount">0</div></div>
-        <div class="sc"><label>Finished</label><div class="sv" id="readFinishedCount">0</div></div>
-        <div class="sc"><label>This Year</label><div class="sv" id="readYearCount">0</div><div class="ss">books/courses</div></div>
-        <div class="sc"><label>Avg Progress</label><div class="sv" id="readAvgProgress">0%</div></div>
-      </div>
-      <div class="sec-lbl">Currently Reading / Learning</div>
-      <div id="readCurrentList"></div>
-      <div style="height:6px"></div>
-    </div>
-    <div class="page" id="readp-finished">
-      <div class="chips" id="readYearChips"></div>
-      <div id="readFinishedList"></div>
-      <div style="height:6px"></div>
-    </div>
-    <div class="page" id="readp-wishlist">
-      <div id="readWishlistEl"></div>
-      <div style="height:6px"></div>
-    </div>
-  </div>
-  <div class="anav">
-    <button class="anav-btn on" id="readn-current" onclick="readingPage('current')"><div class="anav-ico">📖</div>In Progress</button>
-    <button class="anav-btn" id="readn-finished" onclick="readingPage('finished');readingRenderFinished()"><div class="anav-ico">✅</div>Finished</button>
-    <button class="anav-btn" id="readn-wishlist" onclick="readingPage('wishlist');readingRenderWishlist()"><div class="anav-ico">⭐</div>Wishlist</button>
-  </div>
-  <button onclick="readingOpenAdd()" style="position:absolute;right:14px;bottom:calc(var(--nav)+var(--sab)+12px);width:46px;height:46px;border-radius:23px;background:linear-gradient(135deg,#0ea5e9,#0284c7);border:none;color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 3px 14px #0ea5e955;z-index:10;display:flex;align-items:center;justify-content:center">+</button>
-</div>
-
-<!-- ════ HOUSEHOLD INVENTORY ════ -->
-<div class="app" id="ap-inventory">
-  <div class="pages">
-    <div class="page on" id="invp-list">
-      <div class="sgrid">
-        <div class="sc"><label>Items</label><div class="sv" id="invItemCount">0</div></div>
-        <div class="sc"><label>Warranty Expiring</label><div class="sv" id="invWarrantyCount" style="color:var(--yellow)">0</div><div class="ss">next 30 days</div></div>
-      </div>
-      <div class="card" id="invWarrantyCard" style="display:none"><div class="card-hd">⚠️ Warranty Expiring Soon</div><div style="padding:0 4px" id="invWarrantyList"></div></div>
-      <div class="sbar"><span style="color:var(--muted);font-size:.8rem">🔍</span><input type="search" id="invSearch" placeholder="Search items…" oninput="invRender()" style="flex:1;border:none;outline:none;font-size:.84rem;background:transparent;color:var(--text)"></div>
-      <div class="chips" id="invCatChips"></div>
-      <div id="invListEl"></div>
-      <div style="height:6px"></div>
-    </div>
-  </div>
-  <div class="anav"><button class="anav-btn on"><div class="anav-ico">🏠</div>Inventory</button></div>
-  <button onclick="invOpenAdd()" style="position:absolute;right:14px;bottom:calc(var(--nav)+var(--sab)+12px);width:46px;height:46px;border-radius:23px;background:linear-gradient(135deg,#84cc16,#65a30d);border:none;color:#fff;font-size:1.4rem;cursor:pointer;box-shadow:0 3px 14px #84cc1655;z-index:10;display:flex;align-items:center;justify-content:center">+</button>
-</div>
-
     </div>
     <!-- PROFILE OVERLAY -->
     <div class="ov" id="profOv" onclick="if(event.target===this)closeOv('profOv')">
@@ -1087,58 +978,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
   </div>
 </div>
 
-<!-- SUBSCRIPTIONS OVERLAY -->
-<div class="ov" id="addSubOv" onclick="if(event.target===this)closeOv('addSubOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="subOvTitle">Add Subscription</h3>
-    <input type="hidden" id="subEditId">
-    <div class="ff"><label>Name *</label><input type="text" id="subName" placeholder="e.g. Netflix, Spotify, Gym"></div>
-    <div class="ff2"><div class="ff"><label>Amount ₹ *</label><input type="number" id="subAmt" placeholder="0" min="0" step="0.01"></div><div class="ff"><label>Billing Cycle</label><select id="subCycle"><option value="monthly">Monthly</option><option value="yearly">Yearly</option><option value="weekly">Weekly</option><option value="quarterly">Quarterly</option></select></div></div>
-    <div class="ff2"><div class="ff"><label>Next Renewal *</label><input type="date" id="subRenewDate"></div><div class="ff"><label>Category</label><select id="subCat"><option value="Entertainment">🎬 Entertainment</option><option value="Software">💻 Software</option><option value="Fitness">🏋️ Fitness</option><option value="Utilities">💡 Utilities</option><option value="News">📰 News</option><option value="Other">📦 Other</option></select></div></div>
-    <div class="ff"><label>Reminder before renewal</label><select id="subReminder"><option value="3">3 days before</option><option value="7" selected>7 days before</option><option value="1">1 day before</option><option value="0">No reminder</option></select></div>
-    <div class="ff"><label>Notes</label><input type="text" id="subNotes" placeholder="Optional" maxlength="100"></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addSubOv')">Cancel</button><button class="btn btn-p" onclick="subsSave()">Save</button></div>
-    <button class="btn btn-r btn-full" id="subDelBtn" onclick="subsDel()" style="display:none;margin-top:7px">Delete</button>
-  </div>
-</div>
-
-<!-- READING TRACKER OVERLAY -->
-<div class="ov" id="addReadOv" onclick="if(event.target===this)closeOv('addReadOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="readOvTitle">Add Book / Course</h3>
-    <input type="hidden" id="readEditId">
-    <div class="ff"><label>Title *</label><input type="text" id="readTitle" placeholder="e.g. Atomic Habits" maxlength="120"></div>
-    <div class="ff2"><div class="ff"><label>Author / Instructor</label><input type="text" id="readAuthor" placeholder="Optional"></div><div class="ff"><label>Type</label><select id="readType"><option value="book">📖 Book</option><option value="course">🎓 Course</option><option value="article">📄 Article</option><option value="other">📦 Other</option></select></div></div>
-    <div class="ff"><label>Status</label><select id="readStatus" onchange="readingToggleFields()"><option value="wishlist">⭐ Wishlist</option><option value="reading">📖 Currently Reading</option><option value="finished">✅ Finished</option></select></div>
-    <div id="readProgressField"><div class="ff"><label>Progress (%)</label><input type="range" id="readProgress" min="0" max="100" value="0" style="width:100%;accent-color:var(--accent)" oninput="document.getElementById('readProgressVal').textContent=this.value+'%'"><div style="text-align:center;font-size:.78rem;font-weight:700;color:var(--accent)" id="readProgressVal">0%</div></div></div>
-    <div id="readFinishField" style="display:none"><div class="ff2"><div class="ff"><label>Finished Date</label><input type="date" id="readFinishDate"></div><div class="ff"><label>Rating</label><select id="readRating"><option value="">No rating</option><option value="5">⭐⭐⭐⭐⭐</option><option value="4">⭐⭐⭐⭐</option><option value="3">⭐⭐⭐</option><option value="2">⭐⭐</option><option value="1">⭐</option></select></div></div></div>
-    <div class="ff"><label>Notes / Takeaways</label><textarea id="readNotes" rows="3" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addReadOv')">Cancel</button><button class="btn btn-p" onclick="readingSave()">Save</button></div>
-    <button class="btn btn-r btn-full" id="readDelBtn" onclick="readingDel()" style="display:none;margin-top:7px">Delete</button>
-  </div>
-</div>
-
-<!-- HOUSEHOLD INVENTORY OVERLAY -->
-<div class="ov" id="addInvOv" onclick="if(event.target===this)closeOv('addInvOv')">
-  <div class="sh"><div class="sh-hdl"></div><h3 id="invOvTitle">Add Item</h3>
-    <input type="hidden" id="invEditId">
-    <div class="ff"><label>Item Name *</label><input type="text" id="invName" placeholder="e.g. Refrigerator, Laptop" maxlength="100"></div>
-    <div class="ff2"><div class="ff"><label>Category</label><select id="invCat"><option value="Electronics">📱 Electronics</option><option value="Appliances">🔌 Appliances</option><option value="Furniture">🛋️ Furniture</option><option value="Vehicle">🚗 Vehicle</option><option value="Other">📦 Other</option></select></div><div class="ff"><label>Purchase Date</label><input type="date" id="invPurchaseDate"></div></div>
-    <div class="ff2"><div class="ff"><label>Purchase Price ₹</label><input type="number" id="invPrice" placeholder="0" min="0"></div><div class="ff"><label>Warranty Expires</label><input type="date" id="invWarrantyDate"></div></div>
-    <div class="ff"><label>Location</label><input type="text" id="invLocation" placeholder="e.g. Kitchen, Bedroom" maxlength="60"></div>
-    <div class="ff"><label>Notes (serial no., manual link, etc.)</label><textarea id="invNotes" rows="2" placeholder="Optional…"></textarea></div>
-    <div class="sh-btns"><button class="btn btn-m" onclick="closeOv('addInvOv')">Cancel</button><button class="btn btn-p" onclick="invSave()">Save</button></div>
-    <button class="btn btn-r btn-full" id="invDelBtn" onclick="invDel()" style="display:none;margin-top:7px">Delete</button>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
-
-<div class="offline-pill" id="offlinePill">📡 Offline — changes will sync when back online</div>
-<div class="install-banner" id="installBanner">
-  <div class="ico">🚀</div>
-  <div class="txt"><b>Install My Apps Hub</b><span>Add to home screen for the full app experience</span></div>
-  <button class="install-go" onclick="doInstallPWA()">Install</button>
-  <button class="install-x" onclick="dismissInstallBanner()">✕</button>
-</div>
 
 <script>
 // ══════════════════════════════════════════════════
@@ -1262,227 +1102,6 @@ auth.onAuthStateChanged(async u=>{
   }else{user=null;document.getElementById('authWrap').style.display='flex';document.getElementById('shell').style.display='none';}
 });
 
-// ══════════════════════════════════════════════════
-//  PWA: install prompt, service worker, offline state
-// ══════════════════════════════════════════════════
-let deferredInstallPrompt=null;
-window.addEventListener('beforeinstallprompt',(e)=>{
-  e.preventDefault();
-  deferredInstallPrompt=e;
-  if(localStorage.getItem('pwaInstallDismissed')!=='1'&&!window.matchMedia('(display-mode: standalone)').matches){
-    setTimeout(()=>document.getElementById('installBanner')?.classList.add('show'),1200);
-  }
-});
-window.addEventListener('appinstalled',()=>{
-  deferredInstallPrompt=null;
-  document.getElementById('installBanner')?.classList.remove('show');
-  toast('Installed! Find it on your home screen 🚀','ok');
-});
-async function doInstallPWA(){
-  if(!deferredInstallPrompt){dismissInstallBanner();return;}
-  document.getElementById('installBanner')?.classList.remove('show');
-  const r=await deferredInstallPrompt.userChoice.catch(()=>null);
-  deferredInstallPrompt.prompt();
-}
-function dismissInstallBanner(){
-  document.getElementById('installBanner')?.classList.remove('show');
-  localStorage.setItem('pwaInstallDismissed','1');
-}
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js').then(reg=>{
-      // When a new SW takes over (after an update), reload once to pick up fresh assets.
-      reg.addEventListener('updatefound',()=>{
-        const nw=reg.installing;
-        nw?.addEventListener('statechange',()=>{
-          if(nw.state==='activated'&&navigator.serviceWorker.controller)toast('App updated — refresh for the latest version','info');
-        });
-      });
-    }).catch(()=>{/* offline-first still works without SW registration succeeding */});
-  });
-}
-function updateOnlineStatus(){
-  const pill=document.getElementById('offlinePill');
-  if(!pill)return;
-  if(navigator.onLine){pill.classList.remove('show');}
-  else{pill.classList.add('show');}
-}
-window.addEventListener('online',()=>{updateOnlineStatus();toast('Back online — syncing…','ok');flushOfflineQueue();});
-window.addEventListener('offline',updateOnlineStatus);
-document.addEventListener('DOMContentLoaded',updateOnlineStatus);
-
-// Lightweight offline write-queue: if a Firestore write fails while offline,
-// queue it in localStorage and replay in order once connectivity returns.
-// This is a best-effort safety net, not a replacement for Firestore's own
-// offline persistence — it mainly protects actions taken while fully offline
-// before the SDK has cached enough state to queue internally.
-function queueOfflineWrite(kind,payload){
-  try{
-    const q=JSON.parse(localStorage.getItem('offlineQueue')||'[]');
-    q.push({kind,payload,queuedAt:new Date().toISOString()});
-    localStorage.setItem('offlineQueue',JSON.stringify(q));
-    toast('Saved offline — will sync when connection returns','info');
-  }catch(e){console.error('Failed to queue offline write',e);}
-}
-async function flushOfflineQueue(){
-  let q=[];
-  try{q=JSON.parse(localStorage.getItem('offlineQueue')||'[]');}catch(e){return;}
-  if(!q.length)return;
-  localStorage.removeItem('offlineQueue');
-  toast(`Syncing ${q.length} offline change${q.length>1?'s':''}…`,'info');
-  // Replay is best-effort: each queued write re-runs through the normal save
-  // path so existing validation/business logic stays the single source of truth.
-  for(const item of q){
-    try{
-      if(item.kind==='generic'&&typeof window[item.payload.fn]==='function'){
-        await window[item.payload.fn](...(item.payload.args||[]));
-      }
-    }catch(e){console.error('Failed replaying offline write',item,e);}
-  }
-}
-
-// ══════════════════════════════════════════════════
-//  MOBILE UX: swipe-between-tabs (generic, works for every app)
-// ══════════════════════════════════════════════════
-// Every app follows the same pattern: a `.pages` container holding sibling
-// `.page` divs, and an `.anav` bar of `.anav-btn` buttons in the same left-to-
-// right order as the pages. Swiping left/right on the pages area just clicks
-// the next/previous nav button, so each app's own page-switch function (with
-// its own render-on-switch side effects) stays the single source of truth —
-// this hook never duplicates that logic.
-function setupSwipeNavigation(){
-  let touchStartX=0,touchStartY=0,touchStartT=0,swiping=false;
-  const SWIPE_MIN_DIST=60,SWIPE_MAX_VERTICAL=70,SWIPE_MAX_TIME=600;
-
-  document.addEventListener('touchstart',(e)=>{
-    const pages=e.target.closest('.pages');
-    if(!pages)return;
-    // Ignore swipes that start inside a horizontally-scrollable element
-    // (chips rows, tables) so we don't hijack their native scrolling.
-    if(e.target.closest('.chips, .tbl, .cwrap'))return;
-    touchStartX=e.touches[0].clientX;
-    touchStartY=e.touches[0].clientY;
-    touchStartT=Date.now();
-    swiping=true;
-  },{passive:true});
-
-  document.addEventListener('touchend',(e)=>{
-    if(!swiping)return;
-    swiping=false;
-    const dx=e.changedTouches[0].clientX-touchStartX;
-    const dy=e.changedTouches[0].clientY-touchStartY;
-    const dt=Date.now()-touchStartT;
-    if(dt>SWIPE_MAX_TIME||Math.abs(dy)>SWIPE_MAX_VERTICAL||Math.abs(dx)<SWIPE_MIN_DIST)return;
-
-    const activeApp=document.querySelector('.app.active');
-    if(!activeApp)return;
-    const navBtns=[...activeApp.querySelectorAll('.anav .anav-btn')];
-    if(navBtns.length<2)return; // nothing to swipe between
-    const curIdx=navBtns.findIndex(b=>b.classList.contains('on'));
-    if(curIdx<0)return;
-    const nextIdx=dx<0?curIdx+1:curIdx-1; // swipe left -> next tab, swipe right -> previous
-    if(nextIdx<0||nextIdx>=navBtns.length)return;
-    navBtns[nextIdx].click();
-    if(navigator.vibrate)navigator.vibrate(8); // tiny haptic tick, ignored where unsupported
-  },{passive:true});
-}
-document.addEventListener('DOMContentLoaded',setupSwipeNavigation);
-
-// ══════════════════════════════════════════════════
-//  MOBILE UX: pull-to-refresh (per active .page)
-// ══════════════════════════════════════════════════
-// Re-runs the loader for whichever app is currently active, then re-renders it,
-// so "pull to refresh" actually re-fetches from Firestore rather than just
-// being a cosmetic animation.
-const PULL_REFRESH_MAP={
-  expense:async()=>{await loadExpense();eRenderDash();eRenderList();eRenderCats();},
-  grocery:async()=>{await loadGrocery();grRenderHome();grRenderHist();},
-  tasks:async()=>{await loadTasks();tmRender();},
-  moidata:async()=>{await loadMoiData();moiRenderHome();},
-  notes:async()=>{await loadNotes();notesRenderList();},
-  savings:async()=>{await loadSavings();savingsRenderHome();},
-  health:async()=>{await loadHealth();healthRenderDash();},
-  budget:async()=>{await loadBudget();bRenderDash();},
-  calendar:async()=>{await loadCalendar();calRender();},
-  mood:async()=>{await loadMood();moodRenderHome();},
-  meal:async()=>{await loadMeal();mealRenderHome();},
-  ideas:async()=>{await loadIdeas();ideasRender();},
-  subs:async()=>{await loadSubs();subsRender();},
-  reading:async()=>{await loadReading();readingRender();},
-  inventory:async()=>{await loadInventory();invRender();}
-};
-function setupPullToRefresh(){
-  let startY=0,pulling=false,refreshing=false,curPage=null,indicator=null;
-  const THRESHOLD=68;
-
-  document.addEventListener('touchstart',(e)=>{
-    if(refreshing)return;
-    const page=e.target.closest('.page.on');
-    if(!page||page.scrollTop>4)return; // only trigger when already at the top
-    curPage=page;
-    startY=e.touches[0].clientY;
-    pulling=true;
-  },{passive:true});
-
-  document.addEventListener('touchmove',(e)=>{
-    if(!pulling||!curPage)return;
-    const dy=e.touches[0].clientY-startY;
-    if(dy<=0){removeIndicator();return;}
-    if(curPage.scrollTop>4){removeIndicator();pulling=false;return;}
-    ensureIndicator(curPage);
-    const dist=Math.min(dy*0.5,90);
-    indicator.style.transform=`translateX(-50%) translateY(${dist-34}px)`;
-    indicator.classList.toggle('pulling',dist>20);
-    indicator.textContent=dist>THRESHOLD?'↑':'↓';
-  },{passive:true});
-
-  document.addEventListener('touchend',(e)=>{
-    if(!pulling||!curPage)return;
-    pulling=false;
-    const dy=(e.changedTouches[0]?.clientY||startY)-startY;
-    if(dy>THRESHOLD*1.4&&!refreshing){
-      doRefresh();
-    }else{
-      removeIndicator();
-    }
-  },{passive:true});
-
-  function ensureIndicator(page){
-    if(indicator)return;
-    indicator=document.createElement('div');
-    indicator.className='ptr-indicator pulling';
-    indicator.textContent='↓';
-    page.style.position='relative';
-    page.prepend(indicator);
-  }
-  function removeIndicator(){
-    if(indicator){indicator.remove();indicator=null;}
-  }
-  async function doRefresh(){
-    refreshing=true;
-    if(indicator){indicator.classList.add('spinning');indicator.textContent='↻';}
-    const activeApp=document.querySelector('.app.active');
-    const appId=activeApp?.id?.replace('ap-','');
-    const refresher=PULL_REFRESH_MAP[appId];
-    try{
-      if(refresher){await refresher();toast('Refreshed','ok');}
-    }catch(e){toast('Refresh failed: '+e.message,'err');}
-    finally{refreshing=false;removeIndicator();}
-  }
-}
-document.addEventListener('DOMContentLoaded',setupPullToRefresh);
-
-// ══════════════════════════════════════════════════
-//  MOBILE UX: skeleton loaders
-// ══════════════════════════════════════════════════
-// Renders a few placeholder "shimmer" rows immediately (before real data
-// resolves) so switching apps never shows a blank flash on a slow connection.
-function skeletonRows(n=3,height=58){
-  let html='';
-  for(let i=0;i<n;i++)html+=`<div class="skel" style="height:${height}px;margin-bottom:8px"></div>`;
-  return html;
-}
-
 // ══ BOOT ══════════════════════════════════════════
 async function boot(){
   renderProfileSheet();setGreet();renderHubGrid();
@@ -1508,7 +1127,7 @@ function renderProfileSheet(){
 }
 
 // ══ HUB ══════════════════════════════════════════
-const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Contribution tracker'},{id:'notes',name:'Notes',ico:'📝',bg:'#06b6d422',desc:'Rich notes & notebooks'},{id:'savings',name:'Savings Goals',ico:'🏦',bg:'#22c55e22',desc:'Track financial goals'},{id:'health',name:'Health Log',ico:'🩺',bg:'#ef444422',desc:'Vitals, meds & wellness'},{id:'budget',name:'Budget Planner',ico:'💼',bg:'#10b98122',desc:'Income & expense tracking'},{id:'calendar',name:'Calendar',ico:'📅',bg:'#3b82f622',desc:'Events & reminders'},{id:'mood',name:'Mood Journal',ico:'🧘',bg:'#a78bfa22',desc:'Mental wellness tracker'},{id:'meal',name:'Meal Planner',ico:'🍽️',bg:'#f9731622',desc:'Nutrition & meal planning'},{id:'ideas',name:'Ideas Board',ico:'💡',bg:'#fbbf2422',desc:'Brainstorm & capture ideas'},{id:'subs',name:'Subscriptions',ico:'📦',bg:'#ec489922',desc:'Recurring bills & renewals'},{id:'reading',name:'Reading Tracker',ico:'📚',bg:'#0ea5e922',desc:'Books, courses & progress'},{id:'inventory',name:'Household Inventory',ico:'🏠',bg:'#84cc1622',desc:'Warranties & belongings'}];
+const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Contribution tracker'},{id:'notes',name:'Notes',ico:'📝',bg:'#06b6d422',desc:'Rich notes & notebooks'},{id:'savings',name:'Savings Goals',ico:'🏦',bg:'#22c55e22',desc:'Track financial goals'},{id:'health',name:'Health Log',ico:'🩺',bg:'#ef444422',desc:'Vitals, meds & wellness'},{id:'budget',name:'Budget Planner',ico:'💼',bg:'#10b98122',desc:'Income & expense tracking'},{id:'calendar',name:'Calendar',ico:'📅',bg:'#3b82f622',desc:'Events & reminders'},{id:'mood',name:'Mood Journal',ico:'🧘',bg:'#a78bfa22',desc:'Mental wellness tracker'},{id:'meal',name:'Meal Planner',ico:'🍽️',bg:'#f9731622',desc:'Nutrition & meal planning'},{id:'ideas',name:'Ideas Board',ico:'💡',bg:'#fbbf2422',desc:'Brainstorm & capture ideas'}];
 function renderHubGrid(){document.getElementById('hubGrid').innerHTML=APPS.map(a=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')"><div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div><div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div><div style="font-size:.66rem;color:var(--muted)">${a.desc}</div></div>`).join('');}
 function switchApp(id){
   document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));
@@ -1528,9 +1147,6 @@ function switchApp(id){
   if(id==='mood'){moodPage('home');moodRenderHome();}
   if(id==='meal'){mealPage('home');mealRenderHome();}
   if(id==='ideas'){ideasRender();}
-  if(id==='subs'){subsPage('list');subsRender();}
-  if(id==='reading'){readingPage('current');readingRender();}
-  if(id==='inventory'){invRender();}
 }
 function goHub(){document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));document.getElementById('ap-hub').classList.add('active');const ico=document.getElementById('tbarIco');ico.style.background='linear-gradient(135deg,#6c63ff,#3b82f6)';ico.textContent='🚀';document.getElementById('tbarTitle').textContent='My Apps Hub';}
 document.addEventListener('DOMContentLoaded',()=>{document.querySelector('.topbar-left').style.cursor='pointer';document.querySelector('.topbar-left').onclick=goHub;document.getElementById('grDate').value=td();document.getElementById('eDate').value=td();});
@@ -3116,14 +2732,11 @@ function budgetAI(){
   const rate=inc>0?Math.round(((inc-exp)/inc)*100):0;
   const catMap={};cur.filter(t=>t.bType==='expense').forEach(t=>{catMap[t.cat]=(catMap[t.cat]||0)+Number(t.amt);});
   const top=Object.entries(catMap).sort((a,b)=>b[1]-a[1])[0];
-  // Cross-app: factor in recurring subscription cost if it's a meaningful chunk of income.
-  const subsMonthly=(typeof subsList!=='undefined'&&subsList.length)?subsList.reduce((s,sub)=>s+subsMonthlyEquiv(sub),0):0;
-  const subsNote=(subsMonthly>0&&inc>0&&(subsMonthly/inc)*100>=5)?` Recurring subscriptions cost ~₹${Math.round(subsMonthly).toLocaleString('en-IN')}/mo (${Math.round((subsMonthly/inc)*100)}% of income).`:'';
   let msg='';
-  if(rate<0)msg=`⚠️ Overspending by ₹${Math.abs(inc-exp).toLocaleString('en-IN')} this month.${top?` Top expense: ${top[0]}.`:''}${subsNote}`;
-  else if(rate>=30)msg=`🎉 Great! Saving ${rate}% of income. Keep it up!${subsNote}`;
-  else if(rate>=10)msg=`📈 Saving ${rate}% this month.${top?` Top expense: ${top[0]} (₹${Number(top[1]).toLocaleString('en-IN')}).`:''}${subsNote}`;
-  else msg=`💡 Savings rate ${rate}%. Try to target 20%+ by reviewing discretionary spend.${subsNote}`;
+  if(rate<0)msg=`⚠️ Overspending by ₹${Math.abs(inc-exp).toLocaleString('en-IN')} this month.${top?` Top expense: ${top[0]}.`:''}`;
+  else if(rate>=30)msg=`🎉 Great! Saving ${rate}% of income. Keep it up!`;
+  else if(rate>=10)msg=`📈 Saving ${rate}% this month.${top?` Top expense: ${top[0]} (₹${Number(top[1]).toLocaleString('en-IN')}).`:''}`;
+  else msg=`💡 Savings rate ${rate}%. Try to target 20%+ by reviewing discretionary spend.`;
   el.style.display='block';tel.textContent=msg;
 }
 function moodAI(){
@@ -3444,153 +3057,16 @@ async function ideasDel(){const id=document.getElementById('ideaEditId').value;i
 async function ideasQDel(id){if(!confirm('Delete?'))return;await ideaColl().doc(id).delete();ideas=ideas.filter(x=>x.id!==id);ideasRender();toast('Deleted','ok');}
 
 // ══════════════════════════════════════════════════
-//  SUBSCRIPTIONS TRACKER
-// ══════════════════════════════════════════════════
-let subsList=[],subsCatChartC=null;
-const subsColl=()=>uDoc().collection('subscriptions');
-const SUBS_CATS={Entertainment:'#ec4899',Software:'#6c63ff',Fitness:'#22c55e',Utilities:'#f59e0b',News:'#3b82f6',Other:'#94a3b8'};
-const SUBS_CYCLE_DAYS={weekly:7,monthly:30,quarterly:91,yearly:365};
-
-async function loadSubs(){if(!uid())return;const s=await subsColl().orderBy('renewDate','asc').get();subsList=s.docs.map(d=>({id:d.id,...d.data()}));}
-
-function subsMonthlyEquiv(sub){
-  const days=SUBS_CYCLE_DAYS[sub.cycle]||30;
-  return (Number(sub.amt)||0)*(30/days);
-}
-function subsPage(tab){document.querySelectorAll('#ap-subs .page').forEach(p=>p.classList.remove('on'));document.querySelectorAll('#ap-subs .anav-btn').forEach(b=>b.classList.remove('on'));document.getElementById('subsp-'+tab)?.classList.add('on');document.getElementById('subsn-'+tab)?.classList.add('on');if(tab==='list')subsRender();}
-
-function subsRender(){
-  const monthlyTotal=subsList.reduce((s,sub)=>s+subsMonthlyEquiv(sub),0);
-  document.getElementById('subsMonthlyTotal').textContent='₹'+Math.round(monthlyTotal).toLocaleString('en-IN');
-  document.getElementById('subsYearlyNote').textContent='₹'+Math.round(monthlyTotal*12).toLocaleString('en-IN')+'/year if all renew';
-  document.getElementById('subsActiveCount').textContent=subsList.length;
-  const today=td(),in7=addDays(today,7);
-  const dueSoon=subsList.filter(s=>s.renewDate>=today&&s.renewDate<=in7);
-  document.getElementById('subsDueSoonCount').textContent=dueSoon.length;
-  const dueCard=document.getElementById('subsDueCard');
-  if(dueSoon.length){dueCard.style.display='block';document.getElementById('subsDueList').innerHTML=dueSoon.map(s=>{const d=dateDiff(today,s.renewDate);return`<div class="row"><div class="row-ico" style="background:${(SUBS_CATS[s.cat]||'#94a3b8')}22">${subsIco(s.cat)}</div><div class="row-body"><div class="row-name">${s.name}</div><div class="row-sub">${d===0?'Renews today':'Renews in '+d+'d'} · ${fmtD(s.renewDate)}</div></div><div class="row-right"><div class="row-amt">₹${Number(s.amt).toLocaleString('en-IN')}</div></div></div>`;}).join('');}
-  else dueCard.style.display='none';
-  const el=document.getElementById('subsListEl');
-  if(!subsList.length){el.innerHTML='<div class="empty"><div class="empty-ico">📦</div><p>No subscriptions yet.\nTrack your recurring bills here!</p></div>';return;}
-  el.innerHTML=subsList.map(s=>{const overdue=s.renewDate<today;return`<div class="row" style="cursor:pointer" onclick="subsOpenEdit('${s.id}')"><div class="row-ico" style="background:${(SUBS_CATS[s.cat]||'#94a3b8')}22">${subsIco(s.cat)}</div><div class="row-body"><div class="row-name">${s.name}</div><div class="row-sub">${s.cycle} · ${overdue?'<span style="color:var(--red)">Renewal passed</span>':fmtD(s.renewDate)}</div></div><div style="display:flex;align-items:center;gap:5px"><div class="row-right"><div class="row-amt">₹${Number(s.amt).toLocaleString('en-IN')}</div><div class="row-sub2">${s.cycle}</div></div><div class="ia ia-r" onclick="event.stopPropagation();subsQuickDel('${s.id}')">✕</div></div></div>`;}).join('');
-}
-function subsIco(cat){return{Entertainment:'🎬',Software:'💻',Fitness:'🏋️',Utilities:'💡',News:'📰',Other:'📦'}[cat]||'📦';}
-function subsRenderCats(){
-  const byCat={};subsList.forEach(s=>{byCat[s.cat]=(byCat[s.cat]||0)+subsMonthlyEquiv(s);});
-  const labels=Object.keys(byCat),vals=labels.map(l=>byCat[l]),clrs=labels.map(l=>SUBS_CATS[l]||'#94a3b8');
-  if(subsCatChartC)subsCatChartC.destroy();
-  const cv=document.getElementById('subsCatChart');
-  if(cv&&labels.length){subsCatChartC=new Chart(cv.getContext('2d'),{type:'doughnut',data:{labels,datasets:[{data:vals,backgroundColor:clrs,borderWidth:0}]},options:{cutout:'60%',responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{color:'#94a3b8',font:{size:9}}},tooltip:{callbacks:{label:c=>' ₹'+Math.round(c.parsed).toLocaleString('en-IN')+'/mo'}}}}});}
-  document.getElementById('subsCatBreakdown').innerHTML=labels.length?'<div class="card">'+labels.map(l=>`<div class="prow"><div><div class="prow-l">${subsIco(l)} ${l}</div></div><div style="font-weight:700">₹${Math.round(byCat[l]).toLocaleString('en-IN')}/mo</div></div>`).join('')+'</div>':'<div class="empty"><p>No subscriptions yet</p></div>';
-}
-function subsOpenAdd(){document.getElementById('subEditId').value='';document.getElementById('subOvTitle').textContent='Add Subscription';['subName','subAmt','subNotes'].forEach(id=>document.getElementById(id).value='');document.getElementById('subRenewDate').value=td();document.getElementById('subCycle').value='monthly';document.getElementById('subCat').value='Entertainment';document.getElementById('subReminder').value='7';document.getElementById('subDelBtn').style.display='none';openOv('addSubOv');}
-function subsOpenEdit(id){const s=subsList.find(x=>x.id===id);if(!s)return;document.getElementById('subEditId').value=id;document.getElementById('subOvTitle').textContent='Edit Subscription';document.getElementById('subName').value=s.name||'';document.getElementById('subAmt').value=s.amt||'';document.getElementById('subCycle').value=s.cycle||'monthly';document.getElementById('subRenewDate').value=s.renewDate||td();document.getElementById('subCat').value=s.cat||'Entertainment';document.getElementById('subReminder').value=s.reminder??'7';document.getElementById('subNotes').value=s.notes||'';document.getElementById('subDelBtn').style.display='block';openOv('addSubOv');}
-async function subsSave(){const id=document.getElementById('subEditId').value,name=document.getElementById('subName').value.trim(),amt=parseFloat(document.getElementById('subAmt').value),renewDate=document.getElementById('subRenewDate').value;if(!name||!amt||!renewDate){toast('Fill required fields','err');return;}if(!uid()){toast('Not signed in','err');return;}const data={name,amt,cycle:document.getElementById('subCycle').value,renewDate,cat:document.getElementById('subCat').value,reminder:document.getElementById('subReminder').value,notes:document.getElementById('subNotes').value.trim(),updatedAt:new Date().toISOString()};try{if(id){await subsColl().doc(id).update(data);const i=subsList.findIndex(x=>x.id===id);if(i>=0)subsList[i]={...subsList[i],...data};}else{data.createdAt=new Date().toISOString();const r=await subsColl().add(data);subsList.push({id:r.id,...data});}subsList.sort((a,b)=>a.renewDate>b.renewDate?1:-1);closeOv('addSubOv');subsRender();toast(id?'Updated ✅':'Added ✅','ok');}catch(ex){toast('Error: '+ex.message,'err');}}
-async function subsDel(){const id=document.getElementById('subEditId').value;if(!id||!confirm('Delete?'))return;await subsColl().doc(id).delete();subsList=subsList.filter(s=>s.id!==id);closeOv('addSubOv');subsRender();toast('Deleted','ok');}
-async function subsQuickDel(id){if(!confirm('Delete?'))return;await subsColl().doc(id).delete();subsList=subsList.filter(s=>s.id!==id);subsRender();toast('Deleted','ok');}
-
-// ══════════════════════════════════════════════════
-//  READING / LEARNING TRACKER
-// ══════════════════════════════════════════════════
-let readingList=[];
-const readingColl=()=>uDoc().collection('reading_items');
-const READ_TYPE_ICO={book:'📖',course:'🎓',article:'📄',other:'📦'};
-
-async function loadReading(){if(!uid())return;const s=await readingColl().orderBy('createdAt','desc').get();readingList=s.docs.map(d=>({id:d.id,...d.data()}));}
-
-function readingPage(tab){document.querySelectorAll('#ap-reading .page').forEach(p=>p.classList.remove('on'));document.querySelectorAll('#ap-reading .anav-btn').forEach(b=>b.classList.remove('on'));document.getElementById('readp-'+tab)?.classList.add('on');document.getElementById('readn-'+tab)?.classList.add('on');if(tab==='current')readingRender();}
-
-function readingRender(){
-  const current=readingList.filter(r=>r.status==='reading');
-  const finished=readingList.filter(r=>r.status==='finished');
-  const thisYear=finished.filter(r=>r.finishDate?.startsWith(String(new Date().getFullYear())));
-  document.getElementById('readCurrentCount').textContent=current.length;
-  document.getElementById('readFinishedCount').textContent=finished.length;
-  document.getElementById('readYearCount').textContent=thisYear.length;
-  const avgP=current.length?Math.round(current.reduce((s,r)=>s+Number(r.progress||0),0)/current.length):0;
-  document.getElementById('readAvgProgress').textContent=avgP+'%';
-  const el=document.getElementById('readCurrentList');
-  if(!current.length){el.innerHTML='<div class="empty"><div class="empty-ico">📖</div><p>Nothing in progress.\nAdd a book or course to start tracking!</p></div>';return;}
-  el.innerHTML=current.map(r=>{const pct=Number(r.progress||0);return`<div class="tc" style="cursor:pointer" onclick="readingOpenEdit('${r.id}')"><div class="tc-top"><div class="tc-ico">${READ_TYPE_ICO[r.type]||'📦'}</div><div class="tc-body"><div class="tc-name">${r.title}</div><div class="tc-sub">${r.author?r.author+' · ':''}${pct}% complete</div></div><div class="ia ia-r" onclick="event.stopPropagation();readingQuickDel('${r.id}')">✕</div></div><div class="sbar2" style="margin:0 11px 9px"><div class="sbar2-fill" style="width:${pct}%;background:var(--accent)"></div></div></div>`;}).join('');
-}
-function readingRenderFinished(){
-  const finished=readingList.filter(r=>r.status==='finished').sort((a,b)=>(b.finishDate||'').localeCompare(a.finishDate||''));
-  const years=[...new Set(finished.map(r=>r.finishDate?.slice(0,4)).filter(Boolean))].sort().reverse();
-  document.getElementById('readYearChips').innerHTML=`<button class="chip on" onclick="readingFilterYear(null,this)">All</button>`+years.map(y=>`<button class="chip" onclick="readingFilterYear('${y}',this)">${y}</button>`).join('');
-  readingRenderFinishedList(null);
-}
-function readingFilterYear(y,btn){document.querySelectorAll('#readYearChips .chip').forEach(c=>c.classList.remove('on'));btn.classList.add('on');readingRenderFinishedList(y);}
-function readingRenderFinishedList(year){
-  let list=readingList.filter(r=>r.status==='finished');
-  if(year)list=list.filter(r=>r.finishDate?.startsWith(year));
-  list.sort((a,b)=>(b.finishDate||'').localeCompare(a.finishDate||''));
-  const el=document.getElementById('readFinishedList');
-  if(!list.length){el.innerHTML='<div class="empty"><p>No finished items yet</p></div>';return;}
-  el.innerHTML=list.map(r=>{const stars=r.rating?'⭐'.repeat(Number(r.rating)):'';return`<div class="row" style="cursor:pointer" onclick="readingOpenEdit('${r.id}')"><div class="row-ico">${READ_TYPE_ICO[r.type]||'📦'}</div><div class="row-body"><div class="row-name">${r.title}</div><div class="row-sub">${r.author?r.author+' · ':''}${fmtD(r.finishDate)}${stars?' · '+stars:''}</div></div><div class="ia ia-r" onclick="event.stopPropagation();readingQuickDel('${r.id}')">✕</div></div>`;}).join('');
-}
-function readingRenderWishlist(){
-  const list=readingList.filter(r=>r.status==='wishlist');
-  const el=document.getElementById('readWishlistEl');
-  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-ico">⭐</div><p>Wishlist is empty.\nSave books/courses you want to start later!</p></div>';return;}
-  el.innerHTML=list.map(r=>`<div class="row" style="cursor:pointer" onclick="readingOpenEdit('${r.id}')"><div class="row-ico">${READ_TYPE_ICO[r.type]||'📦'}</div><div class="row-body"><div class="row-name">${r.title}</div><div class="row-sub">${r.author||'—'}</div></div><div class="ia ia-r" onclick="event.stopPropagation();readingQuickDel('${r.id}')">✕</div></div>`).join('');
-}
-function readingToggleFields(){
-  const st=document.getElementById('readStatus').value;
-  document.getElementById('readProgressField').style.display=st==='reading'?'block':'none';
-  document.getElementById('readFinishField').style.display=st==='finished'?'block':'none';
-}
-function readingOpenAdd(){document.getElementById('readEditId').value='';document.getElementById('readOvTitle').textContent='Add Book / Course';['readTitle','readAuthor','readNotes'].forEach(id=>document.getElementById(id).value='');document.getElementById('readType').value='book';document.getElementById('readStatus').value='wishlist';document.getElementById('readProgress').value=0;document.getElementById('readProgressVal').textContent='0%';document.getElementById('readFinishDate').value=td();document.getElementById('readRating').value='';document.getElementById('readDelBtn').style.display='none';readingToggleFields();openOv('addReadOv');}
-function readingOpenEdit(id){const r=readingList.find(x=>x.id===id);if(!r)return;document.getElementById('readEditId').value=id;document.getElementById('readOvTitle').textContent='Edit Entry';document.getElementById('readTitle').value=r.title||'';document.getElementById('readAuthor').value=r.author||'';document.getElementById('readType').value=r.type||'book';document.getElementById('readStatus').value=r.status||'wishlist';document.getElementById('readProgress').value=r.progress||0;document.getElementById('readProgressVal').textContent=(r.progress||0)+'%';document.getElementById('readFinishDate').value=r.finishDate||td();document.getElementById('readRating').value=r.rating||'';document.getElementById('readNotes').value=r.notes||'';document.getElementById('readDelBtn').style.display='block';readingToggleFields();openOv('addReadOv');}
-async function readingSave(){const id=document.getElementById('readEditId').value,title=document.getElementById('readTitle').value.trim();if(!title){toast('Enter a title','err');return;}if(!uid()){toast('Not signed in','err');return;}const status=document.getElementById('readStatus').value;const data={title,author:document.getElementById('readAuthor').value.trim(),type:document.getElementById('readType').value,status,notes:document.getElementById('readNotes').value.trim(),updatedAt:new Date().toISOString()};if(status==='reading')data.progress=parseInt(document.getElementById('readProgress').value)||0;if(status==='finished'){data.finishDate=document.getElementById('readFinishDate').value||td();data.rating=document.getElementById('readRating').value||null;data.progress=100;}try{if(id){await readingColl().doc(id).update(data);const i=readingList.findIndex(x=>x.id===id);if(i>=0)readingList[i]={...readingList[i],...data};}else{data.createdAt=new Date().toISOString();const r=await readingColl().add(data);readingList.unshift({id:r.id,...data});}closeOv('addReadOv');readingRender();toast(id?'Updated ✅':'Added ✅','ok');}catch(ex){toast('Error: '+ex.message,'err');}}
-async function readingDel(){const id=document.getElementById('readEditId').value;if(!id||!confirm('Delete?'))return;await readingColl().doc(id).delete();readingList=readingList.filter(r=>r.id!==id);closeOv('addReadOv');readingRender();toast('Deleted','ok');}
-async function readingQuickDel(id){if(!confirm('Delete?'))return;await readingColl().doc(id).delete();readingList=readingList.filter(r=>r.id!==id);readingRender();toast('Deleted','ok');}
-
-// ══════════════════════════════════════════════════
-//  HOUSEHOLD INVENTORY
-// ══════════════════════════════════════════════════
-let invList=[],invCatF='';
-const invColl=()=>uDoc().collection('inventory_items');
-const INV_CAT_ICO={Electronics:'📱',Appliances:'🔌',Furniture:'🛋️',Vehicle:'🚗',Other:'📦'};
-
-async function loadInventory(){if(!uid())return;const s=await invColl().orderBy('createdAt','desc').get();invList=s.docs.map(d=>({id:d.id,...d.data()}));}
-
-function invRender(){
-  document.getElementById('invItemCount').textContent=invList.length;
-  const today=td(),in30=addDays(today,30);
-  const expiring=invList.filter(i=>i.warrantyDate&&i.warrantyDate>=today&&i.warrantyDate<=in30);
-  document.getElementById('invWarrantyCount').textContent=expiring.length;
-  const wCard=document.getElementById('invWarrantyCard');
-  if(expiring.length){wCard.style.display='block';document.getElementById('invWarrantyList').innerHTML=expiring.map(i=>{const d=dateDiff(today,i.warrantyDate);return`<div class="row"><div class="row-ico">${INV_CAT_ICO[i.category]||'📦'}</div><div class="row-body"><div class="row-name">${i.name}</div><div class="row-sub">Warranty ends in ${d}d · ${fmtD(i.warrantyDate)}</div></div></div>`;}).join('');}
-  else wCard.style.display='none';
-  const cats=[...new Set(invList.map(i=>i.category).filter(Boolean))];
-  document.getElementById('invCatChips').innerHTML=`<button class="chip ${!invCatF?'on':''}" onclick="invCatF='';invRender()">All</button>`+cats.map(c=>`<button class="chip ${invCatF===c?'on':''}" onclick="invCatF=invCatF==='${c}'?'':'${c}';invRender()">${INV_CAT_ICO[c]||'📦'} ${c}</button>`).join('');
-  const q=(document.getElementById('invSearch')?.value||'').toLowerCase();
-  let list=invList;
-  if(invCatF)list=list.filter(i=>i.category===invCatF);
-  if(q)list=list.filter(i=>(i.name+' '+(i.location||'')+' '+(i.notes||'')).toLowerCase().includes(q));
-  const el=document.getElementById('invListEl');
-  if(!list.length){el.innerHTML='<div class="empty"><div class="empty-ico">🏠</div><p>'+(q||invCatF?'No items match':'No items yet.\nTrack appliances, electronics & warranties here!')+'</p></div>';return;}
-  el.innerHTML=list.map(i=>{const today2=td();const warrantyActive=i.warrantyDate&&i.warrantyDate>=today2;return`<div class="row" style="cursor:pointer" onclick="invOpenEdit('${i.id}')"><div class="row-ico">${INV_CAT_ICO[i.category]||'📦'}</div><div class="row-body"><div class="row-name">${i.name}</div><div class="row-sub">${i.location?i.location+' · ':''}${i.warrantyDate?(warrantyActive?'🛡 Warranty until '+fmtD(i.warrantyDate):'Warranty expired'):'No warranty info'}</div></div><div style="display:flex;align-items:center;gap:5px">${i.price?`<div class="row-right"><div class="row-amt">₹${Number(i.price).toLocaleString('en-IN')}</div></div>`:''}<div class="ia ia-r" onclick="event.stopPropagation();invQuickDel('${i.id}')">✕</div></div></div>`;}).join('');
-}
-function invOpenAdd(){document.getElementById('invEditId').value='';document.getElementById('invOvTitle').textContent='Add Item';['invName','invLocation','invNotes'].forEach(id=>document.getElementById(id).value='');document.getElementById('invCat').value='Electronics';document.getElementById('invPurchaseDate').value='';document.getElementById('invPrice').value='';document.getElementById('invWarrantyDate').value='';document.getElementById('invDelBtn').style.display='none';openOv('addInvOv');}
-function invOpenEdit(id){const i=invList.find(x=>x.id===id);if(!i)return;document.getElementById('invEditId').value=id;document.getElementById('invOvTitle').textContent='Edit Item';document.getElementById('invName').value=i.name||'';document.getElementById('invCat').value=i.category||'Electronics';document.getElementById('invPurchaseDate').value=i.purchaseDate||'';document.getElementById('invPrice').value=i.price||'';document.getElementById('invWarrantyDate').value=i.warrantyDate||'';document.getElementById('invLocation').value=i.location||'';document.getElementById('invNotes').value=i.notes||'';document.getElementById('invDelBtn').style.display='block';openOv('addInvOv');}
-async function invSave(){const id=document.getElementById('invEditId').value,name=document.getElementById('invName').value.trim();if(!name){toast('Enter item name','err');return;}if(!uid()){toast('Not signed in','err');return;}const data={name,category:document.getElementById('invCat').value,purchaseDate:document.getElementById('invPurchaseDate').value,price:parseFloat(document.getElementById('invPrice').value)||0,warrantyDate:document.getElementById('invWarrantyDate').value,location:document.getElementById('invLocation').value.trim(),notes:document.getElementById('invNotes').value.trim(),updatedAt:new Date().toISOString()};try{if(id){await invColl().doc(id).update(data);const i=invList.findIndex(x=>x.id===id);if(i>=0)invList[i]={...invList[i],...data};}else{data.createdAt=new Date().toISOString();const r=await invColl().add(data);invList.unshift({id:r.id,...data});}closeOv('addInvOv');invRender();toast(id?'Updated ✅':'Added ✅','ok');}catch(ex){toast('Error: '+ex.message,'err');}}
-async function invDel(){const id=document.getElementById('invEditId').value;if(!id||!confirm('Delete?'))return;await invColl().doc(id).delete();invList=invList.filter(i=>i.id!==id);closeOv('addInvOv');invRender();toast('Deleted','ok');}
-async function invQuickDel(id){if(!confirm('Delete?'))return;await invColl().doc(id).delete();invList=invList.filter(i=>i.id!==id);invRender();toast('Deleted','ok');}
-
-// ══════════════════════════════════════════════════
 //  PATCH BOOT — load all new apps
 // ══════════════════════════════════════════════════
 const _origBoot = boot;
 async function boot(){
   renderProfileSheet();setGreet();renderHubGrid();
-  showHubSkeleton();
   try{
     await Promise.all([
       loadExpense(),loadGrocery(),loadTasks(),loadMoiData(),
       loadNotes(),loadSavings(),loadHealth(),
-      loadBudget(),loadCalendar(),loadMood(),loadMeal(),loadIdeas(),
-      loadSubs(),loadReading(),loadInventory()
+      loadBudget(),loadCalendar(),loadMood(),loadMeal(),loadIdeas()
     ]);
   }catch(ex){console.error('Boot error:',ex);toast('Load error: '+ex.message,'err');}
   eRenderDash();eBuildChips();eRenderList();eRenderCats();
@@ -3599,13 +3075,8 @@ async function boot(){
   moiRenderHome();savingsRenderHome();healthRenderDash();
   notesRenderList();notesRenderNotebookChips();
   bRenderDash();calRender();moodRenderHome();mealRenderHome();ideasRender();
-  subsRender();readingRender();invRender();
   checkReminders();
   (function applyT(){const t=localStorage.getItem('appTheme');if(t==='light'){document.body.classList.add('light');const b=document.getElementById('themeToggle');if(b)b.classList.remove('dark');}})();
-}
-function showHubSkeleton(){
-  const el=document.getElementById('hubHabits');
-  if(el&&!el.innerHTML.trim())el.innerHTML=skeletonRows(2,46);
 }
 
 </script>
