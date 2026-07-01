@@ -1,6 +1,3 @@
-# Firebase Hosting deploy — uses firebase-tools CLI directly
-# (avoids FirebaseExtended/action-hosting-deploy@v0 which has a FAILED_PRECONDITION
-#  bug when the uploaded version hash matches the current live version)
 name: Deploy to Firebase Hosting on merge
 on:
   push:
