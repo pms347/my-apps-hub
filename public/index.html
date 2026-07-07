@@ -279,7 +279,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
           <div style="font-size:.73rem;color:var(--muted)" id="hubUser">Welcome back</div>
         </div>
         <div class="sgrid">
-          <div class="sc"><label>Apps</label><div class="sv">15</div><div class="ss">in hub</div></div>
+          <div class="sc"><label>Apps</label><div class="sv" id="hubAppCountStat">15</div><div class="ss">in hub</div></div>
           <div class="sc"><label>Habits Today</label><div class="sv" id="hubHabitStat">—</div><div class="ss">completed</div></div>
         </div>
         <div class="sec-lbl">Your Apps</div>
@@ -925,6 +925,9 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
     <div class="card">
       <div class="prow"><div><div class="prow-l">📦 Export All Data</div><div class="prow-s">Full JSON backup</div></div><button class="btn btn-y btn-sm" onclick="exportAll()">Export</button></div>
     </div>
+    <div class="sec-lbl">My Apps — Show / Hide</div>
+    <div style="font-size:.7rem;color:var(--muted);margin-bottom:7px">Toggle which apps appear on your home screen. Hidden apps still keep your data.</div>
+    <div class="card" id="appVisibilityList"></div>
     <button class="btn btn-m btn-full" style="margin-top:10px" onclick="closeOv('settingsOv')">Close</button>
     <div style="height:6px"></div>
   </div>
@@ -1301,15 +1304,27 @@ if('serviceWorker' in navigator){
     }).catch(()=>{/* offline-first still works without SW registration succeeding */});
   });
 }
+let _offlineTimer=null;
 function updateOnlineStatus(){
   const pill=document.getElementById('offlinePill');
   if(!pill)return;
-  if(navigator.onLine){pill.classList.remove('show');}
-  else{pill.classList.add('show');}
+  if(navigator.onLine){
+    if(_offlineTimer){clearTimeout(_offlineTimer);_offlineTimer=null;}
+    pill.classList.remove('show');
+  }else{
+    // Only show after 3s to avoid false positives on PWA startup
+    if(!_offlineTimer){
+      _offlineTimer=setTimeout(()=>{
+        if(!navigator.onLine)pill.classList.add('show');
+        _offlineTimer=null;
+      },3000);
+    }
+  }
 }
 window.addEventListener('online',()=>{updateOnlineStatus();toast('Back online — syncing…','ok');flushOfflineQueue();});
 window.addEventListener('offline',updateOnlineStatus);
-document.addEventListener('DOMContentLoaded',updateOnlineStatus);
+// Delay initial check by 2s to let PWA fully initialise before judging connectivity
+document.addEventListener('DOMContentLoaded',()=>setTimeout(updateOnlineStatus,2000));
 
 // Lightweight offline write-queue: if a Firestore write fails while offline,
 // queue it in localStorage and replay in order once connectivity returns.
@@ -3606,6 +3621,86 @@ async function boot(){
 function showHubSkeleton(){
   const el=document.getElementById('hubHabits');
   if(el&&!el.innerHTML.trim())el.innerHTML=skeletonRows(2,46);
+}
+
+
+// ══════════════════════════════════════════════════
+//  APP VISIBILITY — show/hide apps from hub
+// ══════════════════════════════════════════════════
+// Hidden apps still work and keep data — they're just removed from the hub grid.
+// Preference is stored in localStorage so it persists without a server round-trip.
+
+function getHiddenApps(){
+  try{ return new Set(JSON.parse(localStorage.getItem('hiddenApps')||'[]')); }
+  catch(e){ return new Set(); }
+}
+function saveHiddenApps(set){
+  localStorage.setItem('hiddenApps', JSON.stringify([...set]));
+}
+
+function renderAppVisibilityList(){
+  const el = document.getElementById('appVisibilityList');
+  if(!el) return;
+  const hidden = getHiddenApps();
+  // Never allow hub to be hidden (it's the home screen itself)
+  const toggleable = APPS.filter(a => a.id !== 'hub');
+  el.innerHTML = toggleable.map(a => {
+    const isHidden = hidden.has(a.id);
+    return `<div class="prow">
+      <div style="display:flex;align-items:center;gap:9px">
+        <div style="width:30px;height:30px;border-radius:8px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:14px">${a.ico}</div>
+        <div><div class="prow-l">${a.name}</div></div>
+      </div>
+      <label style="display:flex;align-items:center;cursor:pointer;gap:6px">
+        <span style="font-size:.68rem;color:var(--muted)">${isHidden?'Hidden':'Visible'}</span>
+        <button class="theme-toggle ${isHidden?'':'dark'}" onclick="toggleAppVisibility('${a.id}',this)" style="flex-shrink:0"></button>
+      </label>
+    </div>`;
+  }).join('');
+}
+
+function toggleAppVisibility(appId, btn){
+  const hidden = getHiddenApps();
+  const isCurrentlyHidden = hidden.has(appId);
+  if(isCurrentlyHidden){
+    hidden.delete(appId);
+    btn.classList.add('dark');
+    btn.previousElementSibling.textContent = 'Visible';
+  } else {
+    hidden.add(appId);
+    btn.classList.remove('dark');
+    btn.previousElementSibling.textContent = 'Hidden';
+  }
+  saveHiddenApps(hidden);
+  // Re-render the hub grid immediately so changes are visible right away
+  renderHubGrid();
+  // Update the hub app count stat
+  const countEl = document.getElementById('hubAppCountStat');
+  if(countEl) countEl.textContent = APPS.filter(a=>a.id!=='hub'&&!hidden.has(a.id)).length;
+}
+
+// ── Patch renderHubGrid to respect visibility settings ──
+const _origRenderHubGrid = renderHubGrid;
+function renderHubGrid(){
+  const hidden = getHiddenApps();
+  const visibleApps = APPS.filter(a => !hidden.has(a.id));
+  document.getElementById('hubGrid').innerHTML = visibleApps.map(a =>
+    `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')">
+      <div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div>
+      <div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div>
+      <div style="font-size:.66rem;color:var(--muted)">${a.desc}</div>
+    </div>`
+  ).join('');
+  // Update the hub stat count dynamically
+  const countEl = document.getElementById('hubAppCountStat');
+  if(countEl) countEl.textContent = visibleApps.length;
+}
+
+// ── Patch openOv to populate the visibility list when Settings opens ──
+const _origOpenOv = openOv;
+function openOv(id){
+  _origOpenOv(id);
+  if(id === 'settingsOv') renderAppVisibilityList();
 }
 
 </script>
