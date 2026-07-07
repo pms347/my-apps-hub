@@ -2,7 +2,7 @@
 // Strategy: cache-first for the app shell, NETWORK-ONLY for ALL auth + Firebase traffic.
 // IMPORTANT: Never cache auth-related requests — doing so breaks Firebase session persistence
 // and causes the app to ask for login on every visit.
-const CACHE_VERSION = 'hub-v2';
+const CACHE_VERSION = 'hub-v3';
 const SHELL_CACHE = `shell-${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [

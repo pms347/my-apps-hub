@@ -1324,7 +1324,17 @@ function updateOnlineStatus(){
 window.addEventListener('online',()=>{updateOnlineStatus();toast('Back online — syncing…','ok');flushOfflineQueue();});
 window.addEventListener('offline',updateOnlineStatus);
 // Delay initial check by 2s to let PWA fully initialise before judging connectivity
-document.addEventListener('DOMContentLoaded',()=>setTimeout(updateOnlineStatus,2000));
+document.addEventListener('DOMContentLoaded',()=>{
+  // Always hide the offline pill immediately on load — only show it after confirmed offline
+  const pill=document.getElementById('offlinePill');
+  if(pill)pill.classList.remove('show');
+  // Tell any active service worker to skip waiting and activate immediately
+  // so the updated sw.js (which no longer caches auth domains) takes effect now
+  if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage('SKIP_WAITING');
+  }
+  setTimeout(updateOnlineStatus,3000);
+});
 
 // Lightweight offline write-queue: if a Firestore write fails while offline,
 // queue it in localStorage and replay in order once connectivity returns.
@@ -2144,7 +2154,7 @@ function addDays(ds,n){const d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n)
 function dateDiff(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
 function groupBy(arr,fn){return arr.reduce((acc,x)=>{const k=fn(x);(acc[k]=acc[k]||[]).push(x);return acc;},{});}
 function dlBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
-function openOv(id){const el=document.getElementById(id);if(!el)return;el.classList.add('on');if(id==='profOv')renderProfileSheet();}
+function openOv(id){const el=document.getElementById(id);if(!el)return;el.classList.add('on');if(id==='profOv')renderProfileSheet();if(id==='settingsOv')renderAppVisibilityList();}
 function closeOv(id){document.getElementById(id)?.classList.remove('on');}
 function toast(msg,type='ok'){const t=document.getElementById('toast');clearTimeout(t._t);t.className='toast';t.textContent=msg;requestAnimationFrame(()=>requestAnimationFrame(()=>{t.className=`toast ${type} show`;t._t=setTimeout(()=>t.className='toast',2500);}));}
 
@@ -3697,12 +3707,6 @@ function renderHubGrid(){
 }
 
 // ── Patch openOv to populate the visibility list when Settings opens ──
-const _origOpenOv = openOv;
-function openOv(id){
-  _origOpenOv(id);
-  if(id === 'settingsOv') renderAppVisibilityList();
-}
-
 </script>
 </body>
 </html>
