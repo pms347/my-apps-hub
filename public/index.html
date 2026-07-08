@@ -1534,7 +1534,12 @@ function renderProfileSheet(){
 
 // ══ HUB ══════════════════════════════════════════
 const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Contribution tracker'},{id:'notes',name:'Notes',ico:'📝',bg:'#06b6d422',desc:'Rich notes & notebooks'},{id:'savings',name:'Savings Goals',ico:'🏦',bg:'#22c55e22',desc:'Track financial goals'},{id:'health',name:'Health Log',ico:'🩺',bg:'#ef444422',desc:'Vitals, meds & wellness'},{id:'budget',name:'Budget Planner',ico:'💼',bg:'#10b98122',desc:'Income & expense tracking'},{id:'calendar',name:'Calendar',ico:'📅',bg:'#3b82f622',desc:'Events & reminders'},{id:'mood',name:'Mood Journal',ico:'🧘',bg:'#a78bfa22',desc:'Mental wellness tracker'},{id:'meal',name:'Meal Planner',ico:'🍽️',bg:'#f9731622',desc:'Nutrition & meal planning'},{id:'ideas',name:'Ideas Board',ico:'💡',bg:'#fbbf2422',desc:'Brainstorm & capture ideas'},{id:'subs',name:'Subscriptions',ico:'📦',bg:'#ec489922',desc:'Recurring bills & renewals'},{id:'reading',name:'Reading Tracker',ico:'📚',bg:'#0ea5e922',desc:'Books, courses & progress'},{id:'inventory',name:'Household Inventory',ico:'🏠',bg:'#84cc1622',desc:'Warranties & belongings'}];
-function renderHubGrid(){document.getElementById('hubGrid').innerHTML=APPS.map(a=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')"><div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div><div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div><div style="font-size:.66rem;color:var(--muted)">${a.desc}</div></div>`).join('');}
+function renderHubGrid(){
+  const hidden=typeof getHiddenApps==='function'?getHiddenApps():new Set();
+  const vis=APPS.filter(a=>!hidden.has(a.id));
+  document.getElementById('hubGrid').innerHTML=vis.map(a=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')"><div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div><div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div><div style="font-size:.66rem;color:var(--muted)">${a.desc}</div></div>`).join('');
+  const c=document.getElementById('hubAppCountStat');if(c)c.textContent=vis.length;
+}
 function switchApp(id){
   document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));
   document.getElementById('ap-'+id)?.classList.add('active');
@@ -3689,24 +3694,6 @@ function toggleAppVisibility(appId, btn){
   if(countEl) countEl.textContent = APPS.filter(a=>a.id!=='hub'&&!hidden.has(a.id)).length;
 }
 
-// ── Patch renderHubGrid to respect visibility settings ──
-const _origRenderHubGrid = renderHubGrid;
-function renderHubGrid(){
-  const hidden = getHiddenApps();
-  const visibleApps = APPS.filter(a => !hidden.has(a.id));
-  document.getElementById('hubGrid').innerHTML = visibleApps.map(a =>
-    `<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')">
-      <div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div>
-      <div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div>
-      <div style="font-size:.66rem;color:var(--muted)">${a.desc}</div>
-    </div>`
-  ).join('');
-  // Update the hub stat count dynamically
-  const countEl = document.getElementById('hubAppCountStat');
-  if(countEl) countEl.textContent = visibleApps.length;
-}
-
-// ── Patch openOv to populate the visibility list when Settings opens ──
 </script>
 </body>
 </html>
