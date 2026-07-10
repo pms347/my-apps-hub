@@ -274,10 +274,34 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
     <!-- HUB -->
     <div class="app active" id="ap-hub">
       <div class="pages"><div class="page on" style="padding-bottom:20px">
-        <div style="margin-bottom:12px">
-          <div style="font-size:1rem;font-weight:700;margin-bottom:1px" id="hubGreet">Hello! 👋</div>
-          <div style="font-size:.73rem;color:var(--muted)" id="hubUser">Welcome back</div>
+        <!-- Greeting + smart summary card -->
+        <div style="background:linear-gradient(135deg,#6c63ff,#3b82f6);border-radius:16px;padding:16px;margin-bottom:12px;color:#fff">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:2px" id="hubGreet">Hello! 👋</div>
+          <div style="font-size:.7rem;opacity:.85;margin-bottom:12px" id="hubUser">Welcome back</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px" id="hubTodayStrip">
+            <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:8px 6px;text-align:center">
+              <div style="font-size:.56rem;opacity:.8;margin-bottom:2px">SPENT</div>
+              <div style="font-size:.82rem;font-weight:800" id="hubTodaySpent">₹—</div>
+            </div>
+            <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:8px 6px;text-align:center">
+              <div style="font-size:.56rem;opacity:.8;margin-bottom:2px">CALORIES</div>
+              <div style="font-size:.82rem;font-weight:800" id="hubTodayCal">—</div>
+            </div>
+            <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:8px 6px;text-align:center">
+              <div style="font-size:.56rem;opacity:.8;margin-bottom:2px">MOOD</div>
+              <div style="font-size:.82rem;font-weight:800" id="hubTodayMood">—</div>
+            </div>
+            <div style="background:rgba(255,255,255,.15);border-radius:10px;padding:8px 6px;text-align:center">
+              <div style="font-size:.56rem;opacity:.8;margin-bottom:2px">HABITS</div>
+              <div style="font-size:.82rem;font-weight:800" id="hubTodayHabits">—</div>
+            </div>
+          </div>
         </div>
+        <!-- Alerts strip: renewals due, warranty expiring, etc. -->
+        <div id="hubAlerts"></div>
+        <!-- Next calendar event -->
+        <div id="hubNextEvent"></div>
+        <!-- Stats row -->
         <div class="sgrid">
           <div class="sc"><label>Apps</label><div class="sv" id="hubAppCountStat">15</div><div class="ss">in hub</div></div>
           <div class="sc"><label>Habits Today</label><div class="sv" id="hubHabitStat">—</div><div class="ss">completed</div></div>
@@ -925,6 +949,11 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
     <div class="card">
       <div class="prow"><div><div class="prow-l">📦 Export All Data</div><div class="prow-s">Full JSON backup</div></div><button class="btn btn-y btn-sm" onclick="exportAll()">Export</button></div>
     </div>
+    <div class="sec-lbl">Reports</div>
+    <div class="card">
+      <div class="prow"><div><div class="prow-l">📊 Monthly Report</div><div class="prow-s">PDF across all 15 apps</div></div><button class="btn btn-p btn-sm" onclick="closeOv('settingsOv');generateMonthlyReport()">Generate</button></div>
+      <div class="prow"><div><div class="prow-l">📦 Export All Data</div><div class="prow-s">Full JSON backup</div></div><button class="btn btn-y btn-sm" onclick="exportAll()">Export</button></div>
+    </div>
     <div class="sec-lbl">My Apps — Show / Hide</div>
     <div style="font-size:.7rem;color:var(--muted);margin-bottom:7px">Toggle which apps appear on your home screen. Hidden apps still keep your data.</div>
     <div class="card" id="appVisibilityList"></div>
@@ -1517,7 +1546,15 @@ async function boot(){
   grSetLbl();grRenderHome();grRefreshChips();grRenderHist();grFillCmp();grRenderShop();
   tmRender();hubRenderHabits();updateHubStat();moiRenderHome();savingsRenderHome();healthRenderDash();notesRenderList();notesRenderNotebookChips();
 }
-function setGreet(){const h=new Date().getHours(),g=h<12?'Good morning! 👋':h<17?'Good afternoon! ☀️':'Good evening! 🌙';document.getElementById('hubGreet').textContent=g;const n=user?.displayName||user?.email?.split('@')[0]||'there';document.getElementById('hubUser').textContent=`Welcome back, ${n}`;}
+function setGreet(){
+  const h=new Date().getHours();
+  const g=h<12?'Good morning! 👋':h<17?'Good afternoon! ☀️':'Good evening! 🌙';
+  const n=user?.displayName||user?.email?.split('@')[0]||'there';
+  const el=document.getElementById('hubGreet');
+  if(el)el.textContent=`${g}, ${n}!`;
+  const uel=document.getElementById('hubUser');
+  if(uel)uel.textContent='Loading your day…';
+}
 function renderProfileSheet(){
   if(!user)return;
   const n=user.displayName||user.email?.split('@')[0]||'User';
@@ -2151,7 +2188,344 @@ async function moiClearAll(){
 
 // ══ HUB HELPERS ══════════════════════════════════
 function hubRenderHabits(){const el=document.getElementById('hubHabits');if(!tHabits.length){el.innerHTML=`<div class="empty" style="padding:14px"><div class="empty-ico">✅</div><p>No habits yet. <span style="color:var(--accent);cursor:pointer" onclick="switchApp('tasks')">Add some →</span></p></div>`;return;}el.innerHTML=tHabits.slice(0,5).map(h=>{const done=tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done');return`<div class="tc" style="margin-bottom:6px"><div class="tc-top" style="padding:8px 10px"><div class="tc-ico" style="background:${done?'#22c55e22':'var(--card2)'};width:28px;height:28px;font-size:13px">${h.icon||'✅'}</div><div class="tc-body"><div class="tc-name" style="font-size:.8rem">${h.name}</div></div><div class="ia ia-g ${done?'done':''}" onclick="tQuick('${h.id}','h')">✓</div></div></div>`;}).join('');if(tHabits.length>5)el.innerHTML+=`<div style="text-align:center;margin-top:4px;font-size:.72rem;color:var(--accent);cursor:pointer" onclick="switchApp('tasks')">View all ${tHabits.length} →</div>`;}
-function updateHubStat(){const done=tHabits.filter(h=>tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done')).length;document.getElementById('hubHabitStat').textContent=`${done}/${tHabits.length}`;}
+function updateHubStat(){
+  const done=tHabits.filter(h=>tLogs.some(l=>l.taskId===h.id&&l.date===td()&&l.status==='done')).length;
+  document.getElementById('hubHabitStat').textContent=`${done}/${tHabits.length}`;
+  hubSmartDashboard();
+}
+
+// ══════════════════════════════════════════════════
+//  SMART HOME DASHBOARD — cross-app "today at a glance"
+// ══════════════════════════════════════════════════
+function hubSmartDashboard(){
+  const today=td();
+
+  // ── Today Spent (from expense + budget trackers) ──
+  const todayExp=eExp.filter(e=>e.date===today).reduce((s,e)=>s+Number(e.amt||0),0);
+  const todayBudgetExp=bTx.filter(t=>t.date===today&&t.bType==='expense').reduce((s,t)=>s+Number(t.amt||0),0);
+  const totalSpent=todayExp+todayBudgetExp;
+  const spentEl=document.getElementById('hubTodaySpent');
+  if(spentEl)spentEl.textContent=totalSpent>0?'₹'+totalSpent.toLocaleString('en-IN'):'₹0';
+
+  // ── Today Calories (from meal planner) ──
+  const todayCal=mealLogs.filter(l=>l.date===today).reduce((s,l)=>s+Number(l.calories||0),0);
+  const calEl=document.getElementById('hubTodayCal');
+  if(calEl)calEl.textContent=todayCal>0?todayCal+'kcal':'—';
+
+  // ── Today Mood (from mood journal) ──
+  const MOOD_E=['😞','😔','😐','🙂','😄'];
+  const todayMood=moodLogs.find(l=>l.date===today);
+  const moodEl=document.getElementById('hubTodayMood');
+  if(moodEl)moodEl.textContent=todayMood?MOOD_E[(todayMood.mood||3)-1]:'—';
+
+  // ── Habits done today ──
+  const habitsDone=tHabits.filter(h=>tLogs.some(l=>l.taskId===h.id&&l.date===today&&l.status==='done')).length;
+  const habitsEl=document.getElementById('hubTodayHabits');
+  if(habitsEl)habitsEl.textContent=tHabits.length?`${habitsDone}/${tHabits.length}`:'—';
+
+  // ── Smart greeting (data-aware, changes based on actual state) ──
+  const h=new Date().getHours();
+  const timeGreet=h<12?'Good morning':'h<17'?'Good afternoon':'Good evening';
+  const name=user?.displayName||user?.email?.split('@')[0]||'there';
+  let smartNote='';
+  if(habitsDone===tHabits.length&&tHabits.length>0)smartNote=' All habits done today 🎉';
+  else if(todayMood&&todayMood.mood>=4)smartNote=' Great mood today 🌟';
+  else if(totalSpent>0)smartNote=` ₹${totalSpent.toLocaleString('en-IN')} spent today`;
+  const greetEl=document.getElementById('hubGreet');
+  const userEl=document.getElementById('hubUser');
+  if(greetEl)greetEl.textContent=`${timeGreet}, ${name}! 👋`;
+  if(userEl)userEl.textContent=smartNote||'Here\'s your day at a glance';
+
+  // ── Alerts strip: renewals due, warranty expiring ──
+  hubRenderAlerts(today);
+
+  // ── Next calendar event ──
+  hubRenderNextEvent(today);
+}
+
+function hubRenderAlerts(today){
+  const el=document.getElementById('hubAlerts');
+  if(!el)return;
+  const alerts=[];
+  const in7=addDays(today,7);
+
+  // Subscriptions due within 7 days
+  const subsDue=subsList.filter(s=>s.renewDate>=today&&s.renewDate<=in7);
+  subsDue.forEach(s=>{
+    const d=dateDiff(today,s.renewDate);
+    alerts.push({icon:'📦',color:'#ec4899',text:`${s.name} renews ${d===0?'today':'in '+d+'d'} — ₹${Number(s.amt).toLocaleString('en-IN')}`,app:'subs'});
+  });
+
+  // Warranties expiring within 30 days
+  const in30=addDays(today,30);
+  const warrantyDue=invList.filter(i=>i.warrantyDate&&i.warrantyDate>=today&&i.warrantyDate<=in30);
+  warrantyDue.slice(0,2).forEach(i=>{
+    const d=dateDiff(today,i.warrantyDate);
+    alerts.push({icon:'🛡',color:'#f59e0b',text:`${i.name} warranty expires in ${d}d`,app:'inventory'});
+  });
+
+  // Savings goal nearly complete
+  savingsGoals.filter(g=>g.target>0&&(Number(g.saved||0)/g.target)>=0.9&&(Number(g.saved||0)/g.target)<1).forEach(g=>{
+    alerts.push({icon:'🏦',color:'#22c55e',text:`${g.name} is 90%+ funded! Keep going 🎯`,app:'savings'});
+  });
+
+  if(!alerts.length){el.innerHTML='';return;}
+  el.innerHTML=alerts.slice(0,3).map(a=>`
+    <div style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--border);border-left:3px solid ${a.color};border-radius:10px;padding:9px 12px;margin-bottom:7px;cursor:pointer" onclick="switchApp('${a.app}')">
+      <span style="font-size:1.1rem">${a.icon}</span>
+      <span style="font-size:.74rem;flex:1">${a.text}</span>
+      <span style="color:var(--muted);font-size:.7rem">→</span>
+    </div>`).join('');
+}
+
+function hubRenderNextEvent(today){
+  const el=document.getElementById('hubNextEvent');
+  if(!el)return;
+  // Find the next calendar event (including auto-events from subscriptions)
+  const upcoming=calEvents.filter(e=>e.date>=today).sort((a,b)=>a.date>b.date?1:-1)[0];
+  if(!upcoming){el.innerHTML='';return;}
+  const d=dateDiff(today,upcoming.date);
+  const label=d===0?'Today':d===1?'Tomorrow':`In ${d} days`;
+  el.innerHTML=`<div style="display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--border);border-left:3px solid ${upcoming.color||'var(--accent)'};border-radius:10px;padding:9px 12px;margin-bottom:10px;cursor:pointer" onclick="switchApp('calendar')">
+    <span style="font-size:1.1rem">📅</span>
+    <div style="flex:1">
+      <div style="font-size:.78rem;font-weight:700">${upcoming.title}</div>
+      <div style="font-size:.66rem;color:var(--muted)">${label}${upcoming.time?' · '+upcoming.time:''}</div>
+    </div>
+    <span style="color:var(--muted);font-size:.7rem">→</span>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════
+//  CROSS-APP INTELLIGENCE
+// ══════════════════════════════════════════════════
+
+// Auto-create calendar events for upcoming subscription renewals
+// (runs once after data loads, idempotent — won't create duplicates)
+async function syncSubsToCalendar(){
+  if(!uid()||!subsList.length)return;
+  const today=td(),in30=addDays(today,30);
+  const dueList=subsList.filter(s=>s.renewDate>=today&&s.renewDate<=in30);
+  for(const sub of dueList){
+    const title=`📦 ${sub.name} renewal`;
+    const alreadyExists=calEvents.some(e=>e.title===title&&e.date===sub.renewDate);
+    if(alreadyExists)continue;
+    const data={title,date:sub.renewDate,time:'09:00',calCat:'finance',color:'#ec4899',notes:`₹${sub.amt} · ${sub.cycle}`,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),_autoCreated:true};
+    try{
+      const r=await calColl().add(data);
+      calEvents.push({id:r.id,...data});
+    }catch(e){console.warn('syncSubsToCalendar error',e);}
+  }
+}
+
+// Surface meal nutrition totals in the health dashboard context
+function getCrossMealHealthSummary(){
+  const today=td();
+  const todayMeals=mealLogs.filter(l=>l.date===today);
+  return{
+    calories:todayMeals.reduce((s,l)=>s+Number(l.calories||0),0),
+    protein:todayMeals.reduce((s,l)=>s+Number(l.protein||0),0),
+    carbs:todayMeals.reduce((s,l)=>s+Number(l.carbs||0),0),
+    fat:todayMeals.reduce((s,l)=>s+Number(l.fat||0),0),
+    count:todayMeals.length
+  };
+}
+
+// Surface sleep from health logs in mood insights
+function getCrossHealthMoodSummary(){
+  const today=td();
+  const sleepToday=healthLogs.find(l=>l.date===today&&l.type==='sleep');
+  const moodToday=moodLogs.find(l=>l.date===today);
+  return{sleep:sleepToday?.sleep||null,mood:moodToday?.mood||null};
+}
+
+// ══════════════════════════════════════════════════
+//  SMART NOTIFICATIONS
+// ══════════════════════════════════════════════════
+function scheduleSmartNotifications(){
+  if(typeof Notification==='undefined'||Notification.permission!=='granted')return;
+  const today=td(),now=new Date();
+
+  // ── Subscription renewals ──
+  subsList.forEach(sub=>{
+    if(!sub.renewDate||!sub.reminder)return;
+    const renewMs=new Date(sub.renewDate+'T09:00:00').getTime();
+    const remindMs=renewMs-(parseInt(sub.reminder||7))*86400000;
+    const diff=remindMs-now.getTime();
+    if(diff>0&&diff<86400000*2){
+      setTimeout(()=>{
+        new Notification(`📦 ${sub.name} renews soon`,{
+          body:`Renewal on ${fmtD(sub.renewDate)} — ₹${Number(sub.amt).toLocaleString('en-IN')} (${sub.cycle})`,
+          icon:'icons/icon-192.png'
+        });
+      },Math.max(diff,1000));
+    }
+  });
+
+  // ── Habit streak at risk (missed yesterday, fire at 9am today) ──
+  const nineAM=new Date(today+'T09:00:00').getTime();
+  const diffToNine=nineAM-now.getTime();
+  if(diffToNine>0&&diffToNine<3600000){
+    tHabits.forEach(h=>{
+      const yesterday=addDays(today,-1);
+      const doneYesterday=tLogs.some(l=>l.taskId===h.id&&l.date===yesterday&&l.status==='done');
+      const doneToday=tLogs.some(l=>l.taskId===h.id&&l.date===today&&l.status==='done');
+      const streak=tStreak(h.id);
+      if(!doneYesterday&&!doneToday&&streak>2){
+        setTimeout(()=>{
+          new Notification(`🔥 Streak at risk: ${h.name}`,{
+            body:`You have a ${streak}-day streak. Don't break it today!`,
+            icon:'icons/icon-192.png'
+          });
+        },diffToNine);
+      }
+    });
+  }
+
+  // ── Savings goal milestone ──
+  savingsGoals.forEach(g=>{
+    if(!g.target||g.target===0)return;
+    const pct=Math.round((Number(g.saved||0)/g.target)*100);
+    const milestones=[25,50,75,100];
+    const lastNotified=parseInt(localStorage.getItem(`savingsNotif_${g.id}`)||'0');
+    const nextMilestone=milestones.find(m=>pct>=m&&m>lastNotified);
+    if(nextMilestone){
+      new Notification(`🏦 ${g.name} — ${nextMilestone}% reached!`,{
+        body:nextMilestone===100?'Goal complete! 🎉':`₹${Number(g.saved||0).toLocaleString('en-IN')} of ₹${Number(g.target).toLocaleString('en-IN')} saved`,
+        icon:'icons/icon-192.png'
+      });
+      localStorage.setItem(`savingsNotif_${g.id}`,String(nextMilestone));
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  MONTHLY PDF REPORT — all apps in one document
+// ══════════════════════════════════════════════════
+async function generateMonthlyReport(){
+  toast('Generating your monthly report…','info');
+  try{
+    const{jsPDF}=window.jspdf;
+    const doc=new jsPDF();
+    const now=new Date();
+    const mo=now.toLocaleString('default',{month:'long'});
+    const yr=now.getFullYear();
+    const moStr=`${yr}-${String(now.getMonth()+1).padStart(2,'0')}`;
+
+    // ── Cover page ──
+    doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');
+    doc.setFillColor(108,99,255);doc.rect(0,0,210,60,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(22);doc.setFont(undefined,'bold');
+    doc.text('My Apps Hub',14,28);
+    doc.setFontSize(13);doc.setFont(undefined,'normal');
+    doc.text(`Monthly Report — ${mo} ${yr}`,14,42);
+    doc.setFontSize(9);doc.setTextColor(180,185,210);
+    doc.text(`Generated for ${user?.email||'—'} on ${new Date().toLocaleDateString('en-IN')}`,14,54);
+
+    let y=75;
+    const section=(title,color=[108,99,255])=>{
+      if(y>250){doc.addPage();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');y=20;}
+      doc.setFillColor(...color);doc.rect(0,0,210,297,'F');
+      doc.setFillColor(15,17,23);doc.rect(0,y-6,210,1,'F');
+      doc.setTextColor(...color);doc.setFontSize(10);doc.setFont(undefined,'bold');
+      doc.text(title,14,y);y+=8;
+      doc.setFont(undefined,'normal');doc.setTextColor(200,205,220);doc.setFontSize(8.5);
+    };
+
+    // Redefine section cleanly without nested rects
+    y=75;
+    const sec=(title,clr)=>{
+      if(y>250){doc.addPage();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');y=20;}
+      doc.setFontSize(10);doc.setFont(undefined,'bold');doc.setTextColor(...(clr||[108,99,255]));
+      doc.text('▌ '+title,14,y);y+=7;
+      doc.setFont(undefined,'normal');doc.setFontSize(8.5);doc.setTextColor(200,205,220);
+    };
+    const row=(label,val)=>{
+      if(y>255){doc.addPage();doc.setFillColor(15,17,23);doc.rect(0,0,210,297,'F');y=20;}
+      doc.setTextColor(140,150,180);doc.text(label,14,y);
+      doc.setTextColor(200,205,220);doc.text(String(val),100,y);y+=6;
+    };
+
+    // ── FINANCES ──
+    const moExp=eExp.filter(e=>e.date?.startsWith(moStr));
+    const moBudget=bTx.filter(t=>t.date?.startsWith(moStr));
+    const moInc=moBudget.filter(t=>t.bType==='income').reduce((s,t)=>s+Number(t.amt),0);
+    const moExpTotal=moBudget.filter(t=>t.bType==='expense').reduce((s,t)=>s+Number(t.amt),0)+moExp.reduce((s,e)=>s+Number(e.amt),0);
+    const subsMonthly=subsList.reduce((s,sub)=>s+subsMonthlyEquiv(sub),0);
+    sec('💰 Finances',[16,185,129]);
+    row('Total Income',moInc>0?'₹'+moInc.toLocaleString('en-IN'):'—');
+    row('Total Expenses','₹'+moExpTotal.toLocaleString('en-IN'));
+    row('Net Balance','₹'+(moInc-moExpTotal).toLocaleString('en-IN'));
+    row('Subscriptions cost','₹'+Math.round(subsMonthly).toLocaleString('en-IN')+'/mo');
+    row('Savings Rate',moInc>0?Math.round(((moInc-moExpTotal)/moInc)*100)+'%':'—');
+    y+=3;
+
+    // ── HEALTH & MEALS ──
+    sec('🩺 Health & Nutrition',[239,68,68]);
+    const moHealth=healthLogs.filter(l=>l.date?.startsWith(moStr));
+    const latestW=[...healthLogs.filter(l=>l.type==='weight'&&l.weight)].sort((a,b)=>b.date>a.date?1:-1)[0];
+    const moMeals=mealLogs.filter(l=>l.date?.startsWith(moStr));
+    const avgCal=moMeals.length?Math.round(moMeals.reduce((s,l)=>s+Number(l.calories||0),0)/moMeals.length):0;
+    row('Health log entries',moHealth.length);
+    row('Latest weight',latestW?latestW.weight+' kg':'—');
+    row('Meals logged this month',moMeals.length);
+    row('Avg calories per meal',avgCal?avgCal+' kcal':'—');
+    y+=3;
+
+    // ── MOOD ──
+    sec('🧘 Mental Wellness',[167,139,250]);
+    const moMood=moodLogs.filter(l=>l.date?.startsWith(moStr));
+    const avgMood=moMood.length?moMood.reduce((s,l)=>s+Number(l.mood||3),0)/moMood.length:0;
+    const MOOD_L=['','Very Bad','Bad','Okay','Good','Great'];
+    row('Mood logs this month',moMood.length);
+    row('Average mood',avgMood?`${avgMood.toFixed(1)}/5 (${MOOD_L[Math.round(avgMood)]||'—'})`:'—');
+    const bestM=moMood.length?Math.max(...moMood.map(l=>l.mood||3)):0;
+    const worstM=moMood.length?Math.min(...moMood.map(l=>l.mood||3)):0;
+    row('Best day',bestM?MOOD_L[bestM]:'—');row('Hardest day',worstM?MOOD_L[worstM]:'—');
+    y+=3;
+
+    // ── HABITS ──
+    sec('✅ Habits & Tasks',[245,158,11]);
+    const moLogs=tLogs.filter(l=>l.date?.startsWith(moStr)&&l.status==='done');
+    const avgScore=tHabits.length?Math.round(tHabits.reduce((s,h)=>s+tScore(h.id),0)/tHabits.length):0;
+    row('Active habits',tHabits.length);
+    row('One-time tasks completed',tOT.filter(t=>t.status==='done').length+'/'+tOT.length);
+    row('Habit completions this month',moLogs.length);
+    row('Avg consistency score',avgScore+'%');
+    y+=3;
+
+    // ── READING ──
+    sec('📚 Reading & Learning',[14,165,233]);
+    const moFinished=readingList.filter(r=>r.status==='finished'&&r.finishDate?.startsWith(moStr));
+    const inProgress=readingList.filter(r=>r.status==='reading');
+    row('Finished this month',moFinished.length);
+    row('Currently reading/learning',inProgress.length);
+    row('Wishlist',readingList.filter(r=>r.status==='wishlist').length);
+    if(moFinished.length){row('Books/Courses completed',moFinished.map(r=>r.title).join(', '));}
+    y+=3;
+
+    // ── SAVINGS ──
+    sec('🏦 Savings Goals',[34,197,94]);
+    savingsGoals.slice(0,4).forEach(g=>{
+      const pct=g.target>0?Math.round((Number(g.saved||0)/g.target)*100):0;
+      row(g.name,'₹'+Number(g.saved||0).toLocaleString('en-IN')+' / ₹'+Number(g.target).toLocaleString('en-IN')+` (${pct}%)`);
+    });
+    y+=3;
+
+    // ── INVENTORY ALERTS ──
+    const warningItems=invList.filter(i=>i.warrantyDate&&i.warrantyDate>=td()&&i.warrantyDate<=addDays(td(),60));
+    if(warningItems.length){
+      sec('⚠️ Warranty Alerts',[249,115,22]);
+      warningItems.forEach(i=>row(i.name,'Expires '+fmtD(i.warrantyDate)));
+    }
+
+    doc.save(`myappshub_report_${moStr}.pdf`);
+    toast('Monthly report downloaded ✅','ok');
+  }catch(ex){
+    console.error('Report error',ex);
+    toast('Report error: '+ex.message,'err');
+  }
+}
 
 // ══ UTILS ════════════════════════════════════════
 function fmtD(d){if(!d)return'—';try{return new Date(d+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});}catch{return d;}}
@@ -3631,6 +4005,10 @@ async function boot(){
   bRenderDash();calRender();moodRenderHome();mealRenderHome();ideasRender();
   subsRender();readingRender();invRender();
   checkReminders();
+  // Cross-app: sync subscription renewals into calendar
+  syncSubsToCalendar().then(()=>{calRender();hubSmartDashboard();});
+  // Smart notifications
+  scheduleSmartNotifications();
   (function applyT(){const t=localStorage.getItem('appTheme');if(t==='light'){document.body.classList.add('light');const b=document.getElementById('themeToggle');if(b)b.classList.remove('dark');}})();
 }
 function showHubSkeleton(){
