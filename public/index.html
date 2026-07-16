@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <meta name="theme-color" content="#0f1117">
 <meta name="description" content="Your personal productivity hub — expenses, tasks, health, budgeting and more, all in one place.">
 <!-- PWA: installability -->
@@ -1538,14 +1540,7 @@ function skeletonRows(n=3,height=58){
 }
 
 // ══ BOOT ══════════════════════════════════════════
-async function boot(){
-  renderProfileSheet();setGreet();renderHubGrid();
-  try{await Promise.all([loadExpense(),loadGrocery(),loadTasks(),loadMoiData(),loadNotes(),loadSavings(),loadHealth()]);}
-  catch(ex){console.error('Boot error:',ex);toast('Load error: '+ex.message,'err');}
-  eRenderDash();eBuildChips();eRenderList();eRenderCats();
-  grSetLbl();grRenderHome();grRefreshChips();grRenderHist();grFillCmp();grRenderShop();
-  tmRender();hubRenderHabits();updateHubStat();moiRenderHome();savingsRenderHome();healthRenderDash();notesRenderList();notesRenderNotebookChips();
-}
+// boot() defined below after all app functions
 function setGreet(){
   const h=new Date().getHours();
   const g=h<12?'Good morning! 👋':h<17?'Good afternoon! ☀️':'Good evening! 🌙';
@@ -3985,7 +3980,6 @@ async function invQuickDel(id){if(!confirm('Delete?'))return;await invColl().doc
 // ══════════════════════════════════════════════════
 //  PATCH BOOT — load all new apps
 // ══════════════════════════════════════════════════
-const _origBoot = boot;
 async function boot(){
   renderProfileSheet();setGreet();renderHubGrid();
   showHubSkeleton();
