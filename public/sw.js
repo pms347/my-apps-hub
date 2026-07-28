@@ -1,85 +1,106 @@
-// My Apps Hub — Service Worker v2
-// Strategy: cache-first for the app shell, NETWORK-ONLY for ALL auth + Firebase traffic.
-// IMPORTANT: Never cache auth-related requests — doing so breaks Firebase session persistence
-// and causes the app to ask for login on every visit.
-const CACHE_VERSION = 'hub-v4';
+// My Apps Hub — Service Worker v5
+// Features: cache-first shell, network-only auth/firebase,
+// Background Sync for offline writes, Push Notifications
+const CACHE_VERSION = 'hub-v5';
 const SHELL_CACHE = `shell-${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icons/icon-72.png',
-  './icons/icon-96.png',
-  './icons/icon-128.png',
-  './icons/icon-144.png',
-  './icons/icon-152.png',
-  './icons/icon-192.png',
-  './icons/icon-384.png',
-  './icons/icon-512.png'
+  './', './index.html', './manifest.json',
+  './icons/icon-72.png', './icons/icon-96.png', './icons/icon-128.png',
+  './icons/icon-144.png', './icons/icon-152.png', './icons/icon-192.png',
+  './icons/icon-384.png', './icons/icon-512.png'
 ];
 
-// ALL of these must bypass the cache entirely — any interception breaks auth sessions.
-const NETWORK_ONLY_PATTERNS = [
+// NEVER cache these — auth sessions break if intercepted
+const NETWORK_ONLY = [
   /firestore\.googleapis\.com/,
-  /firebaseapp\.com/,           // covers auth domain: my-apps-dashboard-a2fbe.firebaseapp.com
-  /googleapis\.com/,            // covers all Google APIs including token refresh
-  /gstatic\.com/,               // Firebase JS SDK scripts
-  /identitytoolkit\.googleapis\.com/,  // Firebase Auth REST API
-  /securetoken\.googleapis\.com/,      // Firebase token refresh
-  /accounts\.google\.com/,      // Google OAuth
-  /cdnjs\.cloudflare\.com/,     // Chart.js, jsPDF etc — always load fresh
-  /fonts\.googleapis\.com/,
-  /fonts\.gstatic\.com/
+  /firebaseapp\.com/,
+  /googleapis\.com/,
+  /gstatic\.com/,
+  /identitytoolkit\.googleapis\.com/,
+  /securetoken\.googleapis\.com/,
+  /accounts\.google\.com/,
+  /cdnjs\.cloudflare\.com/
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL_ASSETS))
-  );
+// ── Install ──
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(SHELL_CACHE).then(c => c.addAll(SHELL_ASSETS)));
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== SHELL_CACHE).map((k) => caches.delete(k)))
+// ── Activate: clear old caches ──
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== SHELL_CACHE).map(k => caches.delete(k)))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  const { request } = event;
-
-  // Only handle GET requests — never intercept POST/PUT/DELETE (Firebase writes)
-  if (request.method !== 'GET') return;
-
-  const url = request.url;
-
-  // Pass ALL auth + API traffic straight to the network, no caching whatsoever
-  if (NETWORK_ONLY_PATTERNS.some((re) => re.test(url))) {
-    event.respondWith(fetch(request));
+// ── Fetch: cache-first for shell, network-only for auth/API ──
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  const url = e.request.url;
+  if (NETWORK_ONLY.some(re => re.test(url))) {
+    e.respondWith(fetch(e.request));
     return;
   }
-
-  // App shell: cache-first, update cache in background on each successful fetch
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      const networkFetch = fetch(request)
-        .then((response) => {
-          if (response && response.status === 200 && response.type !== 'opaque') {
-            const clone = response.clone();
-            caches.open(SHELL_CACHE).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || networkFetch;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      const net = fetch(e.request).then(res => {
+        if (res && res.status === 200 && res.type !== 'opaque') {
+          caches.open(SHELL_CACHE).then(c => c.put(e.request, res.clone()));
+        }
+        return res;
+      }).catch(() => cached);
+      return cached || net;
     })
   );
 });
 
-self.addEventListener('message', (event) => {
-  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+// ── Background Sync: replay offline writes ──
+self.addEventListener('sync', e => {
+  if (e.tag === 'offline-writes') {
+    e.waitUntil(replayOfflineWrites());
+  }
+});
+
+async function replayOfflineWrites() {
+  // Notify the app to flush its offline queue when connection is restored
+  const clients = await self.clients.matchAll({ type: 'window' });
+  clients.forEach(client => client.postMessage({ type: 'SYNC_OFFLINE_QUEUE' }));
+}
+
+// ── Push Notifications ──
+self.addEventListener('push', e => {
+  const data = e.data ? e.data.json() : {};
+  const title = data.title || 'My Apps Hub';
+  const options = {
+    body: data.body || 'You have a new notification',
+    icon: 'icons/icon-192.png',
+    badge: 'icons/icon-72.png',
+    data: data.url || '/',
+    vibrate: [100, 50, 100],
+    actions: data.actions || []
+  };
+  e.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window' }).then(clients => {
+      const url = e.notification.data || '/';
+      const existing = clients.find(c => c.url.includes(url) && 'focus' in c);
+      if (existing) return existing.focus();
+      return self.clients.openWindow(url);
+    })
+  );
+});
+
+// ── Messages from the app ──
+self.addEventListener('message', e => {
+  if (e.data === 'SKIP_WAITING') self.skipWaiting();
 });

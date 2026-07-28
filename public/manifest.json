@@ -1,13 +1,71 @@
 {
+  "id": "/",
   "name": "My Apps Hub",
   "short_name": "Apps Hub",
   "description": "Your personal productivity hub — expenses, tasks, health, budgeting and more, all in one place.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui", "browser"],
   "orientation": "portrait",
   "background_color": "#0f1117",
-  "theme_color": "#0f1117",
+  "theme_color": "#6c63ff",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "finance", "health", "lifestyle", "utilities"],
+  "iarc_rating_id": "e58c174a-81d2-5c3c-32cc-34b8de4a52e6",
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "Add Expense",
+      "short_name": "Expense",
+      "description": "Quickly log a new expense",
+      "url": "./index.html?app=expense",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Log Mood",
+      "short_name": "Mood",
+      "description": "Log today's mood",
+      "url": "./index.html?app=mood",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Add Task",
+      "short_name": "Tasks",
+      "description": "Add a new task or habit",
+      "url": "./index.html?app=tasks",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "View Calendar",
+      "short_name": "Calendar",
+      "description": "Open your calendar",
+      "url": "./index.html?app=calendar",
+      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "My Apps Hub home screen"
+    }
+  ],
   "icons": [
     { "src": "icons/icon-72.png", "sizes": "72x72", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any" },

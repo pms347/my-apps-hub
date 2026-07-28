@@ -1325,16 +1325,28 @@ function dismissInstallBanner(){
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
     navigator.serviceWorker.register('./sw.js').then(reg=>{
-      // When a new SW takes over (after an update), reload once to pick up fresh assets.
       reg.addEventListener('updatefound',()=>{
         const nw=reg.installing;
         nw?.addEventListener('statechange',()=>{
-          if(nw.state==='activated'&&navigator.serviceWorker.controller)toast('App updated — refresh for the latest version','info');
+          if(nw.state==='activated'&&navigator.serviceWorker.controller)
+            toast('App updated — refresh for the latest','info');
         });
       });
-    }).catch(()=>{/* offline-first still works without SW registration succeeding */});
+    }).catch(()=>{});
+  });
+  // Listen for messages from service worker (e.g. Background Sync flush)
+  navigator.serviceWorker.addEventListener('message', e => {
+    if(e.data?.type === 'SYNC_OFFLINE_QUEUE') flushOfflineQueue();
   });
 }
+// Handle shortcut deep-links: ?app=expense etc.
+(function handleShortcutLink(){
+  const app = new URLSearchParams(location.search).get('app');
+  if(app) window.addEventListener('DOMContentLoaded', () => {
+    // Wait for boot to finish, then navigate
+    setTimeout(() => { if(typeof switchApp === 'function') switchApp(app); }, 1500);
+  });
+})();
 let _offlineTimer=null;
 function updateOnlineStatus(){
   const pill=document.getElementById('offlinePill');
