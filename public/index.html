@@ -195,6 +195,27 @@ input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type=file]{display:none}
 
+/* ══ ONBOARDING ══ */
+#onboardWrap{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column}
+.ob-slide{display:none;flex-direction:column;flex:1;animation:obIn .3s ease}
+.ob-slide.on{display:flex}
+@keyframes obIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.ob-dots{display:flex;justify-content:center;gap:7px;padding:16px 0 calc(16px + env(safe-area-inset-bottom))}
+.ob-dot{width:8px;height:8px;border-radius:4px;background:var(--border);transition:all .2s}
+.ob-dot.on{width:24px;background:var(--accent)}
+.ob-feat{display:flex;align-items:flex-start;gap:14px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:14px}
+.ob-feat-ico{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ob-feat-title{font-size:.85rem;font-weight:700;margin-bottom:2px}
+.ob-feat-sub{font-size:.7rem;color:var(--muted);line-height:1.4}
+.ob-nav-btn{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 20px;color:var(--text);font-size:.84rem;font-weight:600;cursor:pointer;font-family:inherit}
+.ob-nav-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ob-app-tile{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all .15s;position:relative}
+.ob-app-tile.sel{border-color:var(--accent);background:var(--accent)18}
+.ob-app-tile .ob-check{position:absolute;top:5px;right:5px;width:16px;height:16px;border-radius:8px;background:var(--accent);color:#fff;font-size:.6rem;display:none;align-items:center;justify-content:center;font-weight:900}
+.ob-app-tile.sel .ob-check{display:flex}
+.ob-app-tile .ob-app-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.ob-app-tile .ob-app-name{font-size:.62rem;font-weight:700;text-align:center;line-height:1.2}
+
 body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1d2e;--muted:#5a6080}
 .theme-toggle{width:38px;height:20px;border-radius:10px;background:var(--border);position:relative;cursor:pointer;transition:background .2s;border:none;flex-shrink:0}
 .theme-toggle.dark{background:var(--accent)}
@@ -239,9 +260,71 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 <body>
 
 <!-- AUTH -->
-<div id="authWrap">
+<!-- ════ ONBOARDING ════ -->
+<div id="onboardWrap" style="display:none">
+  <div id="ob-slides" style="height:100%;display:flex;flex-direction:column">
+
+    <!-- Slide 1: Welcome -->
+    <div class="ob-slide on" id="ob-1">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center">
+        <div style="width:90px;height:90px;border-radius:24px;background:linear-gradient(135deg,#6c63ff,#3b82f6);display:flex;align-items:center;justify-content:center;font-size:42px;margin-bottom:24px;box-shadow:0 8px 32px #6c63ff44">🚀</div>
+        <div style="font-size:1.6rem;font-weight:900;margin-bottom:10px;background:linear-gradient(135deg,#a78bfa,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent">My Apps Hub</div>
+        <div style="font-size:.95rem;color:var(--muted);line-height:1.6;max-width:280px">15 apps. One hub.<br>Your entire life, organised.</div>
+        <div style="margin-top:32px;display:flex;gap:10px;flex-direction:column;width:100%;max-width:300px">
+          <button onclick="obNext()" style="background:linear-gradient(135deg,#6c63ff,#3b82f6);border:none;border-radius:14px;padding:15px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit">Get Started →</button>
+          <button onclick="obSkipToAuth()" style="background:none;border:1px solid var(--border);border-radius:14px;padding:12px;color:var(--muted);font-size:.84rem;cursor:pointer;font-family:inherit">I already have an account</button>
+        </div>
+      </div>
+      <div class="ob-dots"><span class="ob-dot on"></span><span class="ob-dot"></span><span class="ob-dot"></span></div>
+    </div>
+
+    <!-- Slide 2: Features -->
+    <div class="ob-slide" id="ob-2">
+      <div style="flex:1;display:flex;flex-direction:column;padding:32px 24px">
+        <div style="font-size:1.2rem;font-weight:800;margin-bottom:6px">Everything in one place</div>
+        <div style="font-size:.78rem;color:var(--muted);margin-bottom:28px">No more switching between 10 different apps</div>
+        <div style="display:flex;flex-direction:column;gap:14px;flex:1">
+          <div class="ob-feat"><div class="ob-feat-ico" style="background:#6c63ff22">💰</div><div><div class="ob-feat-title">Money & Finance</div><div class="ob-feat-sub">Expenses, budget, subscriptions & savings goals — all linked</div></div></div>
+          <div class="ob-feat"><div class="ob-feat-ico" style="background:#22c55e22">🧘</div><div><div class="ob-feat-title">Health & Wellness</div><div class="ob-feat-sub">Mood journal, health log, meal planner — see how they connect</div></div></div>
+          <div class="ob-feat"><div class="ob-feat-ico" style="background:#f59e0b22">✅</div><div><div class="ob-feat-title">Productivity</div><div class="ob-feat-sub">Tasks, habits, notes, calendar & ideas board</div></div></div>
+          <div class="ob-feat"><div class="ob-feat-ico" style="background:#3b82f622">🏠</div><div><div class="ob-feat-title">Home & Life</div><div class="ob-feat-sub">Grocery planner, household inventory, reading tracker</div></div></div>
+          <div class="ob-feat"><div class="ob-feat-ico" style="background:#ec489922">📦</div><div><div class="ob-feat-title">Smart Dashboard</div><div class="ob-feat-sub">Today's spend, calories, mood & habits — at a glance</div></div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:20px">
+          <button onclick="obPrev()" class="ob-nav-btn">← Back</button>
+          <button onclick="obNext()" class="ob-nav-btn primary">Next →</button>
+        </div>
+      </div>
+      <div class="ob-dots"><span class="ob-dot"></span><span class="ob-dot on"></span><span class="ob-dot"></span></div>
+    </div>
+
+    <!-- Slide 3: App Picker -->
+    <div class="ob-slide" id="ob-3">
+      <div style="flex:1;display:flex;flex-direction:column;padding:28px 20px">
+        <div style="font-size:1.15rem;font-weight:800;margin-bottom:4px">Pick your apps</div>
+        <div style="font-size:.74rem;color:var(--muted);margin-bottom:16px">Start with what matters to you. You can change this anytime in Settings.</div>
+        <div id="obAppGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;flex:1;overflow-y:auto"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px">
+          <button onclick="obPrev()" class="ob-nav-btn">← Back</button>
+          <span style="font-size:.7rem;color:var(--muted)" id="obSelectedCount">0 selected</span>
+          <button onclick="obFinishPicker()" class="ob-nav-btn primary">Continue →</button>
+        </div>
+      </div>
+      <div class="ob-dots"><span class="ob-dot"></span><span class="ob-dot"></span><span class="ob-dot on"></span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════ AUTH ════ -->
+<div id="authWrap" style="display:none">
   <div class="abox">
-    <div class="alogo"><div class="aico">🚀</div><h2>My Apps Hub</h2><p>One login · All your apps</p></div>
+    <div class="alogo"><div class="aico">🚀</div><h2>My Apps Hub</h2><p id="authSubtitle">Sign in to continue</p></div>
+    <button class="gbtn" onclick="doGoogle()" style="margin-bottom:12px">
+      <svg width="15" height="15" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Continue with Google
+    </button>
+    <div class="or"><span>or</span></div>
     <div class="atabs">
       <button class="atab on" onclick="setAM('login')">Sign In</button>
       <button class="atab" onclick="setAM('signup')">Sign Up</button>
@@ -251,13 +334,10 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
     <div class="fi"><label>Password</label><input type="password" id="aPass" placeholder="Min 6 chars"></div>
     <button class="abtn" id="authBtn" onclick="doAuth()">Sign In</button>
     <div class="aerr" id="aerr"></div>
-    <div class="or"><span>or</span></div>
-    <button class="gbtn" onclick="doGoogle()">
-      <svg width="15" height="15" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-      Continue with Google
-    </button>
+    <div style="font-size:.66rem;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5">🔒 Your data is private and tied to your account only.<br>We never sell or share your data.</div>
   </div>
 </div>
+
 
 <!-- SHELL -->
 <div id="shell">
@@ -1289,11 +1369,23 @@ async function doAuth(){
 async function doGoogle(){const p=new firebase.auth.GoogleAuthProvider();try{await auth.signInWithPopup(p);}catch(ex){if(ex.code==='auth/popup-blocked')auth.signInWithRedirect(p);else if(ex.code!=='auth/popup-closed-by-user')document.getElementById('aerr').textContent=ex.message;}}
 async function doSO(){if(!confirm('Sign out?'))return;await auth.signOut();}
 auth.onAuthStateChanged(async u=>{
-  if(u){user=u;try{await u.reload();user=auth.currentUser;}catch(e){}
-    document.getElementById('authWrap').style.display='none';
-    const s=document.getElementById('shell');s.style.display='flex';s.style.flexDirection='column';
+  if(u){
+    user=u;
+    try{await u.reload();user=auth.currentUser;}catch(e){}
+    showShell();
     await boot();
-  }else{user=null;document.getElementById('authWrap').style.display='flex';document.getElementById('shell').style.display='none';}
+    // Show first-run tip only on very first login ever
+    const isNewUser = u.metadata.creationTime === u.metadata.lastSignInTime;
+    if(isNewUser || !localStorage.getItem('hubTipDone')) showFirstRunTip();
+  }else{
+    user=null;
+    // Show onboarding for first-time visitors, auth screen for returning users
+    if(isFirstRun()){
+      showOnboarding();
+    }else{
+      showAuth();
+    }
+  }
 });
 
 // ══════════════════════════════════════════════════
@@ -3992,8 +4084,119 @@ async function invQuickDel(id){if(!confirm('Delete?'))return;await invColl().doc
 // ══════════════════════════════════════════════════
 //  PATCH BOOT — load all new apps
 // ══════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+//  ONBOARDING FLOW
+// ══════════════════════════════════════════════════
+const OB_DEFAULTS=['expense','tasks','notes','health','calendar']; // pre-selected for new users
+let obCurSlide=1,obSelectedApps=new Set(OB_DEFAULTS);
+
+function isFirstRun(){
+  // New user = never completed onboarding before (no flag in localStorage)
+  return !localStorage.getItem('obDone');
+}
+
+function showOnboarding(){
+  document.getElementById('onboardWrap').style.display='flex';
+  document.getElementById('authWrap').style.display='none';
+  document.getElementById('shell').style.display='none';
+  obCurSlide=1;
+  obRenderSlide(1);
+  obBuildAppPicker();
+}
+
+function showAuth(){
+  document.getElementById('onboardWrap').style.display='none';
+  document.getElementById('authWrap').style.display='flex';
+  document.getElementById('shell').style.display='none';
+}
+
+function showShell(){
+  document.getElementById('onboardWrap').style.display='none';
+  document.getElementById('authWrap').style.display='none';
+  const s=document.getElementById('shell');
+  s.style.display='flex';s.style.flexDirection='column';
+}
+
+function obRenderSlide(n){
+  document.querySelectorAll('.ob-slide').forEach(s=>s.classList.remove('on'));
+  document.getElementById('ob-'+n)?.classList.add('on');
+  obCurSlide=n;
+}
+
+function obNext(){
+  if(obCurSlide<3)obRenderSlide(obCurSlide+1);
+  else obFinishPicker();
+}
+
+function obPrev(){
+  if(obCurSlide>1)obRenderSlide(obCurSlide-1);
+}
+
+function obSkipToAuth(){
+  showAuth();
+}
+
+function obBuildAppPicker(){
+  const el=document.getElementById('obAppGrid');
+  if(!el)return;
+  el.innerHTML=APPS.map(a=>`
+    <div class="ob-app-tile ${obSelectedApps.has(a.id)?'sel':''}" onclick="obToggleApp('${a.id}',this)">
+      <div class="ob-check">✓</div>
+      <div class="ob-app-ico" style="background:${a.bg}">${a.ico}</div>
+      <div class="ob-app-name">${a.name}</div>
+    </div>`).join('');
+  obUpdateCount();
+}
+
+function obToggleApp(id,el){
+  if(obSelectedApps.has(id)){
+    obSelectedApps.delete(id);
+    el.classList.remove('sel');
+  }else{
+    obSelectedApps.add(id);
+    el.classList.add('sel');
+  }
+  obUpdateCount();
+}
+
+function obUpdateCount(){
+  const el=document.getElementById('obSelectedCount');
+  if(el)el.textContent=`${obSelectedApps.size} selected`;
+}
+
+function obFinishPicker(){
+  // Save selected apps as hidden = everything NOT selected
+  const allIds=APPS.map(a=>a.id);
+  const hidden=allIds.filter(id=>!obSelectedApps.has(id));
+  saveHiddenApps(new Set(hidden));
+  // Mark onboarding done
+  localStorage.setItem('obDone','1');
+  // Now go to auth
+  showAuth();
+  // Update auth subtitle to reflect new user context
+  const sub=document.getElementById('authSubtitle');
+  if(sub)sub.textContent='Create your account to get started';
+  // Switch to signup tab by default for new users
+  setAM('signup');
+}
+
+// ══════════════════════════════════════════════════
+//  FIRST-RUN HUB TIP (shown once after first login)
+// ══════════════════════════════════════════════════
+function showFirstRunTip(){
+  if(localStorage.getItem('hubTipDone'))return;
+  const tip=document.createElement('div');
+  tip.style.cssText='position:fixed;bottom:calc(var(--nav)+var(--sab)+12px);left:16px;right:16px;background:linear-gradient(135deg,#6c63ff,#3b82f6);border-radius:16px;padding:14px 16px;color:#fff;z-index:200;box-shadow:0 4px 24px #6c63ff44;animation:obIn .3s ease';
+  tip.innerHTML=`<div style="font-size:.82rem;font-weight:700;margin-bottom:4px">👋 Welcome to My Apps Hub!</div>
+  <div style="font-size:.72rem;opacity:.9;margin-bottom:10px">Tap any app below to get started. Your data syncs across all your devices automatically.</div>
+  <div style="display:flex;justify-content:flex-end"><button onclick="this.parentElement.parentElement.remove();localStorage.setItem('hubTipDone','1')" style="background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:6px 14px;color:#fff;font-size:.76rem;font-weight:700;cursor:pointer;font-family:inherit">Got it ✓</button></div>`;
+  document.body.appendChild(tip);
+  setTimeout(()=>{if(tip.parentElement){tip.remove();localStorage.setItem('hubTipDone','1');}},8000);
+}
+
 async function boot(){
   renderProfileSheet();setGreet();renderHubGrid();
+
   showHubSkeleton();
   try{
     await Promise.all([
