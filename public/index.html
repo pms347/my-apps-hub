@@ -1192,6 +1192,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
     <div class="sec-lbl">My Apps — Show / Hide</div>
     <div style="font-size:.7rem;color:var(--muted);margin-bottom:7px">Toggle which apps appear on your home screen. Hidden apps still keep your data.</div>
     <div class="card" id="appVisibilityList"></div>
+    <div style="text-align:center;font-size:.62rem;color:var(--muted);margin-top:12px">App version hub-v8</div>
     <button class="btn btn-m btn-full" style="margin-top:10px" onclick="closeOv('settingsOv')">Close</button>
     <div style="height:6px"></div>
   </div>
@@ -1399,7 +1400,6 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 
 <div class="toast" id="toast"></div>
 
-<div class="offline-pill" id="offlinePill">📡 Offline — changes will sync when back online</div>
 <div class="install-banner" id="installBanner">
   <div class="ico">🚀</div>
   <div class="txt"><b>Install My Apps Hub</b><span>Add to home screen for the full app experience</span></div>
@@ -1592,36 +1592,42 @@ if('serviceWorker' in navigator){
     setTimeout(() => { if(typeof switchApp === 'function') switchApp(app); }, 1500);
   });
 })();
-let _offlineTimer=null;
-function updateOnlineStatus(){
-  const pill=document.getElementById('offlinePill');
-  if(!pill)return;
-  if(navigator.onLine){
-    if(_offlineTimer){clearTimeout(_offlineTimer);_offlineTimer=null;}
-    pill.classList.remove('show');
-  }else{
-    // Only show after 3s to avoid false positives on PWA startup
-    if(!_offlineTimer){
-      _offlineTimer=setTimeout(()=>{
-        if(!navigator.onLine)pill.classList.add('show');
-        _offlineTimer=null;
-      },3000);
-    }
-  }
+// ── Offline notice ──
+// There is NO permanent element in the page. A notice is created only when the browser
+// reports offline AND a real network request fails, and removed as soon as either clears.
+let _netTimer=null;
+async function probeConnection(){
+  try{
+    const c=new AbortController();const t=setTimeout(()=>c.abort(),4000);
+    const r=await fetch('./manifest.json?_='+Date.now(),{cache:'no-store',signal:c.signal});
+    clearTimeout(t);return r.ok;
+  }catch(e){return false;}
 }
-window.addEventListener('online',()=>{updateOnlineStatus();toast('Back online — syncing…','ok');flushOfflineQueue();});
+function setOfflineNotice(show){
+  let pill=document.getElementById('offlinePill');
+  if(show){
+    if(!pill){
+      pill=document.createElement('div');pill.id='offlinePill';pill.className='offline-pill';
+      pill.textContent="📡 You're offline — reconnect to save changes";
+      document.body.appendChild(pill);
+      requestAnimationFrame(()=>pill.classList.add('show'));
+    }
+  }else if(pill){pill.classList.remove('show');setTimeout(()=>pill.remove(),300);}
+}
+function updateOnlineStatus(){
+  clearTimeout(_netTimer);
+  if(navigator.onLine){setOfflineNotice(false);return;}
+  _netTimer=setTimeout(async()=>{const ok=await probeConnection();setOfflineNotice(!ok);},2000);
+}
+window.addEventListener('online',()=>{updateOnlineStatus();toast('Back online','ok');flushOfflineQueue();});
 window.addEventListener('offline',updateOnlineStatus);
-// Delay initial check by 2s to let PWA fully initialise before judging connectivity
+const APP_BUILD='hub-v8';
+console.log('My Apps Hub build',APP_BUILD);
 document.addEventListener('DOMContentLoaded',()=>{
-  // Always hide the offline pill immediately on load — only show it after confirmed offline
-  const pill=document.getElementById('offlinePill');
-  if(pill)pill.classList.remove('show');
-  // Tell any active service worker to skip waiting and activate immediately
-  // so the updated sw.js (which no longer caches auth domains) takes effect now
   if(navigator.serviceWorker&&navigator.serviceWorker.controller){
     navigator.serviceWorker.controller.postMessage('SKIP_WAITING');
   }
-  setTimeout(updateOnlineStatus,3000);
+  updateOnlineStatus();
 });
 
 // Lightweight offline write-queue: if a Firestore write fails while offline,
