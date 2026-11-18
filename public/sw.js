@@ -1,7 +1,7 @@
 // My Apps Hub — Service Worker v5
 // Features: cache-first shell, network-only auth/firebase,
 // Background Sync for offline writes, Push Notifications
-const CACHE_VERSION = 'hub-v6';
+const CACHE_VERSION = 'hub-v7';
 const SHELL_CACHE = `shell-${CACHE_VERSION}`;
 
 const SHELL_ASSETS = [
