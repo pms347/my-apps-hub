@@ -231,6 +231,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 .j-card-in{background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:3px 6px;color:var(--text);font-size:.76rem;outline:none;font-family:inherit;width:58%;min-width:0;text-align:right;color-scheme:dark}
 .j-card-in:focus,.j-card-sel:focus{border-color:var(--accent)}
 .j-line{align-items:center}
+.tbar-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 
 
 </style>
@@ -656,6 +657,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
       <div class="j-log" id="jarvisLog"></div>
       <div class="j-bar">
         <button class="tbar-btn" id="jarvisMicBtn" onclick="jarvisMic()" title="Voice input">🎤</button>
+        <button class="tbar-btn" id="jarvisVoiceBtn" onclick="jVoiceToggle()" title="Hands-free voice mode">🎧</button>
         <input type="text" id="jarvisInput" placeholder="Tell Jarvis… spent 450 · BP 120/80 · had idli…" autocomplete="off" onkeydown="if(event.key==='Enter')jarvisSend()">
         <button class="btn btn-p" onclick="jarvisSend()">➤</button>
       </div>
@@ -1182,7 +1184,7 @@ function renderProfileSheet(){
 }
 
 // ══ HUB ══════════════════════════════════════════
-const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Contribution tracker'},{id:'notes',name:'Notes',ico:'📝',bg:'#06b6d422',desc:'Rich notes & notebooks'},{id:'savings',name:'Savings Goals',ico:'🏦',bg:'#22c55e22',desc:'Track financial goals'},{id:'health',name:'Health Log',ico:'🩺',bg:'#ef444422',desc:'Vitals, meds & wellness'},{id:'budget',name:'Budget Planner',ico:'💼',bg:'#10b98122',desc:'Income & expense tracking'},{id:'calendar',name:'Calendar',ico:'📅',bg:'#3b82f622',desc:'Events & reminders'},{id:'mood',name:'Mood Journal',ico:'🧘',bg:'#a78bfa22',desc:'Mental wellness tracker'},{id:'meal',name:'Meal Planner',ico:'🍽️',bg:'#f9731622',desc:'Nutrition & meal planning'},{id:'ideas',name:'Ideas Board',ico:'💡',bg:'#fbbf2422',desc:'Brainstorm & capture ideas'},{id:'jarvis',name:'Jarvis',ico:'🤖',bg:'#8b5cf622',desc:'AI assistant for all apps'}];
+const APPS=[{id:'expense',name:'Expense Tracker',ico:'💰',bg:'#6c63ff22',desc:'Track & analyse spending'},{id:'grocery',name:'Grocery Planner',ico:'🛒',bg:'#22c55e22',desc:'Plan monthly groceries'},{id:'tasks',name:'Task Manager',ico:'✅',bg:'#f59e0b22',desc:'Habits & consistency'},{id:'moidata',name:'MoiData',ico:'📋',bg:'#8b5cf622',desc:'Contribution tracker'},{id:'notes',name:'Notes',ico:'📝',bg:'#06b6d422',desc:'Rich notes & notebooks'},{id:'savings',name:'Savings Goals',ico:'🏦',bg:'#22c55e22',desc:'Track financial goals'},{id:'health',name:'Health Log',ico:'🩺',bg:'#ef444422',desc:'Vitals, meds & wellness'},{id:'budget',name:'Budget Planner',ico:'💼',bg:'#10b98122',desc:'Income & expense tracking'},{id:'calendar',name:'Calendar',ico:'📅',bg:'#3b82f622',desc:'Events & reminders'},{id:'mood',name:'Mood Journal',ico:'🧘',bg:'#a78bfa22',desc:'Mental wellness tracker'},{id:'meal',name:'Meal Planner',ico:'🍽️',bg:'#f9731622',desc:'Nutrition & meal planning'},{id:'ideas',name:'Ideas Board',ico:'💡',bg:'#fbbf2422',desc:'Brainstorm & capture ideas'},{id:'jarvis',name:'Jarvis',ico:'🤖',bg:'#8b5cf622',desc:'Voice & chat AI for all apps'}];
 function renderHubGrid(){document.getElementById('hubGrid').innerHTML=APPS.map(a=>`<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;cursor:pointer" onclick="switchApp('${a.id}')"><div style="width:40px;height:40px;border-radius:10px;background:${a.bg};display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:7px">${a.ico}</div><div style="font-size:.84rem;font-weight:700;margin-bottom:2px">${a.name}</div><div style="font-size:.66rem;color:var(--muted)">${a.desc}</div></div>`).join('');}
 function switchApp(id){
   document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));
@@ -1202,9 +1204,9 @@ function switchApp(id){
   if(id==='mood'){moodPage('home');moodRenderHome();}
   if(id==='meal'){mealPage('home');mealRenderHome();}
   if(id==='ideas'){ideasRender();}
-  if(id==='jarvis'){jarvisOnOpen();}
+  if(id==='jarvis'){jarvisOnOpen();}else if(typeof jVoiceStop==='function')jVoiceStop();
 }
-function goHub(){document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));document.getElementById('ap-hub').classList.add('active');const ico=document.getElementById('tbarIco');ico.style.background='linear-gradient(135deg,#6c63ff,#3b82f6)';ico.textContent='🚀';document.getElementById('tbarTitle').textContent='My Apps Hub';}
+function goHub(){if(typeof jVoiceStop==='function')jVoiceStop();document.querySelectorAll('.app').forEach(a=>a.classList.remove('active'));document.getElementById('ap-hub').classList.add('active');const ico=document.getElementById('tbarIco');ico.style.background='linear-gradient(135deg,#6c63ff,#3b82f6)';ico.textContent='🚀';document.getElementById('tbarTitle').textContent='My Apps Hub';}
 document.addEventListener('DOMContentLoaded',()=>{document.querySelector('.topbar-left').style.cursor='pointer';document.querySelector('.topbar-left').onclick=goHub;document.getElementById('grDate').value=td();document.getElementById('eDate').value=td();});
 
 // ══════════════════════════════════════════════════
@@ -3561,10 +3563,12 @@ async function jarvisPlan(text){
 }
 
 // ── chat UI ──────────────────────────────────────
-function jarvisMsg(role,text){
+function jarvisMsg(role,text,speak){
   const log=document.getElementById('jarvisLog');
   const el=document.createElement('div');el.className='j-msg '+role;el.textContent=text;
-  log.appendChild(el);log.scrollTop=log.scrollHeight;return el;
+  log.appendChild(el);log.scrollTop=log.scrollHeight;
+  if(role==='bot'&&jVoice.on&&text!=='…')jSay(speak||text);
+  return el;
 }
 function jarvisStatus(msg,pct){
   const s=document.getElementById('jarvisStatus');if(s)s.textContent=msg;
@@ -3633,7 +3637,7 @@ async function jarvisSend(){
     typing.remove();
     jarvisRespond(plan);
   }catch(ex){console.error(ex);typing.textContent='Sorry, something went wrong: '+ex.message;}
-  finally{jarvisBusy=false;}
+  finally{jarvisBusy=false;if(jVoice.on)jVoiceNext();}
 }
 
 // ── editable confirmation cards ──────────────────
@@ -3660,11 +3664,17 @@ function jarvisCard(a,title,fields,hook){
   el.appendChild(b);
   const log=document.getElementById('jarvisLog');log.appendChild(el);log.scrollTop=log.scrollHeight;
   if(hook)hook(el);
+  if(jVoice.on){
+    const parts=fields.map(f=>{let v=f.v;if(f.t==='select'){const o=jOpts(f.o).find(x=>String(x[0])===String(f.v));v=o?o[1]:f.v;}else if(f.t==='date'&&v)v=jDateLbl(v);return(v===''||v==null)?'':f.l+' '+v;}).filter(Boolean);
+    jVoice.pending={id,tries:0};
+    jSay(title+' '+parts.join(', ')+'. Say yes to save, or no to cancel.');
+  }
 }
 const jF=(card,k)=>card.querySelector('[data-k="'+k+'"]');
 function jarvisCancel(id){
   const card=document.getElementById('jc-'+id),b=card?.querySelector('.j-btns');
   delete jarvisActions[id];
+  if(jVoice.pending?.id===id)jVoice.pending=null;
   if(b)b.innerHTML='<span class="j-dim">Cancelled</span>';
 }
 async function jarvisConfirm(id){
@@ -3672,6 +3682,7 @@ async function jarvisConfirm(id){
   if(!a||!card||a.busy)return;
   if(!uid()){toast('Not signed in','err');return;}
   a.busy=true;
+  if(jVoice.pending?.id===id)jVoice.pending=null;
   const b=card.querySelector('.j-btns'),orig=b.innerHTML;b.innerHTML='<span class="j-dim">Saving…</span>';
   try{
     const v={};card.querySelectorAll('[data-k]').forEach(e=>{v[e.dataset.k]=e.value;});
@@ -3679,8 +3690,10 @@ async function jarvisConfirm(id){
     delete jarvisActions[id];
     card.querySelectorAll('input,select').forEach(e=>e.disabled=true);
     b.innerHTML='<span style="font-size:.78rem;font-weight:700;color:var(--green)">'+jEsc(done)+'</span>';
+    if(jVoice.on)jSay(done);
   }catch(ex){
     console.error(ex);a.busy=false;b.innerHTML=orig;toast(ex.message||'Error','err');
+    if(jVoice.on){jVoice.pending={id,tries:0};jSay('Could not save. '+(ex.message||'')+' Fix it on screen, or say no to cancel.');}
   }
 }
 const jNow=()=>new Date().toISOString();
@@ -3838,7 +3851,7 @@ const J_COMMIT={
 function jarvisRespond(p){
   const T=p.text||'',today=jToday();
   switch(p.intent){
-    case 'help':jarvisMsg('bot',J_HELP);return;
+    case 'help':jarvisMsg('bot',J_HELP,'I work with all your apps. Say things like: spent 450 on groceries, blood pressure 120 over 80, or had two idli for breakfast. I have listed more examples on screen.');return;
     case 'need_amount':jarvisMsg('bot',"I couldn't find an amount. Try including one, like \"spent 450 on groceries\".");return;
     case 'no_task':jarvisMsg('bot',"I couldn't match that to a habit or task."+(p.names.length?'\nYou have: '+p.names.join(', '):' You have no tasks or habits yet.'));return;
     case 'no_moi':jarvisMsg('bot','You have no MoiData projects yet. Create one in the MoiData app first.');return;
@@ -4006,19 +4019,98 @@ function jarvisRespond(p){
   }
 }
 
-// ── voice input (fills the box; you still tap send) ──
-function jarvisMic(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){toast('Voice input not supported here','err');return;}
-  const btn=document.getElementById('jarvisMicBtn');
-  if(jarvisRec){jarvisRec.stop();return;}
-  const r=new SR();r.lang='en-IN';r.interimResults=false;r.maxAlternatives=1;
-  r.onresult=e=>{document.getElementById('jarvisInput').value=e.results[0][0].transcript;};
-  r.onend=()=>{jarvisRec=null;btn.classList.remove('rec');};
-  r.onerror=()=>{jarvisRec=null;btn.classList.remove('rec');};
-  jarvisRec=r;btn.classList.add('rec');
-  try{r.start();}catch(e){jarvisRec=null;btn.classList.remove('rec');}
+// ── voice: speak commands, hear replies, say yes/no to confirm ──
+// 🎤 = one spoken command (auto-sent; nothing is saved without a confirmation).
+// 🎧 = hands-free: spoken replies, voice yes/no on cards, keeps listening.
+const jVoice={on:false,pending:null,miss:0};
+let jTalk=Promise.resolve();
+const J_SR=()=>window.SpeechRecognition||window.webkitSpeechRecognition;
+function jMicState(on){
+  const b=document.getElementById('jarvisMicBtn');if(b)b.classList.toggle('rec',on);
 }
+function jSpeakOnce(text){
+  return new Promise(res=>{
+    if(!('speechSynthesis' in window)){res();return;}
+    try{
+      const u=new SpeechSynthesisUtterance(text);u.lang='en-IN';u.rate=1;
+      const vs=speechSynthesis.getVoices(),v=vs.find(x=>x.lang==='en-IN')||vs.find(x=>/^en/i.test(x.lang));if(v)u.voice=v;
+      let done=false;const fin=()=>{if(!done){done=true;res();}};
+      u.onend=fin;u.onerror=fin;setTimeout(fin,Math.max(4000,text.length*95));
+      speechSynthesis.speak(u);
+    }catch(e){res();}
+  });
+}
+function jSay(text){
+  const clean=String(text).replace(/₹/g,' rupees ').replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{27BF}\uFE0F•·→✓✕]/gu,' ').replace(/\s*\n+\s*/g,'. ').replace(/\s+/g,' ').trim().slice(0,350);
+  if(!clean)return;
+  jTalk=jTalk.then(()=>jVoice.on?jSpeakOnce(clean):null);
+}
+function jVoiceNext(){jTalk=jTalk.then(()=>{if(jVoice.on)setTimeout(jVoiceTurn,250);});}
+function jListen(){
+  return new Promise(res=>{
+    const SR=J_SR();if(!SR){res({text:null,err:'unsupported'});return;}
+    const r=new SR();r.lang='en-IN';r.interimResults=false;r.maxAlternatives=1;
+    let got=null,err='';
+    r.onresult=e=>{got=e.results[0][0].transcript;};
+    r.onerror=e=>{err=e.error||'error';};
+    r.onend=()=>{jarvisRec=null;jMicState(false);res({text:got,err});};
+    jarvisRec=r;jMicState(true);
+    try{r.start();}catch(e){jarvisRec=null;jMicState(false);res({text:null,err:'start'});}
+  });
+}
+function jVoiceOff(msg){
+  jVoice.on=false;jVoice.pending=null;jVoice.miss=0;
+  try{speechSynthesis.cancel();}catch(e){}
+  if(jarvisRec){try{jarvisRec.stop();}catch(e){}}
+  const b=document.getElementById('jarvisVoiceBtn');if(b)b.classList.remove('on');
+  if(msg)jarvisMsg('bot',msg);
+}
+function jVoiceStop(){if(jVoice.on)jVoiceOff();}
+function jVoiceToggle(){
+  if(jVoice.on){jVoiceOff('Hands-free off.');return;}
+  if(!J_SR()){toast('Voice input is not supported in this browser','err');return;}
+  jVoice.on=true;jVoice.miss=0;
+  document.getElementById('jarvisVoiceBtn').classList.add('on');
+  jarvisMsg('bot','Hands-free on. Say what you want, say "stop" to end.');
+  jVoiceNext();
+}
+async function jVoiceTurn(){
+  if(!jVoice.on||jarvisRec||jarvisBusy)return;
+  const {text,err}=await jListen();
+  if(!jVoice.on)return;
+  if(!text){
+    if(err==='not-allowed'||err==='service-not-allowed'){jVoiceOff('Microphone permission was denied. Allow it in Chrome site settings.');return;}
+    if(++jVoice.miss>=3){jVoiceOff('Hands-free paused (no speech heard). Tap 🎧 to resume.');return;}
+    jVoiceNext();return;
+  }
+  jVoice.miss=0;
+  const t=text.trim(),p=jVoice.pending;
+  if(p&&jarvisActions[p.id]){
+    if(/^(yes|yeah|yep|yup|ok|okay|save|save it|confirm|sure|correct|do it|go ahead|right)\b/i.test(t)){
+      jarvisMsg('user',t);await jarvisConfirm(p.id);jVoiceNext();return;
+    }
+    if(/^(no|nope|cancel|discard|don't|do not|never mind|stop that)\b/i.test(t)){
+      jarvisMsg('user',t);jarvisCancel(p.id);jSay('Cancelled.');jVoiceNext();return;
+    }
+    if(p.tries<1&&!/^(stop|exit|quit|goodbye|bye)\b/i.test(t)){
+      p.tries++;jarvisMsg('user',t);jSay('Please say yes to save, or no to cancel.');jVoiceNext();return;
+    }
+    jarvisCancel(p.id);  // moved on to something new
+  }
+  if(/^(stop|exit|quit|goodbye|bye|stop listening|turn off)\b/i.test(t)){jarvisMsg('user',t);jSay('Okay, bye.');jTalk=jTalk.then(()=>jVoiceOff());return;}
+  document.getElementById('jarvisInput').value=t;
+  await jarvisSend();   // schedules the next listen when hands-free is on
+}
+async function jarvisMic(){
+  if(!J_SR()){toast('Voice input not supported here','err');return;}
+  if(jarvisRec){try{jarvisRec.stop();}catch(e){}return;}   // tap again = stop listening
+  if(jVoice.on){jVoiceTurn();return;}
+  const {text,err}=await jListen();
+  if(!text){if(err==='not-allowed'||err==='service-not-allowed')toast('Allow microphone access for this site','err');else toast("Didn't catch that, try again",'info');return;}
+  document.getElementById('jarvisInput').value=text.trim();
+  jarvisSend();
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)jVoiceStop();});
 
 
 // ══════════════════════════════════════════════════
