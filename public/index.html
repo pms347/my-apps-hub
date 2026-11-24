@@ -873,7 +873,8 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
     <div class="sec-lbl">Jarvis (optional)</div>
     <div class="card" style="padding:10px 12px">
       <div class="ff"><label>Cloud AI URL (general chat)</label><input type="url" id="jarvisCloudUrl" placeholder="https://…/jarvisChat" onchange="jarvisSaveSettings()"></div>
-      <div class="ff" style="margin-bottom:0"><label>Google OAuth Client ID (Gmail read-only)</label><input type="text" id="jarvisGClient" placeholder="…apps.googleusercontent.com" onchange="jarvisSaveSettings()"></div>
+      <div class="ff"><label>Google OAuth Client ID (Gmail read-only)</label><input type="text" id="jarvisGClient" placeholder="…apps.googleusercontent.com" onchange="jarvisSaveSettings()"></div>
+      <div class="prow" style="padding:6px 0 0"><div><div class="prow-l">Test log</div><div class="prow-s" id="jarvisLogCount">0 entries</div></div><div style="display:flex;gap:5px"><button class="btn btn-b btn-sm" onclick="jarvisCopyLog()">Copy</button><button class="btn btn-r btn-sm" onclick="jarvisClearLog()">Clear</button></div></div>
     </div>
     <div class="sec-lbl">Data</div>
     <div class="card">
@@ -3300,6 +3301,10 @@ function jRuleIntent(text){
   const t=text.trim().toLowerCase(),has=re=>re.test(t);
   const moneyMark=/(?:₹|\brs\.?\s*\d|\brupees\b)/i.test(text);
   if(has(/^(help|what can you do|commands|how do i use)\b/))return 'help';
+  if(has(/^(wrong|that'?s wrong|not right|incorrect|flag this|report this|report a problem)\b/))return 'flag';
+  if(has(/^(show|export|copy|get)\s+(the\s+|my\s+)?(jarvis\s+)?(log|feedback)\b/))return 'show_log';
+  if(has(/^(clear|reset|delete)\s+(the\s+|my\s+)?(jarvis\s+)?(log|feedback)\b/))return 'clear_log';
+  if(has(/^(self ?test|test me|run tests?)\b/))return 'selftest';
   if(has(/^(undo|revert)\b/))return 'undo';
   if(has(/^(delete|remove)\s+(the\s+)?(last|latest|previous)\b/))return 'delete_last';
   if(has(/^(change|edit|update|correct|fix|rename)\b.*\b(last|latest|previous)\b/))return 'edit_last';
@@ -3619,6 +3624,7 @@ const J_HELP=`I work with every app in your hub. Try:
 ✏️ "Delete last expense" · "Change last expense to 500" · "Undo"
 🤖 "Brief" for your day · any general question when AI is loaded
 📧 "Check my email" · "Read email 1" · "Summarize email 1" · "Draft reply to email 1 saying…" (needs Gmail connected)
+🧪 "Wrong" (flags my last reply) · "Show log" · "Self test"
 Ask me too: "how much did I spend on food this month", "calories today", "what's pending", "habits today", "my last BP", "events tomorrow", "savings progress", "last 10 expenses", "recent meals".`;
 function jarvisOnOpen(){
   if(!jarvisInit){
@@ -3691,10 +3697,12 @@ async function jarvisSend(){
   if(!text)return;
   if(!uid()){toast('Not signed in','err');return;}
   inp.value='';jarvisMsg('user',text);
+  const via=jVia;jVia='typed';
   jarvisBusy=true;const typing=jarvisMsg('bot','…');
   try{
     const plan=await jarvisPlan(text);
     typing.remove();
+    plan.via=via;
     await jarvisRespond(plan);
   }catch(ex){console.error(ex);typing.textContent='Sorry, something went wrong: '+ex.message;}
   finally{jarvisBusy=false;if(jVoice.on)jVoiceNext();}
@@ -3707,6 +3715,8 @@ const J_GR_UNITS=['kg','g','litre','ml','nos','packet','bunch'];
 const jOpts=a=>a.map(x=>Array.isArray(x)?x:[x,x]);
 function jarvisCard(a,title,fields,hook){
   const id='ja'+(++jarvisSeq);jarvisActions[id]=a;
+  a.srcText=jCur.text;a.srcIntent=jCur.intent;a.via=jCur.via;
+  a.init={};fields.forEach(f=>{if(f.k)a.init[f.k]=String(f.v??'');});
   const el=document.createElement('div');el.className='j-msg bot card';el.id='jc-'+id;
   const ct=document.createElement('div');ct.className='j-ct';ct.textContent=title;el.appendChild(ct);
   fields.forEach(f=>{
@@ -3733,6 +3743,7 @@ function jarvisCard(a,title,fields,hook){
 const jF=(card,k)=>card.querySelector('[data-k="'+k+'"]');
 function jarvisCancel(id){
   const card=document.getElementById('jc-'+id),b=card?.querySelector('.j-btns');
+  const ca=jarvisActions[id];if(ca&&ca.type!=='clearlog'&&ca.type!=='undo'){jCur.via=ca.via||'typed';jLog('cancelled',ca.srcText,ca.srcIntent,'card cancelled ('+ca.type+')');}
   delete jarvisActions[id];
   if(jVoice.pending?.id===id)jVoice.pending=null;
   if(b)b.innerHTML='<span class="j-dim">Cancelled</span>';
@@ -3747,6 +3758,10 @@ async function jarvisConfirm(id){
   try{
     const v={};card.querySelectorAll('[data-k]').forEach(e=>{v[e.dataset.k]=e.value;});
     const done=await J_COMMIT[a.type](a,v);
+    if(a.init&&a.type!=='clearlog'){
+      const diffs=Object.keys(a.init).filter(k=>k in v&&(isFinite(parseFloat(v[k]))&&isFinite(parseFloat(a.init[k]))?jNum(v[k])!==jNum(a.init[k]):String(v[k])!==String(a.init[k]))).map(k=>k+': '+a.init[k]+' → '+v[k]);
+      if(diffs.length){jCur.via=a.via||'typed';jLog('edited',a.srcText,a.srcIntent,diffs.join('; '));}
+    }
     try{jarvisHubInsights();}catch(e){}
     delete jarvisActions[id];
     card.querySelectorAll('input,select').forEach(e=>e.disabled=true);
@@ -3754,6 +3769,7 @@ async function jarvisConfirm(id){
     if(jVoice.on)jSay(done);
   }catch(ex){
     console.error(ex);a.busy=false;b.innerHTML=orig;toast(ex.message||'Error','err');
+    jCur.via=a.via||'typed';jLog('error',a.srcText,a.srcIntent,ex.message||String(ex));
     if(jVoice.on){jVoice.pending={id,tries:0};jSay('Could not save. '+(ex.message||'')+' Fix it on screen, or say no to cancel.');}
   }
 }
@@ -3761,6 +3777,7 @@ const jNow=()=>new Date().toISOString();
 const jNeed=(c,m)=>{if(!c)throw new Error(m);};
 
 const J_COMMIT={
+  async clearlog(){try{localStorage.removeItem(J_LOG_KEY);}catch(e){}jLogCountUpdate();return '🗑 Test log cleared';},
   async undo(a){const e=jUndoStack.pop();jNeed(e,'Nothing to undo');await e.fn();return '↩️ Undone: '+e.label;},
   async del(a){
     const c=J_DEL[a.kind],it=c.arr().find(x=>x.id===a.id);jNeed(it,'That item no longer exists');
@@ -3939,7 +3956,18 @@ const J_COMMIT={
 // ── respond: reads answer directly, writes show a card ──
 function jarvisRespond(p){
   const T=p.text||'',today=jToday();
+  if(!['flag','show_log','clear_log','selftest'].includes(p.intent))jCur={text:T,intent:p.intent,via:p.via||'typed'};
+  if(['chat','need_amount','no_task','none_found','no_moi','no_goal','no_meds'].includes(p.intent))jLog(p.intent==='chat'?'unmatched':p.intent,T,p.intent,'');
   switch(p.intent){
+    case 'flag':{
+      const note=T.replace(/^(wrong|that'?s wrong|not right|incorrect|flag this|report this|report a problem)\s*[:\-]?\s*/i,'').trim();
+      if(!jCur.text){jarvisMsg('bot','Nothing to flag yet.');return;}
+      jLog('flagged',jCur.text,jCur.intent,note||'user flagged');
+      jarvisMsg('bot','Logged. I noted that "'+jCur.text.slice(0,60)+'" was handled wrongly. Say "show log" any time to copy the log for tuning.');return;
+    }
+    case 'show_log':jShowLog();return;
+    case 'clear_log':jarvisCard({type:'clearlog',ok:'🗑 Clear',danger:true},'Clear the test log?',[{l:'Entries',t:'static',v:String(jLogRead().length)}]);return;
+    case 'selftest':jSelfTest();return;
     case 'chat':return jarvisChat(T);
     case 'help':jarvisMsg('bot',J_HELP,'I work with all your apps. Say things like: spent 450 on groceries, blood pressure 120 over 80, or had two idli for breakfast. I have listed more examples on screen.');return;
     case 'need_amount':jarvisMsg('bot',"I couldn't find an amount. Try including one, like \"spent 450 on groceries\".");return;
@@ -4162,6 +4190,7 @@ function jarvisRespond(p){
 
 // ── settings (stored on this device only) ────────
 function jarvisLoadSettings(){
+  try{jLogCountUpdate();}catch(e){}
   try{
     const a=document.getElementById('jarvisCloudUrl'),b=document.getElementById('jarvisGClient');
     if(a)a.value=localStorage.getItem('jarvisCloudUrl')||'';
@@ -4452,6 +4481,52 @@ async function jMailDraft(text){
   if(jVoice.on)jSay('Draft ready. I have not sent anything. Check it on screen.');
 }
 
+
+// ── test log: records what went wrong so it can be tuned (stays on this device) ──
+const J_LOG_KEY='jarvisLog';
+let jCur={text:'',intent:'',via:'typed'},jVia='typed';
+function jLogRead(){try{return JSON.parse(localStorage.getItem(J_LOG_KEY)||'[]');}catch(e){return [];}}
+function jLogCountUpdate(){const el=document.getElementById('jarvisLogCount');if(el)el.textContent=jLogRead().length+' entries';}
+function jLog(kind,text,intent,detail){
+  try{
+    const a=jLogRead();
+    a.push({t:new Date().toISOString(),kind,text:String(text||'').slice(0,200),intent:intent||'',via:jCur.via||'typed',detail:String(detail||'').slice(0,300)});
+    while(a.length>200)a.shift();
+    localStorage.setItem(J_LOG_KEY,JSON.stringify(a));jLogCountUpdate();
+  }catch(e){}
+}
+function jLogText(){
+  return jLogRead().map(x=>x.t.slice(0,16).replace('T',' ')+' | '+x.kind+' | '+(x.intent||'-')+' | '+x.via+' | "'+x.text+'"'+(x.detail?' | '+x.detail:'')).join('\n');
+}
+function jarvisCopyLog(){
+  const txt=jLogText();if(!txt){toast('Log is empty','info');return;}
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=txt;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(e){}ta.remove();toast(ok?'Log copied ✅':'Copy failed','ok');};
+  if(navigator.clipboard?.writeText)navigator.clipboard.writeText(txt).then(()=>toast('Log copied ✅','ok'),fallback);else fallback();
+}
+function jarvisClearLog(){if(!confirm('Clear the Jarvis test log?'))return;try{localStorage.removeItem(J_LOG_KEY);}catch(e){}jLogCountUpdate();toast('Log cleared','ok');}
+function jShowLog(){
+  const a=jLogRead();
+  if(!a.length){jarvisMsg('bot','The test log is empty. It records sentences I could not match, cards you cancel or edit, errors, and anything you flag by saying "wrong".');return;}
+  const by={};a.forEach(x=>{by[x.kind]=(by[x.kind]||0)+1;});
+  const el=jarvisMsg('bot','Test log: '+a.length+' entries ('+Object.entries(by).map(([k,v])=>k+' '+v).join(', ')+').\nLatest:\n'+a.slice(-6).map(x=>'• '+x.kind+': '+x.text.slice(0,45)+(x.detail?' → '+x.detail.slice(0,45):'')).join('\n'),'You have '+a.length+' entries in the test log. Details are on screen.');
+  const b=document.createElement('button');b.className='btn btn-b btn-sm';b.style.cssText='display:block;margin-top:8px';b.textContent='📋 Copy full log';b.onclick=jarvisCopyLog;el.appendChild(b);
+}
+const J_SELFTEST=[
+  ['Spent 450 on groceries yesterday via UPI','add_expense'],['Salary 50000 received','add_budget'],['Bought 2 kg onion 80','add_grocery'],['Add milk 2 litre to shopping list','add_shopping'],
+  ['Task: pay EB bill tomorrow','add_task'],['Add habit read 10 pages','add_habit'],['Mark water habit done','complete_task'],['Moi Murugan from Madurai 500','add_moi'],
+  ['Note: ideas for weekend','add_note'],['Idea: voice notes app #tech','add_idea'],['Deposit 5000 to emergency fund','savings_tx'],['BP 120/80 pulse 72','log_health'],
+  ['Weight 72.5','log_health'],['Slept 7 hours','log_health'],['Drank 500 ml water','log_health'],['Walked 30 min','log_health'],['Meeting with client tomorrow 4pm','add_event'],
+  ['Mood good, energy 7, work was busy','add_mood'],['Had 2 idli and sambar for breakfast','add_meal'],['How much did I spend on food this month','get_expense_summary'],
+  ['Calories today','get_calorie_summary'],['Habits today','get_habits'],['What is pending','get_tasks'],['last 5 expenses','get_expense_list'],
+  ['Delete last expense','delete_last'],['Undo','undo'],['Good morning','brief'],['Check my email','list_emails']
+];
+function jSelfTest(){
+  const rows=J_SELFTEST.map(([s,exp])=>{let got='chat';try{got=jRuleIntent(s)||'chat';}catch(e){got='ERROR';}return{s,exp,got,ok:got===exp};});
+  const bad=rows.filter(r=>!r.ok),good=rows.length-bad.length;
+  jarvisMsg('bot','Self-test (no data is saved): '+good+'/'+rows.length+' sentences matched the expected app.'+(bad.length?'\n\nMismatches:\n'+bad.map(r=>'❌ '+r.s+'\n   expected '+r.exp+', got '+r.got).join('\n'):'\n\nAll good ✅')+'\n\nThis only checks the keyword rules. Your own sentences are the real test.','Self test done. '+good+' of '+rows.length+' matched.');
+  if(bad.length)jLog('selftest','self-test','',bad.map(r=>r.s+' -> '+r.got).join('; '));
+}
+
 // ── voice: speak commands, hear replies, say yes/no to confirm ──
 // 🎤 = one spoken command (auto-sent; nothing is saved without a confirmation).
 // 🎧 = hands-free: spoken replies, voice yes/no on cards, keeps listening.
@@ -4531,7 +4606,7 @@ async function jVoiceTurn(){
     jarvisCancel(p.id);  // moved on to something new
   }
   if(/^(stop|exit|quit|goodbye|bye|stop listening|turn off)\b/i.test(t)){jarvisMsg('user',t);jSay('Okay, bye.');jTalk=jTalk.then(()=>jVoiceOff());return;}
-  document.getElementById('jarvisInput').value=t;
+  document.getElementById('jarvisInput').value=t;jVia='voice';
   await jarvisSend();   // schedules the next listen when hands-free is on
 }
 async function jarvisMic(){
@@ -4540,7 +4615,7 @@ async function jarvisMic(){
   if(jVoice.on){jVoiceTurn();return;}
   const {text,err}=await jListen();
   if(!text){if(err==='not-allowed'||err==='service-not-allowed')toast('Allow microphone access for this site','err');else toast("Didn't catch that, try again",'info');return;}
-  document.getElementById('jarvisInput').value=text.trim();
+  document.getElementById('jarvisInput').value=text.trim();jVia='voice';
   jarvisSend();
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden)jVoiceStop();});
