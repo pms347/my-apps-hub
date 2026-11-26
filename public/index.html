@@ -232,6 +232,16 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 .j-card-in:focus,.j-card-sel:focus{border-color:var(--accent)}
 .j-line{align-items:center}
 .tbar-btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* layout fixes: bubbles must never shrink/clip inside the flex chat log */
+.j-msg{flex-shrink:0}
+.j-msg.card{overflow:visible;margin-bottom:0;padding-bottom:10px}
+.j-msg>.j-chips:only-child{margin-top:0}
+.j-line:last-of-type{border-bottom:1px solid var(--border)}
+.j-btns{margin-top:10px}
+.j-btns .btn{min-height:40px}
+.j-bar .tbar-btn{width:40px;height:40px;font-size:1rem}
+.j-log{padding-bottom:16px;scroll-behavior:smooth}
+body.light .j-card-in{color-scheme:light}
 
 
 </style>
@@ -659,7 +669,7 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
       <div class="j-bar">
         <button class="tbar-btn" id="jarvisMicBtn" onclick="jarvisMic()" title="Voice input">🎤</button>
         <button class="tbar-btn" id="jarvisVoiceBtn" onclick="jVoiceToggle()" title="Hands-free voice mode">🎧</button>
-        <input type="text" id="jarvisInput" placeholder="Tell Jarvis… spent 450 · BP 120/80 · had idli…" autocomplete="off" onkeydown="if(event.key==='Enter')jarvisSend()">
+        <input type="text" id="jarvisInput" placeholder="Type or speak to Jarvis…" autocomplete="off" onkeydown="if(event.key==='Enter')jarvisSend()">
         <button class="btn btn-p" onclick="jarvisSend()">➤</button>
       </div>
     </div>
@@ -3147,6 +3157,8 @@ const J_UNITS={kg:'kg',kgs:'kg',kilo:'kg',kilos:'kg',g:'g',gm:'g',gms:'g',gram:'
 const J_UNIT_RE='(kgs?|kilos?|gms?|grams?|g|ltrs?|lt|litres?|liters?|l|ml|packets?|pkts?|nos|pcs|pieces?|bunch(?:es)?|dozen)';
 
 // ── small helpers ────────────────────────────────
+const jExpNames=()=>eCats.length?eCats.map(c=>c.name):E_DEFS.map(c=>c.name);
+const jBudNames=ty=>{const l=bCats.filter(c=>c.bType===ty||c.bType==='both').map(c=>c.name);return l.length?l:B_CATS_DEF.filter(c=>c.bType===ty||c.bType==='both').map(c=>c.name);};
 const jEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const jNum=v=>{const n=parseFloat(String(v??'').replace(/,/g,''));return isFinite(n)?n:0;};
 const jCap=s=>s?String(s).charAt(0).toUpperCase()+String(s).slice(1):'';
@@ -3242,7 +3254,7 @@ function jPick(names,text,modelCat,fallback){
   }
   return fallback?(names.find(n=>/^others?$/.test(low(n)))||names[0]||'Others'):null;
 }
-const jFindCat=(text,modelCat,fallback)=>jPick(eCats.map(c=>c.name),text,modelCat,fallback);
+const jFindCat=(text,modelCat,fallback)=>jPick(jExpNames(),text,modelCat,fallback);
 function jPayMode(text,aiMode){
   const m=text.match(/\b(upi|gpay|google pay|phonepe|paytm|cash|credit card|debit card|card|net ?banking)\b/i);
   const raw=(m?m[1]:(aiMode||'')).toLowerCase();
@@ -3358,7 +3370,7 @@ function jRuleIntent(text){
 
 // ── model (classify/label only) ──────────────────
 async function jarvisModelParse(text){
-  const cats=eCats.map(c=>c.name);
+  const cats=jExpNames();
   const foodCat=jFindCat('groceries',null,true);
   const sys=`You convert the user's message into ONE JSON object and output nothing else.
 Schema: {"intent":"<one of: ${J_INTENTS.join('|')}>","amount":number or null,"category":string or null,"description":string or null,"payment_mode":"UPI|Cash|Card|NetBanking" or null,"title":string or null}
@@ -3436,7 +3448,7 @@ function jBuild(intent,text,ai){
     case 'add_budget':{
       const amount=jAmount(text)||aiAmt;if(!amount)return{intent:'need_amount'};
       const bType=/\b(salary|income|received|earned|credited|freelance|got paid)\b/i.test(text)?'income':'expense';
-      const names=bCats.filter(c=>c.bType===bType||c.bType==='both').map(c=>c.name);
+      const names=jBudNames(bType);
       const cat=jPick(names,text,ai?.category,true);
       return{intent,amount,bType,cat,name:jDeriveName(text,cat,ai?.description,'budget|salary|income|received|earned|credited'),date};
     }
@@ -3979,9 +3991,9 @@ function jarvisRespond(p){
     case 'add_expense':
       jarvisCard({type:'expense'},'Add this expense?',[
         {k:'name',l:'For',t:'text',v:p.name},{k:'amount',l:'Amount ₹',t:'number',v:p.amount},{k:'date',l:'Date',t:'date',v:p.date},
-        {k:'cat',l:'Category',t:'select',o:eCats.map(c=>c.name),v:p.cat},{k:'note',l:'Note',t:'text',v:p.note}]);return;
+        {k:'cat',l:'Category',t:'select',o:jExpNames(),v:p.cat},{k:'note',l:'Note',t:'text',v:p.note}]);return;
     case 'add_budget':{
-      const catsFor=ty=>bCats.filter(c=>c.bType===ty||c.bType==='both').map(c=>c.name);
+      const catsFor=ty=>jBudNames(ty);
       jarvisCard({type:'budget'},'Add budget transaction?',[
         {k:'bType',l:'Type',t:'select',o:[['income','↑ Income'],['expense','↓ Expense']],v:p.bType},
         {k:'name',l:'Description',t:'text',v:p.name},{k:'amount',l:'Amount ₹',t:'number',v:p.amount},{k:'date',l:'Date',t:'date',v:p.date},
@@ -4060,7 +4072,7 @@ function jarvisRespond(p){
       jarvisCard({type:'editexp',id:p.id},'Update your last expense?',[
         {l:'Was',t:'static',v:p.old.name+' · '+jMoney(p.old.amt)+' · '+p.old.cat},
         {k:'name',l:'For',t:'text',v:p.name},{k:'amount',l:'Amount ₹',t:'number',v:p.amount},{k:'date',l:'Date',t:'date',v:p.date},
-        {k:'cat',l:'Category',t:'select',o:eCats.map(c=>c.name),v:p.cat},{k:'note',l:'Note',t:'text',v:p.note}]);return;
+        {k:'cat',l:'Category',t:'select',o:jExpNames(),v:p.cat},{k:'note',l:'Note',t:'text',v:p.note}]);return;
     case 'none_found':jarvisMsg('bot','I could not find any '+p.what+' to change.');return;
     case 'brief':{
       const tips=jarvisInsights(),h=new Date().getHours();
