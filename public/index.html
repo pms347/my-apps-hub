@@ -243,10 +243,39 @@ body.light{--bg:#f1f4fb;--card:#fff;--card2:#f5f7fc;--border:#d1d5e8;--text:#1a1
 .j-log{padding-bottom:16px;scroll-behavior:smooth}
 body.light .j-card-in{color-scheme:light}
 
+/* PRIVACY LOCK */
+#lockScreen{position:fixed;inset:0;z-index:5000;background:var(--bg);display:none;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.lk-box{width:100%;max-width:320px;text-align:center;margin:auto}
+.lk-ico{font-size:2.2rem;margin-bottom:8px}
+.lk-title{font-size:1.05rem;font-weight:800}
+.lk-sub{font-size:.74rem;color:var(--muted);min-height:18px;margin:4px 0 14px}
+.lk-dots{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.lk-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);transition:all .12s}
+.lk-dot.on{background:var(--accent);border-color:var(--accent)}
+.lk-dots.shake{animation:lkShake .35s}
+@keyframes lkShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
+.lk-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;justify-items:center;margin-bottom:6px}
+.lk-key{width:68px;height:68px;border-radius:50%;background:var(--card);border:1px solid var(--border);color:var(--text);font-size:1.4rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none}
+.lk-key:active{background:var(--card2)}
+.lk-key.ghost{background:transparent;border-color:transparent;font-size:1.2rem}
+.lk-foot{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.lk-link{background:none;border:none;color:var(--muted);font-size:.72rem;cursor:pointer;font-family:inherit;padding:6px;text-decoration:underline}
+
 
 </style>
 </head>
 <body>
+<div id="lockScreen"><div class="lk-box">
+  <div class="lk-ico">🔒</div><div class="lk-title" id="lkTitle">Unlock</div><div class="lk-sub" id="lkSub"></div>
+  <div class="lk-dots" id="lkDots"></div><div class="lk-pad" id="lkPad"></div>
+  <div class="lk-foot">
+    <button class="btn btn-p btn-full" id="lkOk" onclick="lockSubmit()">Unlock</button>
+    <button class="btn btn-m btn-full" id="lkBio" onclick="lockBioUnlock()" style="display:none">🔐 Use fingerprint</button>
+    <button class="btn btn-m btn-full" id="lkCancel" onclick="lockCancel()" style="display:none">Cancel</button>
+    <button class="lk-link" id="lkForgot" onclick="lockForgot()">Forgot PIN? Sign out</button>
+  </div>
+</div></div>
+<script>try{if(localStorage.getItem('lockEnabled')==='1')document.getElementById('lockScreen').style.display='flex';}catch(e){}</script>
 
 <!-- AUTH -->
 <div id="authWrap">
@@ -879,6 +908,14 @@ body.light .j-card-in{color-scheme:light}
     <div class="sec-lbl">AI Features</div>
     <div class="card">
       <div class="prow"><div><div class="prow-l">🤖 Refresh AI Insights</div><div class="prow-s">Budget & Mood smart tips</div></div><button class="btn btn-v btn-sm" onclick="refreshAI()">Refresh</button></div>
+    </div>
+    <div class="sec-lbl">Privacy lock</div>
+    <div class="card">
+      <div class="prow"><div><div class="prow-l">🔒 App lock</div><div class="prow-s" id="lockState">Off</div></div><button class="btn btn-b btn-sm" id="lockToggleBtn" onclick="lockToggle()">Turn on</button></div>
+      <div class="prow" id="lockRowPin" style="display:none"><div><div class="prow-l">Change PIN</div></div><button class="btn btn-m btn-sm" onclick="lockChangePin()">Change</button></div>
+      <div class="prow" id="lockRowBio" style="display:none"><div><div class="prow-l">Fingerprint / screen lock</div><div class="prow-s" id="lockBioState">Off</div></div><button class="btn btn-b btn-sm" id="lockBioBtn" onclick="lockBioSetup()">Set up</button></div>
+      <div class="prow" id="lockRowAuto" style="display:none"><div><div class="prow-l">Lock after</div></div><select id="lockTimeoutSel" onchange="lockSetTimeout(this.value)" style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:5px 8px;color:var(--text);font-size:.74rem;outline:none;font-family:inherit"><option value="0">Leaving the app</option><option value="60">1 minute</option><option value="300">5 minutes</option><option value="-1">Only on fresh open</option></select></div>
+      <div style="font-size:.64rem;color:var(--muted);padding:8px 12px 10px">A screen lock for this phone. It hides your hub from anyone who picks the phone up, but it does not encrypt your data.</div>
     </div>
     <div class="sec-lbl">Jarvis (optional)</div>
     <div class="card" style="padding:10px 12px">
@@ -1821,7 +1858,7 @@ function addDays(ds,n){const d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n)
 function dateDiff(a,b){return Math.round((new Date(b)-new Date(a))/86400000);}
 function groupBy(arr,fn){return arr.reduce((acc,x)=>{const k=fn(x);(acc[k]=acc[k]||[]).push(x);return acc;},{});}
 function dlBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
-function openOv(id){const el=document.getElementById(id);if(!el)return;el.classList.add('on');if(id==='profOv')renderProfileSheet();}
+function openOv(id){const el=document.getElementById(id);if(!el)return;el.classList.add('on');if(id==='profOv')renderProfileSheet();if(id==='settingsOv'&&typeof lockRefreshUI==='function')lockRefreshUI();}
 function closeOv(id){document.getElementById(id)?.classList.remove('on');}
 function toast(msg,type='ok'){const t=document.getElementById('toast');clearTimeout(t._t);t.className='toast';t.textContent=msg;requestAnimationFrame(()=>requestAnimationFrame(()=>{t.className=`toast ${type} show`;t._t=setTimeout(()=>t.className='toast',2500);}));}
 
@@ -3313,6 +3350,7 @@ function jRuleIntent(text){
   const t=text.trim().toLowerCase(),has=re=>re.test(t);
   const moneyMark=/(?:₹|\brs\.?\s*\d|\brupees\b)/i.test(text);
   if(has(/^(help|what can you do|commands|how do i use)\b/))return 'help';
+  if(has(/^(lock|lock (the )?app|lock now|lock it)$/))return 'lock_now';
   if(has(/^(wrong|that'?s wrong|not right|incorrect|flag this|report this|report a problem)\b/))return 'flag';
   if(has(/^(show|export|copy|get)\s+(the\s+|my\s+)?(jarvis\s+)?(log|feedback)\b/))return 'show_log';
   if(has(/^(clear|reset|delete)\s+(the\s+|my\s+)?(jarvis\s+)?(log|feedback)\b/))return 'clear_log';
@@ -3325,6 +3363,7 @@ function jRuleIntent(text){
   if(has(/\b(summari[sz]e|summary of)\b.*\b(emails?|mails?)\b/))return 'summarize_email';
   if(has(/^(read|open)\b.*\b(emails?|mails?)\b/)||has(/^(read|open)\s+(the\s+)?(first|latest|last|\d+)\b/))return 'read_email';
   if(has(/\b(emails?|mails?|inbox|gmail)\b/)&&has(/\b(check|unread|new|show|list|any|inbox|do i have|get|fetch|latest)\b/))return 'list_emails';
+  if(has(/^(search( for)?|find|look ?up)\b/)||has(/^(show me|give me)\s+everything\b/)||has(/^where (did|is|was)\b/))return 'search';
   if(has(/^(add\s+)?(a\s+)?note\b|^remember\b|^jot\b/))return 'add_note';
   if(has(/^(add|new|create)\s+(a\s+)?(daily\s+)?habit\b/))return 'add_habit';
   if(has(/^(add\s+)?(a\s+)?(new\s+)?(task|todo|to-do)\b/))return 'add_task';
@@ -3332,6 +3371,9 @@ function jRuleIntent(text){
   if(has(/^(add\s+)?(a\s+)?(new\s+)?idea\b/))return 'add_idea';
   if(has(/^(add\s+)?moi\b|\bmoi (entry|record|contribution)\b/))return 'add_moi';
   if(has(/^(mark|tick|complete|completed|done)\b/)||has(/\bmark\b.*\b(done|complete|completed)\b/))return 'complete_task';
+  if(has(/\b(forecast|predict|projection|projected)\b/)||has(/\bat this (pace|rate)\b/)||has(/\b(month[- ]end|end of (the )?month)\b/)||has(/^how much will i (spend|be spending)\b/))return 'forecast';
+  if(has(/\bcan i (afford|spend|buy)\b/)||has(/\bdo i have (room|budget) for\b/)||has(/\bafford\b/))return 'afford';
+  if((has(/\b(per|each|every|a)\s*(week|month)\b/)&&has(/\b(goal|goals|save|saving|savings|reach)\b/))||has(/\bwill i (reach|hit|meet|make)\b.*\bgoal\b/)||has(/\b(goal pace|on track)\b/))return 'goal_pace';
   const listy=has(/\b(records?|statement|history|transactions?|entries|list|latest|recent|old|oldest|previous)\b/)||has(/\blast\s+(\d+|few|expenses?|transactions?|records?|entries|entry|meals?|purchases?)\b/);
   if(listy&&!has(/\b(how much|total|sum|paid|bought)\b/)&&!has(/\b(shopping|grocery) list\b/)){
     if(has(/\b(budget|income|salary)\b/))return 'get_budget_list';
@@ -3585,6 +3627,10 @@ function jBuild(intent,text,ai){
       return body?{intent,title:jCap(title),body:body.length>title.length?body:'',cat,priority,tags:tags.join(', ')}:{intent:'chat'};
     }
     case 'undo':return{intent};
+    case 'afford':{
+      const amount=jAmount(text);if(!amount)return{intent:'need_amount'};
+      return{intent,amount,horizon:/\btoday\b/i.test(text)?'today':/\bweek\b/i.test(text)?'week':'month'};
+    }
     case 'delete_last':{
       const kind=jDelKind(text),it=jLastOf(kind);
       if(!it)return{intent:'none_found',what:J_DEL[kind].n+'s'};
@@ -3636,6 +3682,7 @@ const J_HELP=`I work with every app in your hub. Try:
 ✏️ "Delete last expense" · "Change last expense to 500" · "Undo"
 🤖 "Brief" for your day · any general question when AI is loaded
 📧 "Check my email" · "Read email 1" · "Summarize email 1" · "Draft reply to email 1 saying…" (needs Gmail connected)
+🔎 "Find electricity" (searches every app) · 📈 "Forecast this month" · "Can I afford 5000 this week?" · "How much per week for my bike goal?" · 🔒 "Lock"
 🧪 "Wrong" (flags my last reply) · "Show log" · "Self test"
 Ask me too: "how much did I spend on food this month", "calories today", "what's pending", "habits today", "my last BP", "events tomorrow", "savings progress", "last 10 expenses", "recent meals".`;
 function jarvisOnOpen(){
@@ -4078,6 +4125,14 @@ function jarvisRespond(p){
       const tips=jarvisInsights(),h=new Date().getHours();
       jarvisMsg('bot',tips.length?(h<12?'Good morning. ':h<17?'Good afternoon. ':'Good evening. ')+'Here is your day:\n'+tips.map(t=>'• '+t).join('\n'):'All clear: nothing overdue, no budgets at risk, and no habits waiting. 🎉');return;
     }
+    case 'search':return jarvisSearch(T);
+    case 'forecast':jarvisForecast();return;
+    case 'afford':jarvisAfford(p);return;
+    case 'goal_pace':return jarvisGoalPace(T);
+    case 'lock_now':
+      if(typeof lockEnabled==='function'&&lockEnabled()){lockShow('unlock','Locked','',null,false,true);}
+      else jarvisMsg('bot','App lock is off. Turn it on in ⚙️ Settings → Privacy lock.');
+      return;
     case 'list_emails':return jMailAction(()=>jMailList());
     case 'read_email':return jMailAction(()=>jMailRead(T));
     case 'summarize_email':return jMailAction(()=>jMailSummarize(T));
@@ -4298,6 +4353,8 @@ function jarvisInsights(){
     if(p>=100)out.push('🔴 Over budget: '+c.name+' '+p+'% ('+jMoney(spent[c.name])+' of '+jMoney(c.budget)+')');
     else if(p>=80)out.push('🟠 '+c.name+' is at '+p+'% of its monthly budget');
   });
+  // month-end projection vs budgets
+  try{const P=jProject();if(P.d>=7&&P.budgetTotal>0&&P.proj>P.budgetTotal*1.05)out.push('📈 On pace to spend about '+jMoney(P.proj)+' this month vs budgets of '+jMoney(P.budgetTotal));}catch(e){}
   // week over week
   const sumR=(a,b)=>eExp.filter(e=>e.date>=jLocalISO(jAddDays(-a))&&e.date<=jLocalISO(jAddDays(-b))).reduce((s,e)=>s+Number(e.amt||0),0);
   const cur=sumR(6,0),prev=sumR(13,7);
@@ -4530,6 +4587,7 @@ const J_SELFTEST=[
   ['Weight 72.5','log_health'],['Slept 7 hours','log_health'],['Drank 500 ml water','log_health'],['Walked 30 min','log_health'],['Meeting with client tomorrow 4pm','add_event'],
   ['Mood good, energy 7, work was busy','add_mood'],['Had 2 idli and sambar for breakfast','add_meal'],['How much did I spend on food this month','get_expense_summary'],
   ['Calories today','get_calorie_summary'],['Habits today','get_habits'],['What is pending','get_tasks'],['last 5 expenses','get_expense_list'],
+  ['Find electricity','search'],['Can I afford 5000 this week','afford'],['Forecast this month','forecast'],['How much per week for my bike goal','goal_pace'],['lock','lock_now'],
   ['Delete last expense','delete_last'],['Undo','undo'],['Good morning','brief'],['Check my email','list_emails']
 ];
 function jSelfTest(){
@@ -4537,6 +4595,157 @@ function jSelfTest(){
   const bad=rows.filter(r=>!r.ok),good=rows.length-bad.length;
   jarvisMsg('bot','Self-test (no data is saved): '+good+'/'+rows.length+' sentences matched the expected app.'+(bad.length?'\n\nMismatches:\n'+bad.map(r=>'❌ '+r.s+'\n   expected '+r.exp+', got '+r.got).join('\n'):'\n\nAll good ✅')+'\n\nThis only checks the keyword rules. Your own sentences are the real test.','Self test done. '+good+' of '+rows.length+' matched.');
   if(bad.length)jLog('selftest','self-test','',bad.map(r=>r.s+' -> '+r.got).join('; '));
+}
+
+
+// ══════════════════════════════════════════════════
+//  JARVIS: cross-app search, forecasts, "can I afford it?", goal pace
+//  (all arithmetic on your own logged data, no AI needed)
+// ══════════════════════════════════════════════════
+
+// ── search across every app ──────────────────────
+const J_SEARCH_STOP=['search','for','find','look','lookup','up','my','all','the','about','in','on','of','everything','show','me','give','where','did','is','was','any','apps','app','hub','entries','records','entry','record','i','a','an','to','at','do','you','pay','paid'];
+function jSearchTerms(text){
+  return text.toLowerCase().replace(/[^a-z0-9₹.\s]/g,' ').split(/\s+/).filter(w=>w.length>1&&!J_SEARCH_STOP.includes(w));
+}
+function jHealthDetail(l){
+  if(l.type==='vitals')return 'BP '+(l.systolic||'?')+'/'+(l.diastolic||'?')+(l.pulse?' pulse '+l.pulse:'');
+  if(l.type==='weight')return l.weight+' kg';
+  if(l.type==='sleep')return l.sleep+' h sleep';
+  if(l.type==='water')return l.water+' ml water';
+  if(l.type==='exercise')return (l.exType||'')+' '+(l.exDuration||'')+' min';
+  if(l.type==='mood')return 'mood '+l.mood+'/10';
+  if(l.type==='symptoms')return (l.symptom||'')+(l.severity?' ('+l.severity+'/10)':'');
+  if(l.type==='medication')return (l.medName||'')+' taken';
+  return (l.customLabel||'')+': '+(l.customValue||'');
+}
+async function jSearchAll(terms){
+  const items=[];
+  const add=(app,appId,ico,date,title,detail,hay)=>items.push({app,appId,ico,date:date||'',title:String(title||'').trim()||'(untitled)',detail:detail||'',hay:String(hay).toLowerCase()});
+  eExp.forEach(e=>add('Expenses','expense','💰',e.date,e.name,jMoney(e.amt)+' · '+e.cat,[e.name,e.cat,e.note,e.amt,e.date].join(' ')));
+  bTx.forEach(e=>add('Budget','budget','💼',e.date,e.name,(e.bType==='income'?'+':'-')+jMoney(e.amt)+' · '+e.cat,[e.name,e.cat,e.note,e.amt,e.date].join(' ')));
+  grList.forEach(e=>add('Grocery','grocery','🛒',e.date,e.name,e.amount+' '+e.unit+' · '+jMoney(e.actualPrice||0),[e.name,e.category,e.notes,e.actualPrice,e.date].join(' ')));
+  grShop.forEach(e=>add('Shopping list','grocery','🛒','',e.name,e.qty+' '+e.unit,[e.name].join(' ')));
+  notesAll.forEach(n=>add('Notes','notes','📝',(n.updatedAt||'').slice(0,10),n.title||'Untitled',(n.body||'').replace(/\s+/g,' ').slice(0,60),[n.title,n.body,n.tags].join(' ')));
+  tHabits.forEach(t=>add('Tasks','tasks','✅','',t.name,'habit',[t.name,t.notes,t.category].join(' ')));
+  tIV.forEach(t=>add('Tasks','tasks','✅','',t.name,'repeats every '+(t.intervalDays||7)+' days',[t.name,t.notes,t.category].join(' ')));
+  tOT.forEach(t=>add('Tasks','tasks','✅',t.dueDate,t.name,(t.status==='done'?'done':'pending'),[t.name,t.notes,t.category].join(' ')));
+  calEvents.forEach(e=>add('Calendar','calendar','📅',e.date,e.title,e.time||'all day',[e.title,e.notes,e.calCat].join(' ')));
+  ideas.forEach(i=>add('Ideas','ideas','💡',(i.createdAt||'').slice(0,10),i.title,i.status||'new',[i.title,i.body,i.tags,i.cat].join(' ')));
+  mealLogs.forEach(m=>add('Meals','meal','🍽️',m.date,m.name,(m.calories||0)+' kcal · '+(m.mealType||''),[m.name,m.notes,m.mealType].join(' ')));
+  mealRecipes.forEach(r=>add('Recipes','meal','🍽️','',r.name,(r.calories||0)+' kcal',[r.name,r.ingredients,r.instructions].join(' ')));
+  healthLogs.forEach(l=>add('Health','health','🩺',l.date,jHealthDetail(l),l.notes||'',[l.type,jHealthDetail(l),l.notes,l.date].join(' ')));
+  healthMeds.forEach(m=>add('Health','health','🩺','',m.name,(m.dosage||'')+' '+(m.frequency||''),[m.name,m.dosage,m.instructions].join(' ')));
+  moodLogs.forEach(l=>add('Mood','mood','🧘',l.date,MOOD_L[(l.mood||3)-1],(l.tags||[]).join(', '),[l.journal,(l.tags||[]).join(' '),MOOD_L[(l.mood||3)-1]].join(' ')));
+  savingsGoals.forEach(g=>add('Savings','savings','🏦',g.deadline||'',g.name,jMoney(g.saved||0)+' of '+jMoney(g.target||0),[g.name,g.notes].join(' ')));
+  moiProjects.forEach(p=>add('MoiData','moidata','📋',p.date,p.name,jMoney(p.total||0)+' · '+(p.recordCount||0)+' contributors',[p.name,p.place,p.comments].join(' ')));
+  // MoiData contributor records live in sub-collections, so fetch them on demand
+  try{
+    await Promise.all(moiProjects.slice(0,30).map(async p=>{
+      const snap=await moiRC(p.id).get();
+      snap.docs.forEach(d=>{const r=d.data();add('MoiData','moidata','📋',r.date,r.name+(r.city?' ('+r.city+')':''),jMoney(r.amount||0)+' · '+p.name,[r.name,r.city,r.notes,r.amount,p.name].join(' '));});
+    }));
+  }catch(e){console.warn('moi search',e);}
+  return items.filter(it=>terms.every(t=>it.hay.includes(t)));
+}
+async function jarvisSearch(text){
+  const terms=jSearchTerms(text);
+  if(!terms.length){jarvisMsg('bot','What should I search for? Try "find electricity", "search Murugan" or "where is 450".');return;}
+  const el=jarvisMsg('bot','…');
+  let res=[];
+  try{res=await jSearchAll(terms);}catch(ex){el.textContent='Search failed: '+(ex.message||ex);return;}
+  if(!res.length){el.textContent='Nothing found for "'+terms.join(' ')+'" in any app.';if(jVoice.on)jSay('Nothing found.');return;}
+  const groups={};
+  res.forEach(r=>{(groups[r.app]=groups[r.app]||{id:r.appId,ico:r.ico,items:[]}).items.push(r);});
+  const order=Object.keys(groups).sort((a,b)=>groups[b].items.length-groups[a].items.length);
+  let shown=0,out='🔎 "'+terms.join(' ')+'": '+res.length+' result'+(res.length!==1?'s':'')+' in '+order.length+' app'+(order.length!==1?'s':'')+'\n';
+  order.forEach(app=>{
+    const g=groups[app];g.items.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    out+='\n'+g.ico+' '+app+' ('+g.items.length+')\n';
+    g.items.slice(0,4).forEach(r=>{shown++;out+='• '+(r.date?fmtD(r.date)+' · ':'')+r.title+(r.detail?' · '+r.detail:'')+'\n';});
+    if(g.items.length>4)out+='  + '+(g.items.length-4)+' more\n';
+  });
+  el.textContent=out.trim();
+  const row=document.createElement('div');row.className='j-chips';
+  const seen=new Set();
+  order.forEach(app=>{const g=groups[app];if(seen.has(g.id))return;seen.add(g.id);const b=document.createElement('button');b.className='chip';b.textContent='Open '+g.ico+' '+app;b.onclick=()=>switchApp(g.id);row.appendChild(b);});
+  el.appendChild(row);
+  const log=document.getElementById('jarvisLog');log.scrollTop=log.scrollHeight;
+  if(jVoice.on)jSay('Found '+res.length+' results in '+order.length+' apps. Details are on screen.');
+}
+
+// ── month projection / affordability / goal pace ──
+function jMonthInfo(){
+  const n=new Date();
+  const prev=jLocalISO(new Date(n.getFullYear(),n.getMonth()-1,15)).slice(0,7);
+  return{d:n.getDate(),D:new Date(n.getFullYear(),n.getMonth()+1,0).getDate(),ym:jToday().slice(0,7),prev};
+}
+function jProject(){
+  const {d,D,ym,prev}=jMonthInfo();
+  const rows=eExp.filter(e=>e.date?.startsWith(ym)),by={};
+  rows.forEach(e=>{const c=by[e.cat]=by[e.cat]||{sum:0,n:0};c.sum+=Number(e.amt||0);c.n++;});
+  // a category with a single payment (like rent) is treated as one-off and not extrapolated
+  const cats=Object.entries(by).map(([cat,v])=>({cat,sum:v.sum,n:v.n,oneOff:v.n<=1,proj:v.n<=1?v.sum:v.sum/d*D}));
+  const spent=rows.reduce((s,e)=>s+Number(e.amt||0),0),proj=cats.reduce((s,c)=>s+c.proj,0);
+  const prevTotal=eExp.filter(e=>e.date?.startsWith(prev)).reduce((s,e)=>s+Number(e.amt||0),0);
+  const budgetTotal=eCats.reduce((s,c)=>s+Number(c.budget||0),0);
+  return{d,D,ym,spent,proj,cats,prevTotal,budgetTotal,rows:rows.length};
+}
+function jarvisForecast(){
+  const P=jProject();
+  if(!P.rows){jarvisMsg('bot','No expenses logged this month yet, so there is nothing to project.'+(P.prevTotal?' Last month you spent '+jMoney(P.prevTotal)+'.':''));return;}
+  let m='📈 Month-end forecast ('+P.d+' of '+P.D+' days in):\nSo far: '+jMoney(P.spent)+'\nOn pace for about '+jMoney(P.proj)+' by month end';
+  if(P.prevTotal>0)m+='\nLast month: '+jMoney(P.prevTotal);
+  if(P.budgetTotal>0)m+='\nCategory budgets total: '+jMoney(P.budgetTotal)+(P.proj>P.budgetTotal?' (on pace to exceed by '+jMoney(P.proj-P.budgetTotal)+')':' (on pace to stay '+jMoney(P.budgetTotal-P.proj)+' under)');
+  const over=P.cats.map(c=>({c,b:(eCats.find(x=>x.name===c.cat)||{}).budget||0})).filter(x=>x.b>0&&x.c.proj>x.b).sort((a,b)=>(b.c.proj-b.b)-(a.c.proj-a.b)).slice(0,3);
+  if(over.length)m+='\nLikely over budget: '+over.map(x=>x.c.cat+' ≈ '+jMoney(x.c.proj)+' vs '+jMoney(x.b)).join('; ');
+  if(P.d<7)m+='\nOnly '+P.d+' day'+(P.d!==1?'s':'')+' of data, so this will move a lot.';
+  m+='\n(Single-payment categories like rent are kept as is.)';
+  jarvisMsg('bot',m,'You are on pace to spend about '+jMoney(P.proj)+' this month.'+(P.budgetTotal>0?(P.proj>P.budgetTotal?' That is over your category budgets.':' That is within your category budgets.'):''));
+}
+function jarvisAfford(p){
+  const P=jProject(),A=p.amount,lines=[];
+  const base=P.rows?P.proj:P.prevTotal;
+  let verdict;
+  if(P.budgetTotal>0){
+    const room=P.budgetTotal-base;
+    lines.push('Category budgets total '+jMoney(P.budgetTotal)+' (overall, not per category). '+(P.rows?'On pace for about ':'Last month was ')+jMoney(base)+' ('+jMoney(Math.abs(room))+(room>=0?' of room left':' over')+').');
+    verdict=room>=A?'✅ '+jMoney(A)+' fits within your monthly budgets.':room>0?'⚠️ '+jMoney(A)+' would go over your monthly budgets by about '+jMoney(A-room)+'.':'🔴 You are already on pace to exceed your budgets; this would add '+jMoney(A)+' more.';
+  }else if(P.prevTotal>0||P.rows){
+    const withIt=base+A,ref=P.prevTotal;
+    lines.push('No category budgets are set. '+(P.rows?'On pace for about ':'Last month was ')+jMoney(base)+' this month'+(ref&&P.rows?' (last month '+jMoney(ref)+')':'')+'.');
+    verdict=ref>0?'With this, the month would be about '+jMoney(withIt)+' ('+(withIt>=ref?Math.round((withIt/ref-1)*100)+'% above':Math.round((1-withIt/ref)*100)+'% below')+' last month).':'With this, the month would be about '+jMoney(withIt)+'.';
+  }else{jarvisMsg('bot','I need some logged expenses or category budgets to judge that. Log a few and ask again.');return;}
+  const inc=bTx.filter(t=>t.bType==='income'&&t.date?.startsWith(P.ym)).reduce((s,t)=>s+Number(t.amt||0),0);
+  if(inc>0)lines.push('Budget Planner income this month: '+jMoney(inc)+'. After this, about '+jMoney(inc-base-A)+' would be left at your pace.');
+  if(p.horizon!=='month'){
+    const from=jLocalISO(jAddDays(-27)),last28=eExp.filter(e=>e.date>=from).reduce((s,e)=>s+Number(e.amt||0),0),wk=last28/4;
+    if(wk>0)lines.push('Your typical week is about '+jMoney(wk)+'; this is '+Math.round(A/wk*100)+'% of that.');
+  }
+  jarvisMsg('bot',verdict+'\n'+lines.join('\n')+'\nThis is arithmetic on what you have logged, not financial advice.',verdict.replace(/[✅⚠️🔴]/gu,''));
+}
+async function jarvisGoalPace(text){
+  if(!savingsGoals.length){jarvisMsg('bot','You have no savings goals yet. Create one in Savings Goals first.');return;}
+  const g=jMatch(text,savingsGoals,x=>x.name);
+  const list=g?[g]:savingsGoals.filter(x=>Number(x.saved||0)<Number(x.target||0));
+  if(!list.length){jarvisMsg('bot','All your goals are fully funded 🎉');return;}
+  const el=jarvisMsg('bot','…'),lines=[];
+  for(const x of list.slice(0,4)){
+    let deps=savingsDeposits[x.id];
+    if(!deps){try{const s=await savingsDepositsC(x.id).orderBy('date','desc').get();deps=savingsDeposits[x.id]=s.docs.map(d=>({id:d.id,...d.data()}));}catch(e){deps=[];}}
+    const rem=Math.max(0,Number(x.target||0)-Number(x.saved||0)),since=jLocalISO(jAddDays(-60));
+    const net=deps.filter(d=>d.date>=since).reduce((s,d)=>s+(d.type==='withdraw'?-1:1)*Number(d.amount||0),0),perWeek=net/60*7;
+    let l=(x.icon||'🎯')+' '+x.name+': '+jMoney(rem)+' to go.',dl=null;
+    if(x.deadline){dl=dateDiff(jToday(),x.deadline);if(dl<=0)l+=' The deadline has passed.';else l+=' '+dl+' days left, so about '+jMoney(rem/(dl/7))+' per week (≈ '+jMoney(rem/(dl/30))+' per month).';}
+    if(perWeek>0){
+      const weeks=rem/perWeek;
+      l+=' Your last 60 days: about '+jMoney(perWeek)+' per week, so roughly '+(weeks<1?'under a week':Math.ceil(weeks)+' weeks')+' to finish';
+      if(dl!=null&&dl>0)l+=weeks*7<=dl?' (on track).':' (after the deadline).';else l+='.';
+    }else l+=' No net deposits in the last 60 days.';
+    lines.push(l);
+  }
+  el.textContent=lines.join('\n\n');
+  if(jVoice.on)jSay(lines[0]);
 }
 
 // ── voice: speak commands, hear replies, say yes/no to confirm ──
@@ -4631,6 +4840,158 @@ async function jarvisMic(){
   jarvisSend();
 }
 document.addEventListener('visibilitychange',()=>{if(document.hidden)jVoiceStop();});
+
+
+// ══════════════════════════════════════════════════
+//  PRIVACY LOCK — a screen lock for this device (PIN + optional fingerprint).
+//  It hides the hub from anyone who picks up your phone. It is NOT encryption:
+//  your data still lives in Firestore under your account.
+// ══════════════════════════════════════════════════
+const LOCK={mode:'unlock',buf:'',tmp:'',cb:null,busy:false,hiddenAt:0,cancelable:false,built:false};
+const lkGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}};
+const lkSet=(k,v)=>{try{localStorage.setItem(k,v);}catch(e){}};
+const lkDel=k=>{try{localStorage.removeItem(k);}catch(e){}};
+const lockEnabled=()=>lkGet('lockEnabled')==='1'&&!!lkGet('lockHash');
+const lockTimeout=()=>{const v=parseInt(lkGet('lockTimeout'));return isNaN(v)?60:v;};   // seconds; 0 = immediately, -1 = only on fresh open
+const lkEl=id=>document.getElementById(id);
+const lkB64=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const lkUnB64=s=>Uint8Array.from(atob(s.replace(/-/g,'+').replace(/_/g,'/')),c=>c.charCodeAt(0));
+
+async function lockHash(pin,salt){
+  const enc=new TextEncoder();
+  const key=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveBits']);
+  const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:100000,hash:'SHA-256'},key,256);
+  return btoa(String.fromCharCode(...new Uint8Array(bits)));
+}
+function lockBuild(){
+  if(LOCK.built)return;LOCK.built=true;
+  const pad=lkEl('lkPad');pad.innerHTML='';
+  const mk=(txt,fn,cls)=>{const b=document.createElement('button');b.type='button';b.className='lk-key'+(cls?' '+cls:'');b.textContent=txt;b.onclick=fn;pad.appendChild(b);return b;};
+  for(let i=1;i<=9;i++)mk(String(i),()=>lockKey(String(i)));
+  mk('',()=>{},'ghost');mk('0',()=>lockKey('0'));mk('⌫',lockBack,'ghost');
+}
+function lockRender(){
+  const d=lkEl('lkDots');if(!d)return;
+  d.innerHTML='';for(let i=0;i<6;i++){const s=document.createElement('span');s.className='lk-dot'+(i<LOCK.buf.length?' on':'');d.appendChild(s);}
+}
+function lockSub(msg,bad){const e=lkEl('lkSub');if(e){e.textContent=msg||'';e.style.color=bad?'var(--red)':'var(--muted)';}}
+function lockShake(msg){
+  LOCK.buf='';lockRender();lockSub(msg,true);
+  const d=lkEl('lkDots');d.classList.remove('shake');void d.offsetWidth;d.classList.add('shake');
+  try{navigator.vibrate&&navigator.vibrate(60);}catch(e){}
+}
+function lockShow(mode,title,sub,cb,cancelable,noAuto){
+  lockBuild();
+  LOCK.mode=mode;LOCK.buf='';LOCK.tmp='';LOCK.cb=cb||null;LOCK.cancelable=!!cancelable;
+  lkEl('lkTitle').textContent=title||'Unlock';lockSub(sub||'');
+  lkEl('lkOk').textContent=mode==='unlock'?'Unlock':'Continue';
+  lkEl('lkCancel').style.display=cancelable?'block':'none';
+  lkEl('lkForgot').style.display=mode==='unlock'&&!cancelable?'block':'none';
+  const hasBio=mode==='unlock'&&!!lkGet('lockCred');
+  lkEl('lkBio').style.display=hasBio?'block':'none';
+  lkEl('lockScreen').style.display='flex';
+  lockRender();
+  if(hasBio&&!noAuto&&!document.hidden)setTimeout(lockBioUnlock,350);
+}
+function lockHide(){const e=lkEl('lockScreen');if(e)e.style.display='none';LOCK.buf='';}
+function lockCancel(){lockHide();}
+function lockKey(d){if(LOCK.buf.length>=6)return;LOCK.buf+=d;lockRender();if(LOCK.buf.length===6)lockSubmit();}
+function lockBack(){LOCK.buf=LOCK.buf.slice(0,-1);lockRender();}
+async function lockSubmit(){
+  const pin=LOCK.buf;
+  if(pin.length<4){lockShake('Use 4 to 6 digits');return;}
+  if(LOCK.mode==='new'){
+    LOCK.tmp=pin;LOCK.buf='';LOCK.mode='confirm';lkEl('lkTitle').textContent='Confirm your PIN';lockSub('Enter it once more');lockRender();return;
+  }
+  if(LOCK.mode==='confirm'){
+    if(pin!==LOCK.tmp){LOCK.mode='new';LOCK.tmp='';lkEl('lkTitle').textContent='Choose a PIN';lockShake('PINs did not match. Try again');return;}
+    const salt=lkB64(crypto.getRandomValues(new Uint8Array(16)));
+    lkSet('lockSalt',salt);lkSet('lockHash',await lockHash(pin,salt));lkSet('lockEnabled','1');
+    lkDel('lockFails');lkDel('lockUntil');
+    lockHide();toast('App lock is on 🔒','ok');lockRefreshUI();return;
+  }
+  const until=parseInt(lkGet('lockUntil'))||0;
+  if(Date.now()<until){lockShake('Too many tries. Wait '+Math.ceil((until-Date.now())/1000)+' s');return;}
+  const ok=(await lockHash(pin,lkGet('lockSalt')||''))===lkGet('lockHash');
+  if(ok){lkDel('lockFails');lkDel('lockUntil');const cb=LOCK.cb;lockHide();if(cb)cb();}
+  else{
+    const f=(parseInt(lkGet('lockFails'))||0)+1;lkSet('lockFails',String(f));
+    if(f>=5)lkSet('lockUntil',String(Date.now()+30000*(f-4)));
+    lockShake(f>=5?'Too many tries. Locked for a while':'Wrong PIN ('+(5-f)+' tries left)');
+  }
+}
+async function lockBioUnlock(){
+  const id=lkGet('lockCred');
+  if(!id||LOCK.mode!=='unlock'||LOCK.busy||lkEl('lockScreen').style.display!=='flex')return;
+  LOCK.busy=true;
+  try{
+    await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:lkUnB64(id),transports:['internal']}],userVerification:'required',timeout:60000}});
+    const cb=LOCK.cb;lkDel('lockFails');lkDel('lockUntil');lockHide();if(cb)cb();
+  }catch(e){/* stay locked; the PIN pad still works */}
+  finally{LOCK.busy=false;}
+}
+async function lockBioSetup(){
+  if(!lockEnabled()){toast('Turn on App lock first','err');return;}
+  if(lkGet('lockCred')){lkDel('lockCred');lockRefreshUI();toast('Fingerprint unlock turned off','ok');return;}
+  let avail=false;
+  try{avail=!!window.PublicKeyCredential&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();}catch(e){}
+  if(!avail){toast('Fingerprint / screen-lock unlock is not available on this browser','err');return;}
+  LOCK.busy=true;
+  try{
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'My Apps Hub'},
+      user:{id:crypto.getRandomValues(new Uint8Array(16)),name:(user&&user.email)||'user',displayName:(user&&user.displayName)||'User'},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'discouraged'},
+      timeout:60000,attestation:'none'}});
+    lkSet('lockCred',lkB64(cred.rawId));toast('Fingerprint unlock is on ✅','ok');
+  }catch(e){toast(e&&e.name==='NotAllowedError'?'Set-up cancelled':'Could not set up: '+(e.message||e),'err');}
+  finally{LOCK.busy=false;lockRefreshUI();}
+}
+function lockToggle(){
+  if(lockEnabled()){
+    lockShow('unlock','Enter PIN to turn off','',()=>{['lockEnabled','lockHash','lockSalt','lockCred','lockFails','lockUntil'].forEach(lkDel);lockRefreshUI();toast('App lock is off','ok');},true,true);
+  }else lockShow('new','Choose a PIN','4 to 6 digits',null,true,true);
+}
+function lockChangePin(){
+  if(!lockEnabled())return;
+  lockShow('unlock','Enter current PIN','',()=>lockShow('new','Choose a new PIN','4 to 6 digits',null,true,true),true,true);
+}
+function lockSetTimeout(v){lkSet('lockTimeout',String(v));toast('Auto-lock updated','ok');}
+function lockNow(){if(lockEnabled())lockShow('unlock','Locked','',null,false,true);}
+function lockForgot(){
+  if(!confirm('Sign out? This turns the app lock off. You will sign in again with your account.'))return;
+  ['lockEnabled','lockHash','lockSalt','lockCred','lockFails','lockUntil'].forEach(lkDel);
+  lockHide();try{auth.signOut();}catch(e){}
+}
+function lockRefreshUI(){
+  const on=lockEnabled(),bio=!!lkGet('lockCred');
+  const set=(id,fn)=>{const e=lkEl(id);if(e)fn(e);};
+  set('lockState',e=>e.textContent=on?'On · '+(lockTimeout()===0?'locks when you leave':lockTimeout()<0?'locks on fresh open':'locks after '+(lockTimeout()/60)+' min'):'Off');
+  set('lockToggleBtn',e=>e.textContent=on?'Turn off':'Turn on');
+  set('lockRowPin',e=>e.style.display=on?'flex':'none');
+  set('lockRowBio',e=>e.style.display=on?'flex':'none');
+  set('lockRowAuto',e=>e.style.display=on?'flex':'none');
+  set('lockBioState',e=>e.textContent=bio?'On':'Off');
+  set('lockBioBtn',e=>e.textContent=bio?'Turn off':'Set up');
+  set('lockTimeoutSel',e=>e.value=String(lockTimeout()));
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!lockEnabled()||LOCK.busy)return;
+  const shown=lkEl('lockScreen').style.display==='flex';
+  if(document.hidden){
+    LOCK.hiddenAt=Date.now();
+    if(lockTimeout()===0&&!shown)lockShow('unlock','Unlock','',null,false,true);   // hide data from the app switcher
+  }else if(!shown){
+    const t=lockTimeout();
+    if(t>0&&Date.now()-LOCK.hiddenAt>=t*1000)lockShow('unlock','Welcome back','Enter your PIN');
+  }else if(LOCK.mode==='unlock'&&lkGet('lockCred'))setTimeout(lockBioUnlock,350);
+});
+(function lockInit(){
+  if(lockEnabled())lockShow('unlock','Welcome back','Enter your PIN');
+  else{const e=lkEl('lockScreen');if(e)e.style.display='none';}
+  lockRefreshUI();
+})();
 
 
 // ══════════════════════════════════════════════════
